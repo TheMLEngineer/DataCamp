@@ -1,0 +1,4 @@
+Hi Muthu,
+Hi Santhi
+f = open('DataCamp_Testing.txt')
+f.read()
