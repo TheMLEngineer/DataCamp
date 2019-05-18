@@ -1,0 +1,516 @@
+Q :
+
+Call plot on df[cols] to generate a box plot of the two columns in a single figure. To do this, specify subplots=True.
+
+
+# Make a list of the column names to be plotted: cols
+cols = ['weight', 'mpg']
+
+# Generate the box plots
+df[cols].plot(kind = 'box' , subplots = True)
+# Display the plot
+plt.show()
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+when plotting the PDF, you need to specify normed=True in your call to .hist(), and when plotting the CDF, you need to specify cumulative=True in addition to normed=True.
+
+Q:
+
+
+# This formats the plots such that they appear on separate rows
+fig, axes = plt.subplots(nrows=2, ncols=1)
+
+# Plot the PDF
+df.fraction.plot(ax=axes[0], kind='hist', normed=True, bins = 30, range=(0,.3))
+plt.show()
+
+# Plot the CDF
+df.fraction.plot(ax = axes[0], kind='hist',bins = 30, normed=True, cumulative=True, range=(0,.3))
+plt.show()
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Q :
+Print the minimum value of the 'Engineering' column.
+Print the maximum value of the 'Engineering' column.
+Construct the mean percentage per year with .mean(axis='columns'). Assign the result to mean.
+Plot the average percentage per year. Since 'Year' is the index of df, it will appear on the x-axis of the plot. No keyword arguments are needed in your call to .plot().
+
+# Print the minimum value of the Engineering column
+print(df['Engineering'].min())
+
+# Print the maximum value of the Engineering column
+print(df['Engineering'].max())
+
+# Construct the mean percentage per year: mean
+mean = df.mean(axis='columns')
+
+# Plot the average percentage per year
+mean.plot()
+
+# Display the plot
+plt.show()
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q :
+
+Filter the 'US' population from the 'origin' column and assign the result to us.
+
+# Filter the US population from the origin column: us
+us = df[df.origin == 'US']
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q :
+
+Inside plt.subplots(), specify the nrows and ncols parameters so that there are 3 rows and 1 column.
+Filter the rows where the 'pclass' column has the values 1 and generate a box plot of the 'fare' column.
+Filter the rows where the 'pclass' column has the values 2 and generate a box plot of the 'fare' column.
+Filter the rows where the 'pclass' column has the values 3 and generate a box plot of the 'fare' column.
+
+
+
+# Display the box plots on 3 separate rows and 1 column
+fig, axes = plt.subplots(nrows=3, ncols=1)
+
+# Generate a box plot of the fare prices for the First passenger class
+titanic.loc[titanic['pclass'] == 1].plot(ax=axes[0], y='fare', kind='box')
+
+# Generate a box plot of the fare prices for the Second passenger class
+titanic.loc[titanic['pclass'] == 2].plot(ax=axes[1], y='fare', kind='box')
+
+# Generate a box plot of the fare prices for the Third passenger class
+titanic.loc[titanic['pclass'] == 3].plot(ax=axes[2], y='fare', kind='box')
+
+# Display the plot
+plt.show()
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Pandas provides the pd.to_datetime() function for just this task. For example, if passed the list of strings ['2015-01-01 091234','2015-01-01 091234'] and a format specification variable, such as format='%Y-%m-%d %H%M%S, pandas will parse the string into the proper datetime elements and build the datetime objects.
+ 
+ Prepare a format string, time_format, using '%Y-%m-%d %H:%M' as the desired format.
+Convert date_list into a datetime object by using the pd.to_datetime() function. Specify the format string you defined above and assign the result to my_datetimes.
+Construct a pandas Series called time_series using pd.Series() with temperature_list and my_datetimes. Set the index of the Series to be my_datetimes.
+
+# Prepare a format string: time_format
+time_format = '%Y-%m-%d %H:%M'
+
+# Convert date_list into a datetime object: my_datetimes
+my_datetimes = pd.to_datetime(date_list, format=time_format)  
+
+# Construct a pandas Series using temperature_list and my_datetimes: time_series
+time_series = pd.Series(temperature_list, index=my_datetimes)
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q :
+
+Create a new time series ts3 by reindexing ts2 with the index of ts1. To do this, call .reindex() on ts2 and pass in the index of ts1 (ts1.index).
+Create another new time series, ts4, by calling the same .reindex() as above, but also specifiying a fill method, using the keyword argument method="ffill" to forward-fill values.
+Add ts1 + ts2. Assign the result to sum12.
+
+
+# Reindex without fill method: ts3
+ts3 = ts2.reindex(ts1.index)
+
+# Reindex with fill method, using forward fill: ts4
+ts4 = ts2.reindex(ts1.index , method = 'ffill')
+
+# Combine ts1 + ts2: sum12
+sum12 = ts1 + ts2
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Q :
+
+Downsample the 'Temperature' column of df to 6 hour data using .resample('6h') and .mean(). Assign the result to df1.
+Downsample the 'Temperature' column of df to daily data using .resample('D') and then count the number of data points in each day with .count(). Assign the result df2.
+
+# Downsample to 6 hour data and aggregate by mean: df1
+df1 = df['Temperature'].resample('6H').mean()
+
+# Downsample to daily data and count the number of data points: df2
+df2 = df['Temperature'].resample('D').count()
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Q :
+
+Use partial string indexing to extract temperature data for August 2010 into august.
+Use the temperature data for August and downsample to find the daily maximum temperatures. Store the result in august_highs.
+Use partial string indexing to extract temperature data for February 2010 into february.
+Use the temperature data for February and downsample to find the daily minimum temperatures. Store the result in february_lows
+
+
+
+# Extract temperature data for August: august
+august = df['Temperature'].loc['2010-August']
+
+# Downsample to obtain only the daily highest temperatures in August: august_highs
+august_highs = august.resample('D').max()
+
+# Extract temperature data for February: february
+february = df['Temperature'].loc['2010-February']
+
+# Downsample to obtain the daily lowest temperatures in February: february_lows
+february_lows = february.resample('D').min()
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Rolling mean and frequency : 
+
+Q :
+
+Use partial string indexing to extract temperature data from August 1 2010 to August 15 2010. Assign to unsmoothed.
+Use .rolling() with a 24 hour window to smooth the mean temperature data. Assign the result to smoothed.
+Use a dictionary to create a new DataFrame august with the time series smoothed and unsmoothed as columns.
+Plot both the columns of august as line plots using the .plot() method.
+
+
+
+# Extract data from 2010-Aug-01 to 2010-Aug-15: unsmoothed
+unsmoothed = df['Temperature']['2010-August-1':'2010-August-15']
+
+# Apply a rolling mean with a 24 hour window: smoothed
+smoothed = unsmoothed.rolling(window=24).mean()
+
+
+# Create a new DataFrame with columns smoothed and unsmoothed: august
+august = pd.DataFrame({'smoothed':smoothed, 'unsmoothed':unsmoothed})
+
+# Plot both smoothed and unsmoothed data using august.plot().
+august.plot()
+plt.show()
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Q : 
+
+Use partial string indexing to extract August 2010 temperature data, and assign to august.
+Resample to daily frequency, saving the maximum daily temperatures, and assign the result to daily_highs.
+As part of one long method chain, repeat the above resampling (or you can re-use daily_highs) and then combine it with .rolling() to apply a 7 day .mean() (with window=7 inside .rolling()) so as to smooth the daily highs. Assign the result to daily_highs_smoothed and print the result.
+
+
+# Extract the August 2010 data: august
+august = df['Temperature']['2010-August']
+
+# Resample to daily data, aggregating by max: daily_highs
+daily_highs = august.resample('D').max()
+
+# Use a rolling 7-day window with method chaining to smooth the daily high temperatures in August
+daily_highs_smoothed = daily_highs.rolling(window=7).mean()
+print(daily_highs_smoothed)
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Q :
+
+Use .str.strip() to strip extra whitespace from df.columns. Assign the result back to df.columns.
+In the 'Destination Airport' column, extract all entries where Dallas ('DAL') is the destination airport. Use .str.contains('DAL') for this and store the result in dallas.
+Resample dallas such that you get the total number of departures each day. Store the result in daily_departures.
+Generate summary statistics for daily Dallas departures using .describe(). Store the result in stats.
+
+
+# Strip extra whitespace from the column names: df.columns
+df.columns = df.columns.str.strip()
+
+# Extract data for which the destination airport is Dallas: dallas
+dallas = df['Destination Airport'].str.contains('DAL')
+
+# Compute the total number of Dallas departures each day: daily_departures
+daily_departures = dallas.resample('D').sum()
+
+# Generate the summary statistics for daily Dallas departures: stats
+stats = daily_departures.describe()
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Q :
+
+Replace the index of ts2 with that of ts1, and then fill in the missing values of ts2 by using .interpolate(how='linear'). Save the result as ts2_interp.
+Compute the difference between ts1 and ts2_interp. Take the absolute value of the difference with np.abs(), and assign the result to differences.
+Generate and print summary statistics of the differences with .describe() and print().
+
+
+# Reset the index of ts2 to ts1, and then use linear interpolation to fill in the NaNs: ts2_interp
+ts2_interp = ts2.reindex(ts1.index).interpolate(how = 'linear')
+
+# Compute the absolute difference of ts1 and ts2_interp: differences 
+differences = np.abs(ts1 - ts2_interp)
+
+# Generate and print summary statistics of the differences
+print(differences.describe())
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Q :
+
+Create a Boolean mask, mask, such that if the 'Destination Airport' column of df equals 'LAX', the result is True, and otherwise, it is False.
+Use the mask to extract only the LAX rows. Assign the result to la.
+Concatenate the two columns la['Date (MM/DD/YYYY)'] and la['Wheels-off Time'] with a ' ' space in between. Pass this to pd.to_datetime() to create a datetime array of all the times the LAX-bound flights left the ground.
+Use Series.dt.tz_localize() to localize the time to 'US/Central'.
+Use the .dt.tz_convert() method to convert datetimes from 'US/Central' to 'US/Pacific'.
+
+
+# Build a Boolean mask to filter out all the 'LAX' departure flights: mask
+mask = df['Destination Airport'] == 'LAX'
+
+# Use the mask to subset the data: la
+la = df[mask]
+
+# Combine two columns of data to create a datetime series: times_tz_none 
+times_tz_none = pd.to_datetime( la['Date (MM/DD/YYYY)'] + ' ' + la['Wheels-off Time'] )
+
+# Localize the time to US/Central: times_tz_central
+times_tz_central = times_tz_none.dt.tz_localize('US/Central')
+
+# Convert the datetimes from US/Central to US/Pacific
+times_tz_pacific = times_tz_central.dt.tz_convert('US/Pacific')
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Q :
+
+Plot the summer temperatures using method chaining. The summer ranges from the months '2010-Jun' to '2010-Aug'.
+Plot the temperatures for one week in June using the same method chaining, but this time indexing with '2010-06-10':'2010-06-17' before you follow up with .plot().
+
+# Plot the summer data
+df.Temperature['2010-Jun':'2010-Aug'].plot()
+plt.show()
+plt.clf()
+
+# Plot the one week data
+df.Temperature['2010-06-10':'2010-06-17'].plot()
+plt.show()
+plt.clf()
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+CASE STUDY :
+
+Q :
+
+Convert the comma separated string column_labels to a list of strings using .split(','). Assign the result to column_labels_list.
+Reassign df.columns using the list of strings column_labels_list.
+Call df.drop() with list_to_drop and axis='columns'. Assign the result to df_dropped.
+Print df_dropped.head() to examine the result. This has already been done for you.
+
+
+# Split on the comma to create a list: column_labels_list
+column_labels_list = column_labels.split(',')
+
+# Assign the new column labels to the DataFrame: df.columns
+df.columns = column_labels_list
+
+# Remove the appropriate columns: df_dropped
+df_dropped = df.drop(list_to_drop , axis = 1)
+
+# Print the output of df_dropped.head()
+print(df_dropped.head())
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Q :
+Convert the 'date' column to a string with .astype(str) and assign to df_dropped['date'].
+Add leading zeros to the 'Time' column. This has been done for you.
+Concatenate the new 'date' and 'Time' columns together. Assign to date_string.
+Convert the date_string Series to datetime values with pd.to_datetime(). Specify the format parameter.
+Set the index of the df_dropped DataFrame to be date_times. Assign the result to df_clean.
+
+
+# Convert the date column to string: df_dropped['date']
+df_dropped['date'] = df_dropped['date'].astype(str)
+
+# Pad leading zeros to the Time column: df_dropped['Time']
+df_dropped['Time'] = df_dropped['Time'].apply(lambda x:'{:0>4}'.format(x))
+
+# Concatenate the new date and Time columns: date_string
+date_string = df_dropped.date + df_dropped.Time
+
+# Convert the date_string Series to datetime: date_times
+date_times = pd.to_datetime(date_string, format='%Y%m%d%H%M')
+
+# Set the index to be the new date_times container: df_clean
+df_clean = df_dropped.set_index(date_times)
+
+
+# Print the output of df_clean.head()
+print(df_clean.head())
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Q :
+
+
+Print the 'dry_bulb_faren' temperature between 8 AM and 9 AM on June 20, 2011.
+Convert the 'dry_bulb_faren' column to numeric values with pd.to_numeric(). Specify errors='coerce'.
+Print the transformed dry_bulb_faren temperature between 8 AM and 9 AM on June 20, 2011.
+Convert the 'wind_speed' and 'dew_point_faren' columns to numeric values with pd.to_numeric(). Again, specify errors='coerce'.
+
+
+# Print the dry_bulb_faren temperature between 8 AM and 9 AM on June 20, 2011
+print(df_clean.loc['2011-06-01 8:00:00':'2011-06-01 9:00:00', 'dry_bulb_faren'])
+
+# Convert the dry_bulb_faren column to numeric values: df_clean['dry_bulb_faren']
+df_clean['dry_bulb_faren'] = pd.to_numeric(df_clean['dry_bulb_faren'], errors='coerce')
+
+# Print the transformed dry_bulb_faren temperature between 8 AM and 9 AM on June 20, 2011
+print(df_clean.loc['2011-06-01 8:00:00':'2011-06-01 9:00:00', 'dry_bulb_faren'])
+
+# Convert the wind_speed and dew_point_faren columns to numeric values
+df_clean['wind_speed'] = pd.to_numeric(df_clean['wind_speed'],errors='coerce')
+df_clean['dew_point_faren'] = pd.to_numeric(df_clean['dew_point_faren'], errors='coerce')
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Q :
+
+Select the 'dry_bulb_faren' column and print the output of .median().
+Use .loc[] to select the range '2011-Apr':'2011-Jun' from dry_bulb_faren' and print the output of .median().
+Use .loc[] to select the month '2011-Jan' from 'dry_bulb_faren' and print the output of .median().
+
+# Print the median of the dry_bulb_faren column
+print(df_clean['dry_bulb_faren'].median())
+
+# Print the median of the dry_bulb_faren column for the time range '2011-Apr':'2011-Jun'
+print(df_clean.loc['2011-Apr':'2011-Jun', 'dry_bulb_faren'].median())
+
+# Print the median of the dry_bulb_faren column for the month of January
+print(df_clean.loc['2011-Jan', 'dry_bulb_faren'].median())
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q : 
+
+Downsample df_clean with daily frequency and aggregate by the mean. Store the result as daily_mean_2011.
+Extract the 'dry_bulb_faren' column from daily_mean_2011 as a NumPy array using .values. Store the result as daily_temp_2011. Note: .values is an attribute, not a method, so you don't have to use ().
+Downsample df_climate with daily frequency and aggregate by the mean. Store the result as daily_climate.
+Extract the 'Temperature' column from daily_climate using the .reset_index() method. To do this, first reset the index of daily_climate, and then use bracket slicing to access 'Temperature'. Store the result as daily_temp_climate.
+
+
+
+# Downsample df_clean by day and aggregate by mean: daily_mean_2011
+daily_mean_2011 = df_clean.resample('D').mean()
+
+# Extract the dry_bulb_faren column from daily_mean_2011 using .values: daily_temp_2011
+daily_temp_2011 = daily_mean_2011['dry_bulb_faren'].values
+
+# Downsample df_climate by day and aggregate by mean: daily_climate
+daily_climate = df_climate.resample('D').mean()
+
+# Extract the Temperature column from daily_climate using .reset_index(): daily_temp_climate
+daily_temp_climate = daily_climate.reset_index()['Temperature']
+
+# Compute the difference between the two arrays and print the mean difference
+difference = daily_temp_2011 - daily_temp_climate
+print(difference.mean())
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ you will compute the Pearson correlation coefficient using .corr(). The Pearson correlation coefficient, known also as Pearson's r, ranges from -1 (indicating total negative linear correlation) to 1 (indicating total positive linear correlation). A value close to 1 here would indicate that there is a strong correlation between temperature and visibility.
+
+Q :
+
+
+Import matplotlib.pyplot as plt.
+Select the 'visibility' and 'dry_bulb_faren' columns and resample them by week, aggregating the mean. Assign the result to weekly_mean.
+Print the output of weekly_mean.corr().
+Plot the weekly_mean dataframe with .plot(), specifying subplots=True.
+
+
+# Import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+
+# Select the visibility and dry_bulb_faren columns and resample them: weekly_mean
+weekly_mean = df_clean[['visibility' , 'dry_bulb_faren']].resample('W').mean()
+
+# Print the output of weekly_mean.corr()
+print(weekly_mean.corr())
+
+# Plot weekly_mean with subplots=True
+weekly_mean.plot(subplots=True)
+plt.show()
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
