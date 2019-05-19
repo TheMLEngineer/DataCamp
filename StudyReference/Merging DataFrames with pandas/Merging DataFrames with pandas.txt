@@ -1,0 +1,409 @@
+ Q :
+ 
+ 
+ Create a 'year' column in the DataFrames names_1881 and names_1981, with values of 1881 and 1981 respectively. Recall that assigning a scalar value to a DataFrame column broadcasts that value throughout.
+Create a new DataFrame called combined_names by appending the rows of names_1981 underneath the rows of names_1881. Specify the keyword argument ignore_index=True to make a new RangeIndex of unique integers for each row.
+Print the shapes of all three DataFrames. This has been done for you.
+Extract all rows from combined_names that have the name 'Morgan'. To do this, use the .loc[] accessor with an appropriate filter. The relevant column of combined_names here is 'name'.
+
+
+
+
+
+# Add 'year' column to names_1881 and names_1981
+names_1881['year'] = 1881
+names_1981['year'] = 1981
+
+# Append names_1981 after names_1881 with ignore_index=True: combined_names
+combined_names = names_1881.append(names_1981 , ignore_index=True)
+
+# Print shapes of names_1981, names_1881, and combined_names
+print(names_1981.shape)
+print(names_1881.shape)
+print(combined_names.shape)
+
+# Print all rows that contain the name 'Morgan'
+print(combined_names.loc[combined_names['name'] == 'Morgan'])
+
+
+
+
+
+
+
+
+O/P :
+
+<script.py> output:
+    (19455, 4)
+    (1935, 4)
+    (21390, 4)
+             name gender  count  year
+    1283   Morgan      M     23  1881
+    2096   Morgan      F   1769  1981
+    14390  Morgan      M    766  1981
+	
+	
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+Q : 
+
+
+Iterate over medal_types in the for loop.
+Inside the for loop:
+Create file_name using string interpolation with the loop variable medal. This has been done for you. The expression "%s_top5.csv" % medal evaluates as a string with the value of medal replacing %s in the format string.
+Create the list of column names called columns. This has been done for you.
+Read file_name into a DataFrame called medal_df. Specify the keyword arguments header=0, index_col='Country', and names=columns to get the correct row and column Indexes.
+Append medal_df to medals using the list .append() method.
+Concatenate the list of DataFrames medals horizontally (using axis='columns') to create a single DataFrame called medals. Print it in its entirety.
+
+
+
+for medal in medal_types:
+
+    # Create the file name: file_name
+    file_name = "%s_top5.csv" % medal
+    
+    # Create list of column names: columns
+    columns = ['Country', medal]
+    
+    # Read file_name into a DataFrame: df
+    medal_df = pd.read_csv(file_name, header=0, index_col='Country', names=columns)
+
+    # Append medal_df to medals
+    medals.append(medal_df)
+
+# Concatenate medals horizontally: medals
+medals = pd.concat(medals, axis='columns')
+
+# Print medals
+print(medals)
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+Q : 
+
+
+Create a new DataFrame medals_sorted with the entries of medals sorted. Use .sort_index(level=0) to ensure the Index is sorted suitably.
+Print the number of bronze medals won by Germany and all of the silver medal data. This has been done for you.
+Create an alias for pd.IndexSlice called idx. A slicer pd.IndexSlice is required when slicing on the inner level of a MultiIndex.
+Slice all the data on medals won by the United Kingdom. To do this, use the .loc[] accessor with idx[:,'United Kingdom'], :
+
+
+
+
+# Sort the entries of medals: medals_sorted
+medals_sorted = medals.sort_index(level = 0)
+
+# Print the number of Bronze medals won by Germany
+print(medals_sorted.loc[('bronze','Germany')])
+
+# Print data about silver medals
+print(medals_sorted.loc['silver'])
+
+# Create alias for pd.IndexSlice: idx
+idx = pd.IndexSlice
+
+# Print all the data on medals won by the United Kingdom
+print(medals_sorted.loc[idx[:,'United Kingdom'], :])
+
+
+
+
+O/P:
+
+<script.py> output:
+    Total    454.0
+    Name: (bronze, Germany), dtype: float64
+                     Total
+    Country               
+    France           461.0
+    Italy            394.0
+    Soviet Union     627.0
+    United Kingdom   591.0
+    United States   1195.0
+                           Total
+           Country              
+    bronze United Kingdom  505.0
+    gold   United Kingdom  498.0
+    silver United Kingdom  591.0
+	
+	
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q : 
+ 
+ Construct a new DataFrame february with MultiIndexed columns by concatenating the list dataframes.
+Use axis=1 to stack the DataFrames horizontally and the keyword argument keys=['Hardware', 'Software', 'Service'] to construct a hierarchical Index from each DataFrame.
+Print summary information from the new DataFrame february using the .info() method. This has been done for you.
+Create an alias called idx for pd.IndexSlice.
+Extract a slice called slice_2_8 from february (using .loc[] & idx) that comprises rows between Feb. 2, 2015 to Feb. 8, 2015 from columns under 'Company'.
+Print the slice_2_8. This has been done for you, so hit 'Submit Answer' to see the sliced data!
+
+
+
+
+# Concatenate dataframes: february
+february = pd.concat(dataframes,keys=['Hardware', 'Software', 'Service'] , axis = 1)
+february.stack()
+
+# Print february.info()
+print(february.info())
+
+# Assign pd.IndexSlice: idx
+idx = pd.IndexSlice
+
+# Create the slice: slice_2_8
+slice_2_8 = february.loc['Feb. 2, 2015 ':'Feb. 8, 2015', idx[:, 'Company']]
+
+# Print slice_2_8
+print(slice_2_8)
+
+
+
+<script.py> output:
+    <class 'pandas.core.frame.DataFrame'>
+    DatetimeIndex: 20 entries, 2015-02-02 08:33:01 to 2015-02-26 08:58:51
+    Data columns (total 9 columns):
+    (Hardware, Company)    5 non-null object
+    (Hardware, Product)    5 non-null object
+    (Hardware, Units)      5 non-null float64
+    (Software, Company)    9 non-null object
+    (Software, Product)    9 non-null object
+    (Software, Units)      9 non-null float64
+    (Service, Company)     6 non-null object
+    (Service, Product)     6 non-null object
+    (Service, Units)       6 non-null float64
+    dtypes: float64(3), object(6)
+    memory usage: 1.6+ KB
+    None
+                                Hardware         Software Service
+                                 Company          Company Company
+    Date                                                         
+    2015-02-02 08:33:01              NaN            Hooli     NaN
+    2015-02-02 20:54:49        Mediacore              NaN     NaN
+    2015-02-03 14:14:18              NaN          Initech     NaN
+    2015-02-04 15:36:29              NaN        Streeplex     NaN
+    2015-02-04 21:52:45  Acme Coporation              NaN     NaN
+    2015-02-05 01:53:06              NaN  Acme Coporation     NaN
+    2015-02-05 22:05:03              NaN              NaN   Hooli
+    2015-02-07 22:58:10  Acme Coporation              NaN     NaN
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q: 
+ 
+ Create a list called month_list consisting of the tuples ('january', jan), ('february', feb), and ('march', mar).
+Create an empty dictionary called month_dict.
+Inside the for loop:
+Group month_data by 'Company' and use .sum() to aggregate.
+Construct a new DataFrame called sales by concatenating the DataFrames stored in month_dict.
+Create an alias for pd.IndexSlice and print all sales by 'Mediacore'. This has been done for you, so hit 'Submit Answer' to see the result!
+
+
+
+# Make the list of tuples: month_list
+month_list = [('january', jan), ('february', feb),  ('march', mar)]
+
+# Create an empty dictionary: month_dict
+month_dict = dict()
+
+for month_name, month_data in month_list:
+
+    # Group month_data: month_dict[month_name]
+    month_dict[month_name] = month_data.groupby('Company').sum()
+
+# Concatenate data in month_dict: sales
+sales = pd.concat(month_dict)
+
+# Print sales
+print(sales)
+
+# Print all sales by Mediacore
+idx = pd.IndexSlice
+print(sales.loc[idx[:, 'Mediacore'], :])
+
+
+
+O/P:
+
+<script.py> output:
+                              Units
+             Company               
+    february Acme Coporation     34
+             Hooli               30
+             Initech             30
+             Mediacore           45
+             Streeplex           37
+    january  Acme Coporation     76
+             Hooli               70
+             Initech             37
+             Mediacore           15
+             Streeplex           50
+    march    Acme Coporation      5
+             Hooli               37
+             Initech             68
+             Mediacore           68
+             Streeplex           40
+                        Units
+             Company         
+    february Mediacore     45
+    january  Mediacore     15
+    march    Mediacore     68
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q : 
+ 
+ 
+ Make a new DataFrame china_annual by resampling the DataFrame china with .resample('A').last() (i.e., with annual frequency) and chaining two method calls:
+Chain .pct_change(10) as an aggregation method to compute the percentage change with an offset of ten years.
+Chain .dropna() to eliminate rows containing null values.
+Make a new DataFrame us_annual by resampling the DataFrame us exactly as you resampled china.
+Concatenate china_annual and us_annual to construct a DataFrame called gdp. Use join='inner' to perform an inner join and use axis=1 to concatenate horizontally.
+Print the result of resampling gdp every decade (i.e., using .resample('10A')) and aggregating with the method .last(). This has been done for you, so hit 'Submit Answer' to see the result!
+
+
+
+# Resample and tidy china: china_annual
+china_annual = china.resample('A').last().pct_change(10).dropna()
+
+# Resample and tidy us: us_annual
+us_annual = us.resample('A').last().pct_change(10).dropna()
+
+# Concatenate china_annual and us_annual: gdp
+gdp = pd.concat([china_annual , us_annual] , axis = 1 ,join = 'inner')
+
+# Resample gdp and print
+print(gdp.resample('10A').last())
+
+
+
+O/P :
+
+<script.py> output:
+                   China        US
+    Year                          
+    1971-12-31  0.988860  1.052270
+    1981-12-31  0.972048  1.750922
+    1991-12-31  0.962528  0.912380
+    2001-12-31  2.492511  0.704219
+    2011-12-31  4.623958  0.475082
+    2021-12-31  3.789936  0.361780
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q :
+
+Merge auto and oil using pd.merge_asof() with left_on='yr' and right_on='Date'. Store the result as merged.
+Print the tail of merged. This has been done for you.
+Resample merged using 'A' (annual frequency), and on='Date'. Select [['mpg','Price']] and aggregate the mean. Store the result as yearly.
+Hit Submit Answer to examine the contents of yearly and yearly.corr(), which shows the Pearson correlation between the resampled 'Price' and 'mpg'.
+
+
+# Merge auto and oil: merged
+merged = pd.merge_asof(auto, oil, left_on='yr', right_on='Date')
+
+# Print the tail of merged
+print(merged.tail())
+
+# Resample merged: yearly
+yearly = merged.resample('A',on='Date')[['mpg','Price']].mean()
+
+# Print yearly
+print(yearly)
+
+# Print yearly.corr()
+print(yearly.corr())
+
+
+
+o/p :
+
+
+<script.py> output:
+          mpg  cyl  displ  hp  weight  ...         yr  origin             name       Date  Price
+    387  27.0    4  140.0  86    2790  ... 1982-01-01      US  ford mustang gl 1982-01-01  33.85
+    388  44.0    4   97.0  52    2130  ... 1982-01-01  Europe        vw pickup 1982-01-01  33.85
+    389  32.0    4  135.0  84    2295  ... 1982-01-01      US    dodge rampage 1982-01-01  33.85
+    390  28.0    4  120.0  79    2625  ... 1982-01-01      US      ford ranger 1982-01-01  33.85
+    391  31.0    4  119.0  82    2720  ... 1982-01-01      US       chevy s-10 1982-01-01  33.85
+    
+    [5 rows x 11 columns]
+                      mpg  Price
+    Date                        
+    1970-12-31  17.689655   3.35
+    1971-12-31  21.111111   3.56
+    1972-12-31  18.714286   3.56
+    1973-12-31  17.100000   3.56
+    1974-12-31  22.769231  10.11
+    1975-12-31  20.266667  11.16
+    1976-12-31  21.573529  11.16
+    1977-12-31  23.375000  13.90
+    1978-12-31  24.061111  14.85
+    1979-12-31  25.093103  14.85
+    1980-12-31  33.803704  32.50
+    1981-12-31  30.185714  38.00
+    1982-12-31  32.000000  33.85
+                mpg     Price
+    mpg    1.000000  0.948677
+    Price  0.948677  1.000000
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
