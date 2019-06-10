@@ -378,6 +378,635 @@ FROM transactions;
 
 
 
+ Q 1 : 
+ 
+ 
+ Have a look at the distinct university_shortname values and take note of the length of the strings.
+ 
+ 
+ -- Select the university_shortname column
+SELECT distinct(university_shortname) 
+FROM professors;
+
+
+
+ Q 2 : 
+ 
+ Now specify a fixed-length character type with the correct length for university_shortname.
+ 
+ 
+ 
+ -- Specify the correct fixed-length character type
+ALTER TABLE professors
+ALTER COLUMN university_shortname
+TYPE char(3);
+
+
+
+ Q 3 : 
+ 
+ 
+ Change the type of the firstname column to varchar(64).
+ 
+ 
+ 
+ 
+ -- Change the type of firstname
+ALTER TABLE professors
+ALTER COLUMN firstname
+TYPE varchar(64);
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q : 
+
+Run the sample code as is and take note of the error.
+Now use SUBSTRING() to reduce firstname to 16 characters so its type can be altered to varchar(16).
+
+
+
+-- Convert the values in firstname to a max. of 16 characters
+ALTER TABLE professors 
+ALTER COLUMN firstname 
+TYPE varchar(16)
+USING SUBSTRING(firstname FROM 1 FOR 16)
+
+ 
+
+Reference : 
+
+Convert types USING a function
+If you don't want to reserve too much space for a certain varchar column, you can truncate the values before converting its type.
+
+For this, you can use the following syntax:
+
+ALTER TABLE table_name
+ALTER COLUMN column_name
+TYPE varchar(x)
+USING SUBSTRING(column_name FROM 1 FOR x)
+You should read it like this: Because you want to reserve only x characters for column_name, you have to retain a SUBSTRING of every value, i.e. the first x characters of it, and throw away the rest. This way, the values will fit the varchar(x) requirement.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q 1 : 
+ 
+ Add a not-null constraint for the firstname column.
+ 
+ 
+ -- Disallow NULL values in firstname
+ALTER TABLE professors 
+ALTER COLUMN firstname SET NOT NULL;
+
+
+ Q 2 : 
+ 
+ 
+ Add a not-null constraint for the lastname column.
+ 
+ 
+ 
+ -- Disallow NULL values in lastname
+ALTER TABLE professors
+ALTER COLUMN lastname SET NOT NULL;
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q : 
+ 
+ 
+ What happens if you try to enter NULLs?
+Execute the following statement:
+
+INSERT INTO professors (firstname, lastname, university_shortname)
+VALUES (NULL, 'Miller', 'ETH');
+Why does this throw an error?
+
+
+
+
+
+Professors without first names do not exist.
+Because a database constraint is violated.        (A)
+Error? This works just fine.
+NULL is not put in quotes.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q 1 : 
+ 
+ 
+ Add a unique constraint to the university_shortname column in universities. Give it the name university_shortname_unq.
+
+
+
+
+-- Make universities.university_shortname unique
+ALTER TABLE  universities
+ADD CONSTRAINT university_shortname_unq UNIQUE(university_shortname);
+
+
+
+Reference :
+
+
+
+Make your columns UNIQUE with ADD CONSTRAINT
+As seen in the video, you add the UNIQUE keyword after the column_name that should be unique. This, of course, only works for new tables:
+
+CREATE TABLE table_name (
+ column_name UNIQUE
+);
+If you want to add a unique constraint to an existing table, you do it like that:
+
+ALTER TABLE table_name
+ADD CONSTRAINT some_name UNIQUE(column_name);
+Note that this is different from the ALTER COLUMN syntax for the not-null constraint. Also, you have to give the constraint a name some_name.
+
+
+
+
+
+
+
+
+ Q 2 : 
+ 
+ 
+Add a unique constraint to the organization column in organizations. Give it the name organization_unq.
+
+
+
+-- Make organizations.organization unique
+ALTER TABLE organizationS
+ADD CONSTRAINT organization_unq UNIQUE(organization)
+
+
+
+
+ 
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q 1 : 
+ 
+ 
+ First, find out the number of rows in universities.
+ 
+ 
+ 
+ -- Count the number of rows in universities
+SELECT count(*) 
+FROM universities;
+
+
+
+
+ Q 2 : 
+ 
+ Then, find out how many unique values there are in the university_city column.
+ 
+ 
+ -- Count the number of distinct values in the university_city column
+SELECT count(distinct(university_city)) 
+FROM universities;
+
+
+
+Reference : 
+
+
+Get to know SELECT COUNT DISTINCT
+Your database doesn't have any defined keys so far, and you don't know which columns or combinations of columns are suited as keys.
+
+There's a simple way of finding out whether a certain column (or a combination) contains only unique values – and thus identifies the records in the table.
+
+You already know the SELECT DISTINCT query from the first chapter. Now you just have to wrap everything within the COUNT() function and PostgreSQL will return the number of unique rows for the given columns:
+
+SELECT COUNT(DISTINCT(column_a, column_b, ...))
+FROM table;
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Reference : 
+
+
+Identify keys with SELECT COUNT DISTINCT
+There's a very basic way of finding out what qualifies for a key in an existing, populated table:
+Count the distinct records for all possible combinations of columns. If the resulting number x equals the number of all rows in the table for a combination, you have discovered a superkey.
+Then remove one column after another until you can no longer remove columns without seeing the number x decrease. If that is the case, you have discovered a (candidate) key.
+The table professors has 551 rows. It has only one possible candidate key, which is a combination of two attributes. You might want to try different combinations using the "Run code" button. Once you have found the solution, you can submit your answer.
+
+
+Hint : 
+
+
+
+Query the database to find out the number of rows for the different combination of columns:
+SELECT COUNT(DISTINCT(column_a, column_b, ...))
+FROM professors;
+If the resulting number equals 551, remove a column to see whether 551 decreases or not. If it doesn't, you have found the correct combination of attributes that form a key.
+
+
+ Q : 
+ 
+ 
+ 
+ Using the above steps, identify the candidate key by trying out different combination of columns.
+ 
+ 
+ 
+ 
+ 
+-- Try out different combinations
+select COUNT(distinct(firstname , lastname)) 
+FROM professors;
+
+
+
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 
+ 
+ Q : 
+ 
+ Identify the primary key
+Have a look at the example table from the previous video. As the database designer, you have to make a wise choice as to which column should be the primary key.
+
+     license_no     | serial_no |    make    |  model  | year
+--------------------+-----------+------------+---------+------
+ Texas ABC-739      | A69352    | Ford       | Mustang |    2
+ Florida TVP-347    | B43696    | Oldsmobile | Cutlass |    5
+ New York MPO-22    | X83554    | Oldsmobile | Delta   |    1
+ California 432-TFY | C43742    | Mercedes   | 190-D   |   99
+ California RSK-629 | Y82935    | Toyota     | Camry   |    4
+ Texas RSK-629      | U028365   | Jaguar     | XJS     |    4
+Which of the following column or column combinations could best serve as primary key?
+
+
+
+
+
+PK = {make}
+press
+1
+PK = {model, year}
+press
+2
+PK = {license_no}    (A)
+press
+3
+PK = {year, make}
+press
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q 1 : 
+ 
+ 
+ Rename the organization column to id in organizations.
+Make id a primary key and name it organization_pk.
+
+
+
+
+-- Rename the organization column to id
+alter table organizations
+rename column organization TO id;
+
+-- Make id a primary key
+ALTER TABLE organizations
+add constraint organization_pk primary KEY (id);
+
+
+
+ Q 2 : 
+ 
+ 
+ Rename the university_shortname column to id in universities.
+Make id a primary key and name it university_pk.
+
+
+
+-- Rename the university_shortname column to id
+alter table universities
+rename column university_shortname to id;
+
+-- Make id a primary key
+alter table universities
+add constraint university_pk primary key (id);
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q 1 : 
+ 
+ 
+ Add a new column id with data type serial to the professors table.
+ 
+ 
+ 
+ -- Add the new column to the table
+ALTER TABLE professors 
+add column id serial;
+
+
+ Q 2 : 
+ 
+ 
+ Make id a primary key and name it professors_pkey.
+ 
+ 
+ -- Add the new column to the table
+ALTER TABLE professors 
+ADD COLUMN id serial;
+
+-- Make id a primary key
+ALTER table professors 
+add CONSTRAINT professors_pkey primary key (id);
+
+
+
+ Q 3 :
+ 
+ 
+ Write a query that returns all the columns and 10 rows from professors.
+ 
+ 
+ 
+ -- Add the new column to the table
+ALTER TABLE professors 
+ADD COLUMN id serial;
+
+-- Make id a primary key
+ALTER TABLE professors 
+ADD CONSTRAINT professors_pkey PRIMARY KEY (id);
+
+-- Have a look at the first 10 rows of professors
+select * from professors
+limit 10;
+
+
+Reference : 
+
+
+ As you can see, PostgreSQL has automatically numbered the rows with the id column, which now functions as a (surrogate) primary key – it uniquely identifies professors.
+ 
+ 
+ 
+
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 
+ Q 1 : 
+ 
+ 
+ Count the number of distinct rows with a combination of the make and model columns.
+ 
+ 
+ -- Count the number of distinct rows with columns make, model
+select COUNT(DISTINCT(make , model))
+FROM cars;
+
+
+ Q 2 : 
+ 
+ Add a new column id with the data type varchar(128)
+ 
+ 
+ -- Count the number of distinct rows with columns make, model
+SELECT COUNT(DISTINCT(make, model)) 
+FROM cars;
+
+-- Add the id column
+ALTER TABLE cars
+add column id varchar(128);
+
+
+
+ Q 3 : 
+ 
+ 
+ Concatenate make and model into id using an UPDATE query and the CONCAT() function.
+ 
+ 
+ -- Count the number of distinct rows with columns make, model
+SELECT COUNT(DISTINCT(make, model)) 
+FROM cars;
+
+-- Add the id column
+ALTER TABLE cars
+ADD COLUMN id varchar(128);
+
+-- Update id with make + model
+UPDATE cars
+SET id = CONCAT(make , model);
+
+
+
+ Q 4 : 
+ 
+ 
+ Make id a primary key and name it id_pk.
+ 
+ 
+ 
+ 
+ -- Count the number of distinct rows with columns make, model
+SELECT COUNT(DISTINCT(make, model)) 
+FROM cars;
+
+-- Add the id column
+ALTER TABLE cars
+ADD COLUMN id varchar(128);
+
+-- Update id with make + model
+UPDATE cars
+SET id = CONCAT(make, model);
+
+-- Make id a primary key
+alter table cars
+add constraint id_pk primary key(id);
+
+-- Have a look at the table
+SELECT * FROM cars;
+
+
+
+
+ 
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ Q : 
+ 
+ 
+ 
+ Given the above description of a student entity, create a table students with the correct column types.
+Add a primary key for the social security number.
+
+
+
+-- Create the table
+create table students (
+  last_name varchar(128) not null,
+  ssn integer primary key unique,
+  phone_no char(12)
+);
+
+
+
+
+ 
+ 
+ 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q 1 : 
+ 
+ 
+ Rename the university_shortname column to university_id in professors.
+ 
+ 
+ 
+
+-- Rename the university_shortname column
+ALTER TABLE professors
+rename column university_shortname to university_id;
+
+
+
+ Q 2 : 
+ 
+ 
+ Add a foreign key on university_id column in professors that references the id column in universities.
+Name this foreign key professors_fkey.
+
+
+ 
+ 
+ -- Rename the university_shortname column
+ALTER TABLE professors
+RENAME COLUMN university_shortname TO university_id;
+
+-- Add a foreign key on professors referencing universities
+ALTER TABLE professors 
+ADD CONSTRAINT professors_fkey FOREIGN KEY (university_id) REFERENCES universities (id);
+ 
+ 
+ 
+ 
+ 
+Reference : 
+
+
+ALTER TABLE a 
+ADD CONSTRAINT a_fkey FOREIGN KEY (b_id) REFERENCES b (id);
+
+
+ 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q : 
+ 
+ 
+ Run the sample code and have a look at the error message.
+What's wrong? Correct the university_id so that it actually reflects where Albert Einstein wrote his dissertation and became a professor – at the University of Zurich (UZH)!
+
+
+
+-- Try to insert a new professor
+INSERT INTO professors (firstname, lastname, university_id)
+VALUES ('Albert', 'Einstein', 'UZH');
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q : 
+ 
+ 
+ JOIN professors with universities on professors.university_id = universities.id, i.e., retain all records where the foreign key of professors is equal to the primary key of universities.
+Filter for university_city = 'Zurich'.
+
+
+
+
+
+-- Select all professors working for universities in the city of Zurich
+SELECT professors.lastname, universities.id, universities.university_city
+from professors
+join universities
+on professors.university_id = universities.id
+where universities.university_city = 'Zurich';
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q 1 : 
+ 
+ 
+ Add a professor_id column with integer data type to affiliations, and declare it to be a foreign key that references the id column in professors.
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
