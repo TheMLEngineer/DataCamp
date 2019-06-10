@@ -996,6 +996,121 @@ where universities.university_city = 'Zurich';
  
  
 
+-- Add a professor_id column
+ALTER TABLE affiliations
+ADD COLUMN professor_id integer REFERENCES professors (id);
+
+
+ Q 2 : 
+
+
+Rename the organization column in affiliations to organization_id.
+
+
+
+
+    -- Add a professor_id column
+ALTER TABLE affiliations
+ADD COLUMN professor_id integer REFERENCES professors (id);
+
+-- Rename the organization column to organization_id
+alter table affiliations
+rename organization TO organization_id;
+
+
+
+ Q 3 : 
+
+
+Add a foreign key constraint on organization_id so that it references the id column in organizations.
+
+
+
+-- Add a professor_id column
+ALTER TABLE affiliations
+ADD COLUMN professor_id integer REFERENCES professors (id);
+
+-- Rename the organization column to organization_id
+ALTER TABLE affiliations
+RENAME organization TO organization_id;
+
+-- Add a foreign key on organization_id
+ALTER TABLE affiliations
+ADD CONSTRAINT affiliations_organization_fkey foreign key (organization_id) references organizations (id);
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q 1 : 
+
+
+First, have a look at the current state of affiliations by fetching 10 rows and all columns.
+
+
+
+-- Have a look at the 10 first rows of affiliations
+select * from affiliations limit 10;
+
+
+ Q 2 : 
+
+
+Update the professor_id column with the corresponding value of the id column in professors.
+"Corresponding" means rows in professors where the firstname and lastname are identical to the ones in affiliations.
+
+
+
+-- Update professor_id to professors.id where firstname, lastname correspond to rows in professors
+UPDATE affiliations
+SET professor_id = professors.id
+FROM professors
+WHERE affiliations.firstname = professors.firstname AND affiliations.lastname = professors.lastname;
+
+
+
+ Q 3 : 
+
+
+Check out the first 10 rows and all columns of affiliations again. Have the professor_ids been correctly matched?
+
+
+-- Update professor_id to professors.id where firstname, lastname correspond to rows in professors
+UPDATE affiliations
+SET professor_id = professors.id
+FROM professors
+WHERE affiliations.firstname = professors.firstname AND affiliations.lastname = professors.lastname;
+
+-- Have a look at the 10 first rows of affiliations again
+select * from affiliations
+limit 10;
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q : 
+
+
+Drop the firstname and lastname columns from the affiliations table.
+
+
+
+
+-- Drop the firstname column
+alter table affiliations
+DROP column firstname;
+
+-- Drop the lastname column
+alter table affiliations
+drop column lastname;
 
 
 
@@ -1003,8 +1118,216 @@ where universities.university_city = 'Zurich';
 
 
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+ Q : 
+
+
+Referential integrity violations
+Given the current state of your database, what happens if you execute the following SQL statement?
+
+DELETE FROM universities WHERE id = 'EPF';
+
+
+
+
+It throws an error because the university with ID "EPF" does not exist.
+The university with ID "EPF" is deleted.
+It fails because referential integrity from universities to professors is violated.
+It fails because referential integrity from professors to universities is violated.   (A)
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q 1 : 
+
+
+Have a look at the existing foreign key constraints by querying table_constraints in information_schema.
+
+
+-- Identify the correct constraint name
+SELECT constraint_name, table_name, constraint_type
+FROM information_schema.table_constraints
+WHERE constraint_type = 'FOREIGN KEY';
+
+
+
+ Q 2 : 
+
+
+Delete the affiliations_organization_id_fkey foreign key constraint in affiliations.
+
+
+
+-- Identify the correct constraint name
+SELECT constraint_name, table_name, constraint_type
+FROM information_schema.table_constraints
+WHERE constraint_type = 'FOREIGN KEY';
+
+-- Drop the right foreign key constraint
+alter table affiliations
+drop constraint affiliations_organization_id_fkey;
+
+
+
+ Q 3 : 
+
+
+
+Add a new foreign key that cascades deletion if a referenced record is deleted from organizations. Name it affiliations_organization_id_fkey.
+
+
+-- Identify the correct constraint name
+SELECT constraint_name, table_name, constraint_type
+FROM information_schema.table_constraints
+WHERE constraint_type = 'FOREIGN KEY';
+
+-- Drop the right foreign key constraint
+ALTER TABLE affiliations
+DROP CONSTRAINT affiliations_organization_id_fkey;
+
+-- Add a new foreign key constraint from affiliations to organizations which cascades deletion
+ALTER TABLE affiliations
+ADD CONSTRAINT affiliations_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES organizations (id) ON DELETE CASCADE;
+
+
+
+ Q 4 : 
+
+
+
+Run the DELETE and SELECT queries to double check that the deletion cascade actually works.
+
+
+
+-- Identify the correct constraint name
+SELECT constraint_name, table_name, constraint_type
+FROM information_schema.table_constraints
+WHERE constraint_type = 'FOREIGN KEY';
+
+-- Drop the right foreign key constraint
+ALTER TABLE affiliations
+DROP CONSTRAINT affiliations_organization_id_fkey;
+
+-- Add a new foreign key constraint from affiliations to organizations which cascades deletion
+ALTER TABLE affiliations
+ADD CONSTRAINT affiliations_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES organizations (id) ON DELETE CASCADE;
+
+-- Delete an organization 
+DELETE FROM organizations 
+WHERE id = 'CUREM';
+
+-- Check that no more affiliations with this organization exist
+SELECT * FROM organizations
+WHERE id = 'CUREM';
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q : 
+
+
+Count the number of total affiliations by university.
+Sort the result by that count, in descending order.
+
+
+
+
+-- Count the total number of affiliations per university
+SELECT count(*), professors.university_id 
+FROM affiliations
+JOIN professors
+ON affiliations.professor_id = professors.id
+GROUP BY professors.university_id
+order by count DESC;
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Q 1 : 
+
+
+Join all tables in the database (starting with affiliations, professors, organizations, and universities) and look at the result.
+
+
+
+
+-- Join all tables
+SELECT *
+FROM affiliations
+JOIN professors
+ON affiliations.professor_id = professors.id
+JOIN organizations
+ON affiliations.organization_id = organizations.id
+JOIN universities
+ON professors.university_id = universities.id;
+
+
+ Q 2 : 
+
+
+Now group the result by organization sector, professor, and university city.
+Count the resulting number of rows.
+
+
+
+-- Group the table by organization sector, professor and university city
+SELECT COUNT(*), organizations.organization_sector, 
+professors.id, universities.university_city
+FROM affiliations
+JOIN professors
+ON affiliations.professor_id = professors.id
+JOIN organizations
+ON affiliations.organization_id = organizations.id
+JOIN universities
+ON professors.university_id = universities.id
+GROUP BY organizations.organization_sector, 
+professors.id, universities.university_city;
+
+
+
+ Q 3 : 
+
+
+Only retain rows with "Media & communication" as organization sector, and sort the table by count, in descending order.
+
+
+
+
+-- Filter the table and sort it
+SELECT COUNT(*), organizations.organization_sector, 
+professors.id, universities.university_city
+FROM affiliations
+JOIN professors
+ON affiliations.professor_id = professors.id
+JOIN organizations
+ON affiliations.organization_id = organizations.id
+JOIN universities
+ON professors.university_id = universities.id
+where organizations.organization_sector = 'Media & communication'
+GROUP BY organizations.organization_sector, 
+professors.id, universities.university_city
+order by count(*) DESC;
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
