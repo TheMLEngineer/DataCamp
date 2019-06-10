@@ -1,0 +1,419 @@
+
+
+ Q : 
+
+Attributes of relational databases
+In the video, we talked about some basic facts about relational databases. Which of the following statements does not hold true for databases? Relational databases ...
+
+
+
+... store different real-world entities in different tables.
+press
+1
+... allow to establish relationships between entities.
+press
+2
+... are called "relational" because they store data only about people.  (A)
+press
+3
+... use constraints, keys and referential integrity in order to assure data quality.
+press
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q 1 : 
+
+Get information on all table names in the current database, while limiting your query to the 'public' table_schema.
+
+
+
+-- Query the right table in information_schema
+SELECT table_name 
+FROM information_schema.tables
+-- Specify the correct table_schema value
+WHERE table_schema = 'public';
+
+
+
+ Q 2 : 
+
+
+Now have a look at the columns in university_professors by selecting all entries in information_schema.columns that correspond to that table.
+
+
+
+-- Query the right table in information_schema to get columns
+SELECT column_name, data_type 
+FROM information_schema.columns 
+WHERE table_name = 'university_professors' AND table_schema = 'public';
+
+
+
+ Q 3 : 
+
+
+How many columns does the table university_professors have?
+
+
+
+A  : 8 (By looking the queryed result from Q3
+
+
+ Q 4 : 
+
+Finally, print the first five rows of the university_professors table.
+
+-- Query the first five rows of our table
+select * 
+from university_professors 
+LIMIT 5;
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q 1 : 
+
+
+Create a table professors with two text columns: firstname and lastname.
+
+
+
+-- Create a table for the professors entity type
+CREATE TABLE professors (
+ firstname text,
+ lastname text
+);
+
+-- Print the contents of this table
+SELECT * 
+FROM professors
+
+
+
+ Q 2 : 
+
+
+Create a table universities with three text columns: university_shortname, university, and university_city.
+
+
+
+-- Create a table for the universities entity type
+CREATE TABLE universities(
+university_shortname text,
+university text, 
+university_city text
+);
+
+
+
+
+
+-- Print the contents of this table
+SELECT * 
+FROM universities
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q : 
+
+
+Alter professors to add the text column university_shortname.
+
+
+
+-- Add the university_shortname column
+ALTER TABLE professors 
+ADD COLUMN university_shortname text;
+
+-- Print the contents of this table
+SELECT * 
+FROM professors
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q 1 : 
+
+
+Rename the organisation column to organization in affiliations.
+
+
+-- Rename the organisation column
+ALTER TABLE affiliations
+RENAME COLUMN organisation TO organization;
+
+
+
+ Q 2 : 
+
+
+Delete the university_shortname column in affiliations
+
+
+-- Rename the organisation column
+ALTER TABLE affiliations
+RENAME COLUMN organisation TO organization;
+
+-- Delete the university_shortname column
+alter table affiliations
+drop column university_shortname;
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q 1 : 
+
+
+Insert all DISTINCT professors from university_professors into professors.
+Print all the rows in professors.
+
+
+
+
+
+-- Insert unique professors into the new table
+insert into professors 
+SELECT DISTINCT firstname, lastname, university_shortname 
+FROM university_professors;
+
+-- Doublecheck the contents of professors
+SELECT * 
+FROM professors;
+
+
+
+
+Q 2 : 
+
+
+Insert all DISTINCT affiliations into affiliations.
+
+
+
+-- Insert unique affiliations into the new table
+insert into affiliations 
+select distinct firstname, lastname, function, organization 
+FROM university_professors;
+
+-- Doublecheck the contents of affiliations
+SELECT * 
+FROM affiliations;
+
+
+
+
+
+(Refer the ER diagram to get more idea)
+image URL  : https://assets.datacamp.com/production/repositories/3632/datasets/71ddadcfdc38ebe2ffbc5fe69b2b460719d833a9/1_erm_five_tables_groups.png
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q : 
+
+Delete the university_professors table.
+
+
+-- Delete the university_professors table
+drop table university_professors;
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q : 
+
+Types of database constraints
+Which of the following is not used to enforce a database constraint?
+
+
+
+Foreign keys
+press
+1
+SQL aggregate functions   (A)
+press
+2
+The BIGINT data type
+press
+3
+Primary keys
+press
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Q : 
+
+
+Execute the given sample code.
+As it doesn't work, have a look at the error message and correct the statement accordingly – then execute it again.
+
+
+
+-- Let's add a record to the table
+INSERT INTO transactions (transaction_date, amount, fee) 
+VALUES ('2018-24-09', 5454, '30');
+
+-- Doublecheck the contents
+SELECT *
+FROM transactions;
+
+
+
+
+Error Msg : 
+
+
+date/time field value out of range: "2018-24-09"
+LINE 4: VALUES ('2018-24-09', 5454, '30');
+                ^
+HINT:  Perhaps you need a different "datestyle" setting.
+
+
+
+A : 
+
+
+
+-- Let's add a record to the table
+INSERT INTO transactions (transaction_date, amount, fee) 
+VALUES ('2018-09-24', 5454, '30');
+
+-- Doublecheck the contents
+SELECT *
+FROM transactions;
+
+
+Reason : 
+
+
+Conforming with data types
+For demonstration purposes, I created a fictional database table that only holds three records. The columns have the data types date, integer, and text, respectively.
+
+CREATE TABLE transactions (
+ transaction_date date, 
+ amount integer,
+ fee text
+);
+Have a look at the contents of the transactions table.
+
+The transaction_date accepts date values. According to the PostgreSQL documentation, it accepts values in the form of YYYY-MM-DD, DD/MM/YY, and so forth.
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q  : 
+
+
+Execute the given sample code.
+As it doesn't work, add an integer type cast at the right place and execute it again.
+
+
+
+-- Calculate the net amount as amount + fee
+SELECT transaction_date, amount + fee AS net_amount 
+FROM transactions;
+
+
+
+Error Msg : 
+
+
+operator does not exist: integer + text
+LINE 2: SELECT transaction_date, amount + fee AS net_amount 
+                                        ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+
+
+
+-- Calculate the net amount as amount + fee
+SELECT transaction_date, amount + CAST(fee AS integer) AS net_amount 
+FROM transactions;
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
