@@ -541,6 +541,736 @@ dependencies:
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+ Ref : 
+
+
+Channels and why are they needed?
+All Conda packages we've seen so far were published on the main or default channel of Anaconda Cloud. A Conda channel is an identifier of a path (e.g., as in a web address) from which Conda packages can be obtained. Using the public cloud, installing without specifying a channel points to the main channel at https://repo.continuum.io/pkgs/main; where hundreds of packages are available. Although covering a wide swath, the main channel contains only packages that are (moderately) curated by Anaconda Inc. Given finite resources and a particular area focus, not all genuinely worthwhile packages are vetted by Anaconda Inc.
+
+If you happen to be working in a firewalled or airgapped environment with a private installation of Anaconda Repository, your default channel may point to a different (internal) URL, but the same concepts will apply.
+
+Anyone may register for an account with Anaconda Cloud, thereby creating their own personal Conda channel. This is covered in the companion course Conda for Building & Distributing Packages (along with creating and uploading your own packages). For this course, just understand that many users have accounts and corresponding channels.
+
+
+
+
+
+ Q : 
+
+
+Which description best characterizes Conda channels?
+
+
+ A : 
+
+
+Channels are a means for a user to publish packages independently.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Searching within channels
+If a particular colleague or other recognized user may have published a package useful to you, you can search for it using the anaconda search command. For example, David Mertz, the principal author of this course, has a channel and Anaconda Cloud account called davidmertz. You can search his channel using the command below; the option --channel (or -c for short) specifies the channel to search. Particular users may have published more niche software you would like to use; for example, colleagues of yours may publish packages of special use in your field or topic area.
+
+$ conda search --channel davidmertz --override-channels --platform linux-64
+Loading channels: done
+Name                       Version                   Build  Channel
+accelerate                 2.2.0               np110py27_2  davidmertz
+accelerate                 2.2.0               np110py35_2  davidmertz
+accelerate-dldist          0.1                 np110py27_1  davidmertz
+accelerate-dldist          0.1                 np110py35_1  davidmertz
+accelerate-gensim          0.12.3             np110py27_96  davidmertz
+accelerate-gensim          0.12.3             np110py35_96  davidmertz
+accelerate-skimage         0.1.0                    py27_1  davidmertz
+accelerate-skimage         0.1.0                    py35_1  davidmertz
+constants                  0.0.2                    py35_0  davidmertz
+humidity                   0.1              py36ha038022_0  davidmertz
+textadapter                2.0.0                    py27_0  davidmertz
+textadapter                2.0.0                    py35_0  davidmertz
+textadapter                2.0.0                    py36_0  davidmertz
+In this case, the switch --override-channels is used to prevent searching on default channels. The switch --platform is used to select a platform that may differ from the one on which the search is run (absent the switch, the current computer's platform is used).
+
+The first search is unusual in that it does not specify a package name, which is more typical actual use. For example, you might want to know which versions of the package of textadapter for the win-64 platform are available for any version of Python (assuming you know in which channels to look):
+
+$ conda search -c conda-forge -c sseefeld -c gbrener --platform win-64 textadapter
+Loading channels: done
+Name                       Version                   Build  Channel
+textadapter                2.0.0                    py27_0  conda-forge
+textadapter                2.0.0                    py27_0  sseefeld
+textadapter                2.0.0                    py34_0  sseefeld
+textadapter                2.0.0                    py35_0  conda-forge
+textadapter                2.0.0                    py35_0  sseefeld
+textadapter                2.0.0                    py36_0  sseefeld
+
+
+
+ Q : 
+
+Based on the examples shown, in which of the channels used in the examples above could you find an osx-64 version of textadapter for Python 3.6?
+
+
+
+
+ A : 
+davidmertz
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+
+
+Searching across channels
+Although the conda command and its subcommands are used for nearly everything in this course, the package anaconda-client provides the command anaconda that searches in a different manner that is often more useful. For instance, you may know the name of the textadapter package, but you may not know in which channel (or channels) it may be published (or by which users). You can search across all channels and all platforms using:
+
+$ anaconda search textadapter
+Using Anaconda API: https://api.anaconda.org
+Packages:
+     Name                      |  Version | Package Types   | Platforms       | Builds
+     ------------------------- |   ------ | --------------- | --------------- | ----------
+     DavidMertz/textadapter    |    2.0.0 | conda           | linux-64, osx-64 | py36_0, py35_0, py27_0
+     conda-forge/textadapter   |    2.0.0 | conda           | linux-64, win-32, osx-64, win-64 | py35_0, py27_0
+     gbrener/textadapter       |    2.0.0 | conda           | linux-64, osx-64 | py35_0, py27_0
+                                          : python interface Amazon S3, and large data files
+     sseefeld/textadapter      |    2.0.0 | conda           | win-64          | py36_0, py34_0, py35_0, py27_0
+                                          : python interface Amazon S3, and large data files
+Found 4 packages
+
+ Q : 
+
+
+ Following this example, use anaconda search to determine the latest available version of the package boltons.
+
+
+(base) $ anaconda search boltonsUsing Anaconda Cloud api site https://api.anaconda.org
+Run 'anaconda show <USER/PACKAGE>' to get more details:Packages:
+     Name                      |  Version | Package Types   | Platforms
+     ------------------------- |   ------ | --------------- | ---------------
+     Carta/boltons             |   17.1.0 | conda           | linux-64, osx-64
+                                          : When they're not builtins, they're boltons.
+     auto/boltons              |      0.2 | conda           | linux-64, linux-32
+                                          : https://github.com/mahmoud/boltons
+     bioconda/boltons          |   16.4.1 | conda           | linux-64, osx-64
+     conda-forge/boltons       |   19.1.0 | conda           | linux-64, win-32, osx-64, noarch, win-64
+                                          : boltons should be builtins. Boltons is a set of over 160 BSD-licensed, pure-Python utilities in the same spirit as--and yet conspicuously missing from--the standard library.
+
+     danielballan/boltons      |    0.6.4 | conda           | osx-64
+     ericdill/boltons          | 16.0.0.post6 | conda           | linux-64, osx-64
+     lightsource2-tag/boltons  |   16.3.1 | conda           | linux-64, osx-64
+                                          : boltons should be builtins. Boltons is a set of over 160 BSD-licensed, pure-Python utilities in the same spirit as--and yet conspicuously missing from--the standard library.
+
+     lightsource2/boltons      |   16.3.1 | conda           | linux-64, osx-64
+     pdrops/boltons            |    0.6.3 | conda           | linux-64
+                                          : When they're not builtins, they're boltons.
+     prkrekel/boltons          |   15.0.1 | conda           | win-64
+                                          : When they're not builtins, they're boltons.
+     rolando-test-org/boltons  |   15.1.0 | pypi            |
+                                          : When they're not builtins, they're boltons.
+     tacaswell/boltons         |   16.3.1 | conda           | linux-64
+Found 12 packages
+
+
+ A : 
+17.1.0
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Default, non-default, and special channels
+The default channel on Anaconda Cloud is curated by Anaconda Inc., but another channel called conda-forge also has a special status. This channel does not operate any differently than other channels, whether those others are associated with an individual or organization, but it acts as a kind of "community curation" of relatively well-vetted packages. The GitHub page for the conda-forge project at https://github.com/conda-forge describes it as: "A community led collection of recipes, build infrastructure and distributions for the conda package manager."
+
+Apart from the somewhat more organized conda-forge channel/project, Anaconda Cloud channels are relatively anarchic. Much like GitHub repos or packages on the Python Package Index (PyPI), anyone is free to upload whatever projects they like to conda-forge (as long as they are assembled as Conda packages, that is, but this is a minor restriction).
+
+You should generally trust or rely only on packages sourced from reputable channels. There is no inherent rating system for channels or their packages. However, you are likely to trust your colleagues, your organization, well-known people in your software or data science communities, and so on.
+
+
+ Q : 
+
+ conda-forge is almost certainly the most widely used channel on Anaconda Cloud. In fact, it has very many more packages than the main channel itself. Use the tools from this course to make a rough estimate of the number of packages available on the conda-forge channel for the linux-64 platform (i.e., the platform used for this session).
+
+
+ A : 
+
+
+About 30 thousand
+
+Hint : 
+
+
+Hint
+It may be useful to use the tool wc (word count) on your query output. For example, if you wanted to know how many lines there are in Markdown (.md) files in the current directory, you could pipe to wc as follows (performed somewhere other than the current session for the example).
+
+$ cat *.md | wc -l
+     820
+Or to ask how many lines, words, and characters there are on Project Gutenberg's copy of Marcel Proust's Swan's Way, you could run:
+
+$ wget -qO- http://www.gutenberg.org/cache/epub/7178/pg7178.txt | wc
+   17461  198262 1122204
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Installing from a channel
+We saw in the last exercise that there are about 30,000 linux-64 packages on conda-forge. Across all the channels there are about 50,000 packages, most of those for at least 3 of of the 5 main platforms (osx-64, linux-32, linux-64, win-32, win-64; 32-bit support is of diminishing importance compared to 64-bit). There are around 2500 channels that have been active in the last 6 months; most are individual users, but a fair number belonging to projects or organizations. A majority of package names are published by more than one different channel; sometimes just as a copy, other times with a tweak or compiler optimization, or in a different version.
+
+The whole point of having channels is to be able to install packages from them. For this exercise, you will install a version of a package not available on the default channel. Adding a channel to install from simply requires using the same --channel or -c switch we have seen in other conda commands, but with the conda install command.
+
+For example:
+
+conda install --channel my-organization the-package
+
+
+
+ Q 1 : 
+
+
+A package named youtube-dl exists on conda-forge but is not available on the default channel. Please install it.
+
+
+$ conda install -c conda-forge youtube-dl
+Collecting package metadata: done
+Solving environment: \
+The environment is inconsistent, please check the package plan carefully
+The following packages are causing the inconsistency:
+
+  - defaults/linux-64::numpy==1.14.0=py36h3dfced4_1
+  - defaults/linux-64::pandas==0.22.0=py36hf484d3e_0
+done
+
+## Package Plan ##
+
+  environment location: /home/repl/miniconda
+
+  added / updated specs:
+    - youtube-dl
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    certifi-2019.3.9           |           py36_0         149 KB  conda-forge
+    ------------------------------------------------------------
+                                           Total:         149 KB
+
+The following NEW packages will be INSTALLED:
+
+  youtube-dl         conda-forge/linux-64::youtube-dl-2019.6.8-py36_0
+
+The following packages will be SUPERSEDED by a higher-priority channel:
+
+  ca-certificates    pkgs/main::ca-certificates-2019.5.15-0 --> conda-forge::ca-certificates-2019.3.9-hecc5488_0
+  certifi                                         pkgs/main --> conda-forge
+  cryptography       pkgs/main::cryptography-2.7-py36h1ba5~ --> conda-forge::cryptography-2.7-py36h72c5cf5_0
+  openssl              pkgs/main::openssl-1.1.1c-h7b6447c_1 --> conda-forge::openssl-1.1.1b-h14c3975_1
+
+
+
+Downloading and Extracting Packages
+certifi-2019.3.9     | 149 KB    |certifi-2019.3.9     | 149 KB    | ##################################### | 100%
+Preparing transaction: done
+Verifying transaction: done
+Executing transaction: done
+
+
+
+ Q 2 : 
+
+You should examine what software is installed in your current environment now. You should notice that unlike other packages, the newly install youtube-dl came from a non-default channel.
+
+
+ $ conda list
+done
+Solving environment: \
+The environment is inconsistent, please check the package plan carefully
+The following packages are causing the inconsistency:
+
+  - defaults/linux-64::numpy==1.14.0=py36h3dfced4_1
+  - defaults/linux-64::pandas==0.22.0=py36hf484d3e_0
+done
+
+## Package Plan ##
+
+  environment location: /home/repl/miniconda
+
+  added / updated specs:
+    - youtube-dl
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    certifi-2019.3.9           |           py36_0         149 KB  conda-forge
+    ------------------------------------------------------------
+                                           Total:         149 KB
+
+The following NEW packages will be INSTALLED:
+
+  youtube-dl         conda-forge/linux-64::youtube-dl-2019.6.8-py36_0
+
+The following packages will be SUPERSEDED by a higher-priority channel:
+
+  ca-certificates    pkgs/main::ca-certificates-2019.5.15-0 --> conda-forge::ca-certificates-2019.3.9-hecc5488_0
+  certifi                                         pkgs/main --> conda-forge
+  cryptography       pkgs/main::cryptography-2.7-py36h1ba5~ --> conda-forge::cryptography-2.7-py36h72c5cf5_0
+  openssl              pkgs/main::openssl-1.1.1c-h7b6447c_1 --> conda-forge::openssl-1.1.1b-h14c3975_1
+
+
+
+Downloading and Extracting Packages
+certifi-2019.3.9     | 149 KB    |certifi-2019.3.9     | 149 KB    | ##################################### | 100%
+Preparing transaction: done
+Verifying transaction: done
+Executing transaction: done
+$
+$
+$
+$ conda list
+# packages in environment at /home/repl/miniconda:
+#
+# Name                    Version                   Build  Channel
+anaconda-client           1.6.11                   py36_0
+anaconda-project          0.8.2            py36h44fb852_0
+asn1crypto                0.24.0                   py36_0
+beautifulsoup4            4.6.0            py36h49b8c8c_1
+ca-certificates           2019.3.9             hecc5488_0    conda-forge
+certifi                   2019.3.9                 py36_0    conda-forge
+cffi                      1.11.4           py36h9745a5d_0
+chardet                   3.0.4            py36h0f667ec_1
+clyent                    1.2.2            py36h7e57e65_1
+conda                     4.6.14                   py36_0
+conda-build               3.5.0                    py36_0
+conda-env                 2.6.0                h36134e3_1
+conda-verify              2.0.0            py36h98955d8_0
+cryptography              2.7              py36h72c5cf5_0    conda-forge
+decorator                 4.2.1                    py36_0
+filelock                  3.0.4                    py36_0
+glob2                     0.6              py36he249c77_0
+idna                      2.6              py36h82fb2a8_1
+intel-openmp              2018.0.0             hc7b2577_8
+ipython_genutils          0.2.0            py36hb52b0d5_0
+jinja2                    2.10             py36ha16c418_0
+jsonschema                2.6.0            py36h006f8b5_0
+jupyter_core              4.4.0            py36h7c827e3_0
+libedit                   3.1.20181209         hc058e9b_0
+libffi                    3.2.1                hd88cf55_4
+libgcc-ng                 9.1.0                hdf63c60_0
+libgfortran-ng            7.2.0                h9f7466a_2
+libstdcxx-ng              9.1.0                hdf63c60_0
+markupsafe                1.0              py36hd9260cd_1
+mkl                       2018.0.1             h19d6760_4
+nbformat                  4.4.0            py36h31c9010_0
+ncurses                   6.1                  he6710b0_1
+numpy                     1.14.0           py36h3dfced4_1
+openssl                   1.1.1b               h14c3975_1    conda-forge
+pandas                    0.22.0           py36hf484d3e_0
+patchelf                  0.9                  hf79760b_2
+pip                       9.0.1            py36h6c6f9ce_4
+pkginfo                   1.4.1            py36h215d178_1
+psutil                    5.4.3            py36h14c3975_0
+pycosat                   0.6.3            py36h0a5515d_0
+pycparser                 2.18             py36hf9f622e_1
+pyopenssl                 17.5.0           py36h20ba746_0
+pysocks                   1.6.7            py36hd97a5b1_1
+python                    3.6.8                h0371630_0
+python-dateutil           2.6.1            py36h88d3b88_1
+pytz                      2018.3                   py36_0
+pyyaml                    3.12             py36hafb9ca4_1
+readline                  7.0                  ha6073c6_4
+requests                  2.18.4           py36he2e5f8d_1
+ruamel_yaml               0.15.35          py36h14c3975_1
+setuptools                38.4.0                   py36_0
+six                       1.11.0           py36h372c433_1
+sqlite                    3.28.0               h7b6447c_0
+tk                        8.6.8                hbc83047_0
+tornado                   4.5.3                    py36_0
+traitlets                 4.3.2            py36h674d592_0
+urllib3                   1.22             py36hbe7ace6_0
+wheel                     0.30.0           py36hfd4bba0_1
+xz                        5.2.4                h14c3975_4
+yaml                      0.1.7                had09818_2
+youtube-dl                2019.6.8                 py36_0    conda-forge
+zlib                      1.2.11               ha838bed_2
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Environments and why are they needed?
+Conda environments allow multiple incompatible versions of the same (software) package to coexist on your system. An environment is simply a filepath containing a collection of mutually compatible packages. By isolating distinct versions of a given package (and their dependencies) in distinct environments, those versions are all available to work on particular projects or tasks.
+
+There are a large number of reasons why it is best practice to use environments, whether as a data scientist, software developer, or domain specialist. Without the concept of environments, users essentially rely on and are restricted to whichever particular package versions are installed globally (or in their own user accounts) on a particular machine. Even when one user moves scripts between machines (or shares them with a colleague), the configuration is often inconsistent in ways that interfere with seamless functionality. Conda environments solve both these problems. You can easily maintain and switch between as many environments as you like, and each one has exactly the collection of packages that you want.
+
+For example, you may develop a project comprising scripts, notebooks, libraries, or other resources that depend on a particular collection of package versions. You later want to be able to switch flexibly to newer versions of those packages and to ensure the project continues to function properly before switching wholly. Or likewise, you may want to share code with colleagues who are required to use certain package versions. In this context, an environment is a way of documenting a known set of packages that correctly support your project.
+
+
+
+
+
+ Q : 
+
+
+Which statement is true of Conda environments?
+
+
+A : 
+
+
+Conda environments allow for flexible version management of packages.
+press
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Which environment am I using?
+When using conda, you are always in some environment, but it may be the default (called the base or root environment). Your current environment has a name and contains a collection of packages currently associated with that environment. There are a few ways to determine the current environment.
+
+Most obviously, at a terminal prompt, the name of the current environment is usually prepended to the rest of your prompt in parentheses. Alternatively, the subcommand conda env list displays a list of all environments on your current system; the currently activated one is marked with an asterisk in the middle column. The subcommands of conda env (sometimes with suitable switches) encompass most of your needs for working with environments.
+
+The output of conda env list shows that each environment is associated with a particular directory. This is not the same as your current working directory for a given project; being "in" an environment is completely independent of the directory you are working in. Indeed, you often wish to preserve a certain Conda environment and edit resources across multiple project directories (all of which rely on the same environment). The environment directory displayed by conda env list is simply the top-level filepath in which all resources associated with that environment are stored; you need never manipulate those environment directories directly (other than via the conda command); indeed, it is much safer to leave those directories alone!
+
+For example, here is output you might see in a particular terminal:
+
+(test-project) $ conda env list
+# conda environments:
+#
+base                     /home/repl/miniconda
+py1.0                    /home/repl/miniconda/envs/py1.0
+stats-research           /home/repl/miniconda/envs/stats-research
+test-project          *  /home/repl/miniconda/envs/test-project
+
+ Q : 
+ Following the example above, what is the name of the environment you are using in the current session? Even if you determine the answer without running a command, run conda env list to get a feel of using that subcommand.
+
+
+
+
+(course-project) $ conda env list
+# conda environments:
+#
+course-env               /.conda/envs/course-env
+pd-2015                  /.conda/envs/pd-2015
+py1.0                    /.conda/envs/py1.0
+test-env                 /.conda/envs/test-env
+base                     /home/repl/miniconda
+course-project        *  /home/repl/miniconda/envs/course-project
+
+
+
+ A : 
+
+
+course-project
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+
+What packages are installed in an environment? (I)
+The command conda list seen previously displays all packages installed in the current environment. You can reduce this list by appending the particular package you want as an option. The package can be specified either as a simple name, or as a regular expression pattern. This still displays the version (and channel) associated with the installed package(s). For example:
+
+(test-env) $ conda list 'numpy|pandas'
+# packages in environment at /home/repl/miniconda/envs/test-env:
+#
+# Name                    Version                   Build  Channel
+numpy                     1.11.3                   py35_0
+pandas                    0.18.1              np111py35_0
+Without specifying 'numpy|pandas', these same two lines would be printed, simply interspersed with many others for the various other installed packages. Notice that the output displays the filepath associated with the current environment first: in this case, /home/repl/miniconda/envs/test-env as test-env is the active environment (as also shown at the prompt).
+
+Following this example, what versions of numpy and pandas are installed in the current (base/root) environment?
+
+
+
+A : 
+
+(base) $ conda list 'numpy|pandas'
+# packages in environment at /home/repl/miniconda:
+#
+# Name                    Version                   Build  Channel
+numpy                     1.14.0           py36h3dfced4_1
+pandas                    0.22.0           py36hf484d3e_0
+
+
+numpy=1.14.0; pandas=0.22.0
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+What packages are installed in an environment? (II)
+It is often useful to query a different environment's configuration (i.e., as opposed to the currently active environment). You might do this simply to verify the package versions in that environment that you need for a given project. Or you may wish to find out what versions you or a colleague used in some prior project (developed in that other environment). The switch --name or -n allows you to query another environment. For example,
+
+(course-env) $ conda list --name test-env 'numpy|pandas'
+# packages in environment at /home/repl/miniconda/envs/test-env:
+#
+# Name                    Version                   Build  Channel
+numpy                     1.11.3                   py35_0
+pandas                    0.18.1              np111py35_0
+Without specifying the --name argument, the command conda list would run in the current environment. The output would then be the versions of numpy and pandas present in the current environment.
+
+
+ Q : 
+
+Suppose you created an environment called pd-2015 in 2015 when you were working on a project. Identify which versions of numpy and pandas were installed in the environment pd-2015.
+
+
+
+
+(base) $ conda list -n pd-2015 'numpy|pandas'# packages in environment at /.conda/envs/pd-2015:
+## Name                    Version                   Build  Channel
+numpy                     1.9.3            py35hff6eb55_3
+pandas                    0.17.1               np19py35_0
+
+
+
+numpy=1.9.3; pandas=0.17.1
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Switch between environments
+Simply having different environments is not of much use; you need to be able to switch between environments. Most typically this is done at the command line, using the conda command. With some other interfaces (like Anaconda Navigator or Jupyter with nb_conda installed), other techniques for selecting environment are available. But for this course, you will learn about command-line use.
+
+To activate an environment, you simply use conda activate ENVNAME. To deactivate an environment, you use conda deactivate, which returns you to the root/base environment.
+
+If you used conda outside this course, and prior to version 4.4, you may have seen a more platform specific style. On older versions, Windows users would type activate ENVNAME and deactivate, while Linux and OSX users would type source activate ENVNAME and source deactivate. The unified style across platforms is more friendly. Related to the change to conda activate, version 4.4 and above use a special environment called base that is equivalent to what was called root in older versions. However, in old versions of conda you would not typically see an environment listed on the terminal prompt when you were in the root environment.
+
+
+
+ Q 1 : 
+
+
+Activate the environment called course-env in the current session.
+
+
+(base) $ conda activate course-env
+(course-env) $
+
+
+ Q 2 : 
+
+
+Suppose you did some work within the course-env environment. Now you wish to utilize another environment. Activate the environment called pd-2015 in the current session.
+
+
+
+
+(course-env) $ conda activate pd-2015
+(pd-2015) $
+
+
+ Q 3 : 
+
+Deactivate the current environment you swtiched in the last step. This will bring you back to the base environment.
+
+
+(pd-2015) $ conda deactivate pd-2015
+deactivate does not accept arguments
+remainder_args: ('pd-2015',)
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+ Ref : 
+
+
+Remove an environment
+From time to time, it is worth cleaning up the environments you have accumulated just to make management easier. Doing so is not pressing; as they use little space or resources. But it's definitely useful to be able to see a list of only as many environments as are actually useful for you.
+
+The command to remove an environment is:
+
+conda env remove --name ENVNAME
+You may also use the shorter -n switch instead.
+
+
+ Q : 
+
+The current session has an environment named deprecated. Remove it from the session.
+
+
+(base) $ conda env remove -n deprecated
+
+Remove all packages in environment /home/repl/miniconda/envs/deprecated:
+
+
+## Package Plan ##
+
+  environment location: /home/repl/miniconda/envs/deprecated
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Create a new environment
+This course you are working in has come configured with several environments, but in your use you will need to create environments meeting your own purposes. The basic command for creating environments is conda create. You will always need to specify a name for your environment, using --name (or short form -n), and you may optionally specify packages (with optional versions) that you want in that environment intially. You do not need to specify any packages when creating; either way you can add or remove whatever packages you wish from an environment later.
+
+The general syntax is similar to:
+
+conda create --name recent-pd python=3.6 pandas=0.22 scipy statsmodels
+This command will perform consistency resolution on those packages and versions indicated, in the same manner as a conda install will. Notice that even though this command works with environments it is conda create rather than a conda env ... command.
+
+
+
+ Q 1 : 
+
+
+Create a new environment called conda-essentials that contains attrs version 15.2 and the best available version of cytoolz (we pick these examples for illustration largely because they are small and have few dependencies).
+
+
+
+(base) $ conda env create conda-essentials attrs=15.2 cytoolzusage: conda-env [-h] {attach,create,export,list,remove,upload,update} ...conda-env: error: unrecognized arguments: attrs=15.2 cytoolz
+(base) $ conda create  -n conda-essentials attrs=15.2 cytoolz
+Solving environment: done
+
+
+==> WARNING: A newer version of conda exists. <==
+  current version: 4.4.10
+  latest version: 4.6.14
+
+Please update conda by running
+
+    $ conda update -n base conda
+
+
+
+## Package Plan ##
+
+  environment location: /home/repl/miniconda/envs/conda-essentials
+
+  added / updated specs:
+    - attrs=15.2
+    - cytoolz
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    cytoolz-0.9.0.1            |   py36h14c3975_1         419 KB
+    pip-19.1.1                 |           py36_0         1.9 MB
+    wheel-0.33.4               |           py36_0          40 KB
+    certifi-2019.3.9           |           py36_0         155 KB
+    ------------------------------------------------------------
+                                           Total:         2.5 MB
+
+The following NEW packages will be INSTALLED:
+
+    attrs:           15.2.0-py36_0
+    ca-certificates: 2019.5.15-0
+    certifi:         2019.3.9-py36_0
+    cytoolz:         0.9.0.1-py36h14c3975_1
+    libedit:         3.1.20181209-hc058e9b_0
+    libffi:          3.2.1-hd88cf55_4
+    libgcc-ng:       9.1.0-hdf63c60_0
+    libstdcxx-ng:    9.1.0-hdf63c60_0
+    ncurses:         6.1-he6710b0_1
+    openssl:         1.1.1c-h7b6447c_1
+    pip:             19.1.1-py36_0
+    python:          3.6.8-h0371630_0
+    readline:        7.0-h7b6447c_5
+    setuptools:      41.0.1-py36_0
+    sqlite:          3.28.0-h7b6447c_0
+    tk:              8.6.8-hbc83047_0
+    toolz:           0.9.0-py36_0
+    wheel:           0.33.4-py36_0
+    xz:              5.2.4-h14c3975_4
+    zlib:            1.2.11-h7b6447c_3
+
+
+Downloading and Extracting Packages
+cytoolz 0.9.0.1:cytoolz 0.9.0.1: #########################################2cytoolz 0.9.0.1: ####################################################### | 100%
+pip 19.1.1:pip 19.1.1: #############################################pip 19.1.1: ###################################################6pip 19.1.1: ########################################################pip 19.1.1: ############################################################ | 100%
+wheel 0.33.4:wheel 0.33.4: ########################################################## | 100%
+certifi 2019.3.9:certifi 2019.3.9: ###################################################### | 100%
+Preparing transaction: done
+Verifying transaction: done
+Executing transaction: done
+#
+# To activate this environment, use
+#
+#     $ conda activate conda-essentials
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+
+
+
+
+ Q 2 : 
+
+
+Switch into the environment you just created named conda-essentials.
+
+
+(base) $ conda activate conda-essentials
+(conda-essentials) $
+
+
+ Q 3 : 
+
+
+Examine all the software packages installed in the current conda-essentials environment.
 
 
 
@@ -561,6 +1291,117 @@ dependencies:
 
 
 
+(conda-essentials) $ conda list
+# packages in environment at /home/repl/miniconda/envs/conda-essentials:
+#
+# Name                    Version                   Build  Channel
+attrs                     15.2.0                   py36_0
+ca-certificates           2019.5.15                     0
+certifi                   2019.3.9                 py36_0
+cytoolz                   0.9.0.1          py36h14c3975_1
+libedit                   3.1.20181209         hc058e9b_0
+libffi                    3.2.1                hd88cf55_4
+libgcc-ng                 9.1.0                hdf63c60_0
+libstdcxx-ng              9.1.0                hdf63c60_0
+ncurses                   6.1                  he6710b0_1
+openssl                   1.1.1c               h7b6447c_1
+pip                       19.1.1                   py36_0
+python                    3.6.8                h0371630_0
+readline                  7.0                  h7b6447c_5
+setuptools                41.0.1                   py36_0
+sqlite                    3.28.0               h7b6447c_0
+tk                        8.6.8                hbc83047_0
+toolz                     0.9.0                    py36_0
+wheel                     0.33.4                   py36_0
+xz                        5.2.4                h14c3975_4
+zlib                      1.2.11               h7b6447c_3
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Export an environment
+Using conda list provides useful information about the packages that are installed. However, the format it describes packages in is not immediately usable to let a colleague or yourself to recreate exactly the same environment on a different machine. For that you want the conda env export command.
+
+There are several optional switches to this command. If you specify -n or --name you can export an environment other than the active one. Without that switch it chooses the active environment. If you specify -f or --file you can output the environment specification to a file rather than just to the terminal output. If you are familiar with piping, you might prefer to pipe the output to a file rather than use the --file switch. By convention, the name environment.yml is used for environment, but any name can be used (but the extension .yml is strongly encouraged).
+
+Without saving to a file, the output might look similar to the below. Notice that this gives exact versions of packages, not simply ranges or prefixes. This assures exact reproducibility of computation within the same environment on a different machine.
+
+$ conda env export -n pd-2015
+name: pd-2015
+channels:
+  - defaults
+dependencies:
+  - certifi=2018.1.18=py35_0
+  - libffi=3.2.1=hd88cf55_4
+  - libgcc-ng=7.2.0=h7cc24e2_2
+  - libgfortran-ng=7.2.0=h9f7466a_2
+  - mkl=2018.0.1=h19d6760_4
+  - numpy=1.9.3=py35hff6eb55_3
+  - openssl=1.0.2n=hb7f436b_0
+  - pandas=0.17.1=np19py35_0
+  - pip=9.0.1=py35h7e7da9d_4
+  - python=3.5.4=h417fded_24
+  - python-dateutil=2.6.1=py35h90d5b31_1
+  - pytz=2017.3=py35hb13c558_0
+  - readline=7.0=ha6073c6_4
+  - setuptools=38.4.0=py35_0
+  - six=1.11.0=py35h423b573_1
+  - xz=5.2.3=h55aa19d_2
+  - zlib=1.2.11=ha838bed_2
+  - pip:
+    - chardet==3.0.4
+    - pexpect==4.2.1
+    - urllib3==1.22
+prefix: /home/repl/miniconda/envs/pd-2015
+
+
+
+
+ Q : 
+
+
+Export the environment called course-env to the file course-env.yml.
+
+
+
+(base) $ conda env export -n course-env > course-env.yml
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+Create an environment from a shared specification
+You may recreate an environment from one of the YAML (Yet Another Markup Language) format files produced by conda env export. However, it is also easy to hand write an environment specification with less detail. For example, you might describe an environment you need and want to share with colleagues as follows:
+
+$ cat shared-project.yml
+name: shared-project
+channels:
+  - defaults
+dependencies:
+  - python=3.6
+  - pandas>=0.21
+  - scikit-learn
+  - statsmodels
+Clearly this version is much less specific than what conda env export produces. But it indicates the general tools, with some version specification, that will be required to work on a shared project. Actually creating an environment from this sketched out specification will fill in all the dependencies of those large projects whose packages are named, and this will install dozens of packages not explicitly listed. Often you are happy to have other dependencies in the manner conda decides is best.
+
+Of course, a fully fleshed out specification like we saw in the previous exercise are equally usable. Non-relevant details like the path to the environment on the local system are ignored when installing to a different machine—or indeed to a different platform altogether, which will work equally well.
+
+To create an environment from file-name.yml, you can use the following command:
+
+conda env create --file file-name.yml
+As a special convention, if you use the plain command conda env create without specifying a YAML file, it will assume you mean the file environment.yml that lives in the local directory.
 
 
 
@@ -574,11 +1415,283 @@ dependencies:
 
 
 
+ Q 1 : 
+
+
+A file environment.yml exists in the local directory within the current session. Use this file to create an environment called shared-project.
+
+
+(base) $ conda env create --file environment.yml
+Using Anaconda Cloud api site https://api.anaconda.org
+Solving environment: done
+
+
+==> WARNING: A newer version of conda exists. <==
+  current version: 4.4.10
+  latest version: 4.6.14
+
+Please update conda by running
+
+    $ conda update -n base conda
+
+
+
+Downloading and Extracting Packages
+soupsieve 1.8:soupsieve 1.8: ######################################################### | 100%
+chardet 3.0.4:chardet 3.0.4: ######################################################### | 100%
+pyopenssl 19.0.0:pyopenssl 19.0.0: ###################################################### | 100%
+pycparser 2.19:pycparser 2.19: ######################################################## | 100%
+six 1.12.0:six 1.12.0: ############################################################ | 100%
+beautifulsoup4 4.7.1:beautifulsoup4 4.7.1: ################################################## | 100%
+pysocks 1.7.0:pysocks 1.7.0: ######################################################### | 100%
+urllib3 1.24.2:urllib3 1.24.2: ######################################################## | 100%
+idna 2.8:idna 2.8: ############################################################## | 100%
+cffi 1.12.3:cffi 1.12.3: ########################################################### | 100%
+requests 2.22.0:requests 2.22.0: ####################################################### | 100%
+Preparing transaction: done
+Verifying transaction: done
+Executing transaction: done
+#
+# To activate this environment, use
+#
+#     $ conda activate shared-project
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+
+
+
+ Q 2 : 
+
+
+The current session directory also has a file named shared-config.yml. Create an environment based on this specification. The name of this environment will be functional-data.
+
+
+(base) $ conda env create --file environment.yml
+Using Anaconda Cloud api site https://api.anaconda.org
+Solving environment: done
+
+
+==> WARNING: A newer version of conda exists. <==
+  current version: 4.4.10
+  latest version: 4.6.14
+
+Please update conda by running
+
+    $ conda update -n base conda
+
+
+
+Downloading and Extracting Packages
+soupsieve 1.8:soupsieve 1.8: ######################################################### | 100%
+chardet 3.0.4:chardet 3.0.4: ######################################################### | 100%
+pyopenssl 19.0.0:pyopenssl 19.0.0: ###################################################### | 100%
+pycparser 2.19:pycparser 2.19: ######################################################## | 100%
+six 1.12.0:six 1.12.0: ############################################################ | 100%
+beautifulsoup4 4.7.1:beautifulsoup4 4.7.1: ################################################## | 100%
+pysocks 1.7.0:pysocks 1.7.0: ######################################################### | 100%
+urllib3 1.24.2:urllib3 1.24.2: ######################################################## | 100%
+idna 2.8:idna 2.8: ############################################################## | 100%
+cffi 1.12.3:cffi 1.12.3: ########################################################### | 100%
+requests 2.22.0:requests 2.22.0: ####################################################### | 100%
+Preparing transaction: done
+Verifying transaction: done
+Executing transaction: done
+#
+# To activate this environment, use
+#
+#     $ conda activate shared-project
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+(base) $
+(base) $
+(base) $
+(base) $
+(base) $
+(base) $ conda env create --file shared-config.yml functional-data
+Using Anaconda Cloud api site https://api.anaconda.org
+Solving environment: done
+
+
+==> WARNING: A newer version of conda exists. <==
+  current version: 4.4.10
+  latest version: 4.6.14
+
+Please update conda by running
+
+    $ conda update -n base conda
+
+
+
+Downloading and Extracting Packages
+cytoolz 0.9.0.1:cytoolz 0.9.0.1: #########################################4cytoolz 0.9.0.1: ####################################################### | 100%
+setuptools 41.0.1:setuptools 41.0.1: #######################################7     |  75%
+toolz 0.9.0:toolz 0.9.0: ########################################################### | 100%
+python 3.7.3:python 3.7.3: ##########4python 3.7.3: ############################8python 3.7.3: ##########################################6python 3.7.3: ####################################################1python 3.7.3: ######################################################python 3.7.3: ######################################################python 3.7.3: ######################################################python 3.7.3: ######################################################python 3.7.3: ########################################################## | 100%
+attrs 19.1.0:attrs 19.1.0: ########################################################## | 100%
+certifi 2019.3.9:certifi 2019.3.9: ########################################5     |  75%
+pip 19.1.1:pip 19.1.1: #############################################pip 19.1.1: ##################################################3pip 19.1.1: #####################################################2pip 19.1.1: ########################################################pip 19.1.1: ############################################################ | 100%
+wheel 0.33.4:wheel 0.33.4: ########################################################## | 100%
+
+IsADirectoryError(21, 'Is a directory')
+IsADirectoryError(21, 'Is a directory')
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+Compatibility with different versions
+A common case for using environments is in developing scripts or Jupyter notebooks that rely on particular software versions for their functionality. Over time, the underlying tools might change, making updating the scripts worthwhile. Being able to switch between environments with different versions of the underlying packages installed makes this development process much easier.
+
+In this chapter, you will walk through steps of doing this with a very simple script as an example.
 
 
 
 
 
+ Q 1 : 
+
+
+The file weekly_humidity.py is stored in the current session. First just take a look at it using the Unix tool cat. You will see that the purpose of this script is rather trivial: it shows the last few days of the rolling mean of humidity taken from a data file. It would be easy to generalize this with switches to show different periods, different rolling intervals, different data sources, etc.
+
+
+(base) $ cat weekly_humidity.py# weekly_humidity.py# rolling mean of humidityimport pandas as pd
+df = pd.read_csv('pittsburgh2015_celsius.csv')
+humidity = df['Mean Humidity']print(pd.rolling_mean(humidity, 7).tail(5))
+
+
+ Q 2 : 
+
+
+Run the script (in the current base environment).
+
+
+(base) $ python weekly_humidity.pyweekly_humidity.py:6: FutureWarning: pd.rolling_mean is deprecated for Series and will be removed in a future version, replace with
+        Series.rolling(window=7,center=False).mean()
+  print(pd.rolling_mean(humidity, 7).tail(5))
+360    77.000000
+361    80.428571
+362    78.857143
+363    78.285714
+364    78.714286
+Name: Mean Humidity, dtype: float64
+
+
+
+ Q 3 : 
+
+The script ran and produced a little report of the rolling mean of humidity. However, it also produced some rather noisy complaints about deprecated syntax in the Pandas library (called a FutureWarning). You now remember that you created this script a few years ago when you were using the pd-2015 environment. Switch to that environment.
+
+
+
+
+(base) $ conda activate pd-2015
+
+
+ Q 4 : 
+
+Run the script in the current pd-2015 environment. You will notice that the report itself is the same, but the FutureWarning is not present. For a first step, this is how to utilize this script.
+
+
+(pd-2015) $ python weekly_humidity.py
+360    77.000000
+361    80.428571
+362    78.857143
+363    78.285714
+364    78.714286
+Name: Mean Humidity, dtype: float64
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+Updating a script
+You certainly have the easy option to continue using the pd-2015 environment whenever you need to run the weekly_humidity.py script. Environments can be kept around as long as you like and will assure that all your old scripts (and notebooks, libraries, etc) continue to run the same way they always have.
+
+But quite likely you would like to update your script for your colleagues who use more recent versions of Python. Ideally, you would like them not to have to worry about this message:
+
+FutureWarning: pd.rolling_mean is deprecated for Series and will be removed in a future version, replace with 
+     Series.rolling(window=7,center=False).mean()
+  print(pd.rolling_mean(humidity, 7).tail(5))
+Happily, the warning itself pretty much tells you exactly how to update your script.
+
+
+
+ Q 1 : 
+
+
+Use the nano text editor to modify weekly_humidity.py so the last line is changed to:
+
+print(humidity.rolling(7).mean().tail(5))
+If you are more familiar with them, the editors vim and emacs are also installed in this session.
+
+
+
+(base) $ nano weekly_humidity.pyError in /home/repl/.nano/etc-hosts.nanorc on line 11: Color "normal" not understood.
+Valid colors are "green", "red", "blue",
+"white", "yellow", "cyan", "magenta" and"black", with the optional prefix "bright"
+for foreground colors.
+
+Error in /home/repl/.nano/html.nanorc on line 5: Command "comment" not understood
+Error in /home/repl/.nano/html.j2.nanorc on line 5: Command "comment" not understood
+
+Press Enter to continue starting nano.
+
+(Did as per Q)
+
+
+ Q 2 : 
+
+Run the modified script in the active base environment that contains Panda 0.22. The FutureWarning should be gone now.
+
+(base) $ python weekly_humidity.py
+  File "weekly_humidity.py", line 4
+    df = phumidity.rolling(7).mean().tail(5))
+                                            ^
+SyntaxError: invalid syntax
+
+
+ Q 3 : 
+
+APIs do change over time. You should check whether your script, as modified, works in the older Pandas 0.17 installed in pd-2015. So, switch to the pd-2015 environment.
+
+
+(base) $ conda activate pd-2015
+
+
+ Q 4 : 
+
+Now, run the script in the current pd-2015 environment. You will notice that a new failure mode occurs now because Pandas 0.17 does not support the newer API you have used in your modified script.
+
+
+
+(pd-2015) $ python weekly_humidity.py
+  File "weekly_humidity.py", line 4
+    df = phumidity.rolling(7).mean().tail(5))
+                                            ^
+SyntaxError: invalid syntax
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
