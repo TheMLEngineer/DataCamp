@@ -903,6 +903,455 @@ Well done! The slope needed to update this weight is indeed 6. You're now ready 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+ 
+ Ref : 
+
+
+Understanding your data
+You will soon start building models in Keras to predict wages based on various professional and demographic factors. Before you start building a model, it's good to understand your data by performing some exploratory analysis.
+
+The data is pre-loaded into a pandas DataFrame called df. Use the .head() and .describe() methods in the IPython Shell for a quick overview of the DataFrame.
+
+The target variable you'll be predicting is wage_per_hour. Some of the predictor variables are binary indicators, where a value of 1 represents True, and 0 represents False.
+
+ Q : 
+ 
+
+ 
+ Of the 9 predictor variables in the DataFrame, how many are binary indicators? The min and max values as shown by .describe() will be informative here. How many binary indicator predictors are there?
+
+
+
+ A : 
+
+
+6
+
+
+
+In [1]: df.describe()
+Out[1]: 
+       wage_per_hour       union  education_yrs  experience_yrs         age  \
+count     534.000000  534.000000     534.000000      534.000000  534.000000   
+mean        9.024064    0.179775      13.018727       17.822097   36.833333   
+std         5.139097    0.384360       2.615373       12.379710   11.726573   
+min         1.000000    0.000000       2.000000        0.000000   18.000000   
+25%         5.250000    0.000000      12.000000        8.000000   28.000000   
+50%         7.780000    0.000000      12.000000       15.000000   35.000000   
+75%        11.250000    0.000000      15.000000       26.000000   44.000000   
+max        44.500000    1.000000      18.000000       55.000000   64.000000   
+
+           female        marr       south  manufacturing  construction  
+count  534.000000  534.000000  534.000000     534.000000    534.000000  
+mean     0.458801    0.655431    0.292135       0.185393      0.044944  
+std      0.498767    0.475673    0.455170       0.388981      0.207375  
+min      0.000000    0.000000    0.000000       0.000000      0.000000  
+25%      0.000000    0.000000    0.000000       0.000000      0.000000  
+50%      0.000000    1.000000    0.000000       0.000000      0.000000  
+75%      1.000000    1.000000    1.000000       0.000000      0.000000  
+max      1.000000    1.000000    1.000000       1.000000      1.000000
+
+
+
+Exactly! There are 6 binary indicators.
+
+
+
+ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Specifying a model
+Now you'll get to work with your first model in Keras, and will immediately be able to run more complex neural network models on larger datasets compared to the first two chapters.
+
+To start, you'll take the skeleton of a neural network and add a hidden layer and an output layer. You'll then fit that model and see Keras do the optimization so your model continually gets better.
+
+As a start, you'll predict workers wages based on characteristics like their industry, education and level of experience. You can find the dataset in a pandas dataframe called df. For convenience, everything in df except for the target has been converted to a NumPy matrix called predictors. The target, wage_per_hour, is available as a NumPy matrix called target.
+
+For all exercises in this chapter, we've imported the Sequential model constructor, the Dense layer constructor, and pandas.
+
+
+
+ Q : 
+
+
+Store the number of columns in the predictors data to n_cols. This has been done for you.
+Start by creating a Sequential model called model.
+Use the .add() method on model to add a Dense layer.
+Add 50 units, specify activation='relu', and the input_shape parameter to be the tuple (n_cols,) which means it has n_cols items in each row of data, and any number of rows of data are acceptable as inputs.
+Add another Dense layer. This should have 32 units and a 'relu' activation.
+Finally, add an output layer, which is a Dense layer with a single node. Don't use any activation function here.
+
+
+
+
+
+
+# Import necessary modules
+import keras
+from keras.layers import Dense
+from keras.models import Sequential
+
+# Save the number of columns in predictors: n_cols
+n_cols = predictors.shape[1]
+
+# Set up the model: model
+model = Sequential()
+
+# Add the first layer
+model.add(Dense(50, activation = 'relu', input_shape=(n_cols , )))
+
+# Add the second layer
+model.add(Dense(32 , activation='relu' , input_shape = (n_cols , )))
+
+# Add the output layer
+model.add(Dense(1))
+
+
+
+
+Well done! Now that you've specified the model, the next step is to compile it.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+
+Compiling the model
+You're now going to compile the model you specified earlier. To compile the model, you need to specify the optimizer and loss function to use. In the video, Dan mentioned that the Adam optimizer is an excellent choice. You can read more about it as well as other keras optimizers here, and if you are really curious to learn more, you can read the original paper that introduced the Adam optimizer.
+
+In this exercise, you'll use the Adam optimizer and the mean squared error loss function. Go for it!
+
+
+
+
+ Q : 
+
+
+
+Compile the model using model.compile(). Your optimizer should be 'adam' and the loss should be 'mean_squared_error'.
+
+
+
+# Import necessary modules
+import keras
+from keras.layers import Dense
+from keras.models import Sequential
+
+# Specify the model
+n_cols = predictors.shape[1]
+model = Sequential()
+model.add(Dense(50, activation='relu', input_shape = (n_cols,)))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(1))
+
+# Compile the model
+model.compile(optimizer = 'adam' , loss = 'mean_squared_error')
+
+# Verify that model contains information from compiling
+print("Loss function: " + model.loss)
+
+
+
+
+<script.py> output:
+    Loss function: mean_squared_error
+
+
+
+Fantastic work - all that's left now is to fit the model!
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+
+Fitting the model
+You're at the most fun part. You'll now fit the model. Recall that the data to be used as predictive features is loaded in a NumPy matrix called predictors and the data to be predicted is stored in a NumPy matrix called target. Your model is pre-written and it has been compiled with the code from the previous exercise.
+
+
+
+
+
+ Q : 
+
+
+Fit the model. Remember that the first argument is the predictive features (predictors), and the data to be predicted (target) is the second argument.
+
+
+
+
+# Import necessary modules
+import keras
+from keras.layers import Dense
+from keras.models import Sequential
+
+# Specify the model
+n_cols = predictors.shape[1]
+model = Sequential()
+model.add(Dense(50, activation='relu', input_shape = (n_cols,)))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(1))
+
+# Compile the model
+model.compile(optimizer='adam', loss='mean_squared_error')
+
+# Fit the model
+model.fit(predictors , target)
+
+
+
+
+
+<script.py> output:
+    Epoch 1/10
+    
+ 32/534 [>.............................] - ETA: 0s - loss: 146.0927
+534/534 [==============================] - 0s - loss: 78.4764      
+    Epoch 2/10
+    
+ 32/534 [>.............................] - ETA: 0s - loss: 85.1685
+534/534 [==============================] - 0s - loss: 30.3551     
+    Epoch 3/10
+    
+ 32/534 [>.............................] - ETA: 0s - loss: 21.0458
+534/534 [==============================] - 0s - loss: 27.1004     
+    Epoch 4/10
+    
+ 32/534 [>.............................] - ETA: 0s - loss: 16.8587
+534/534 [==============================] - 0s - loss: 25.1325     
+    Epoch 5/10
+    
+ 32/534 [>.............................] - ETA: 0s - loss: 23.2208
+534/534 [==============================] - 0s - loss: 24.0389     
+    Epoch 6/10
+    
+ 32/534 [>.............................] - ETA: 0s - loss: 13.3877
+224/534 [===========>..................] - ETA: 0s - loss: 25.1677
+480/534 [=========================>....] - ETA: 0s - loss: 23.5278
+534/534 [==============================] - 0s - loss: 23.2489     
+    Epoch 7/10
+    
+ 32/534 [>.............................] - ETA: 0s - loss: 28.1815
+448/534 [========================>.....] - ETA: 0s - loss: 23.2542
+534/534 [==============================] - 0s - loss: 22.5513     
+    Epoch 8/10
+    
+ 32/534 [>.............................] - ETA: 0s - loss: 11.5042
+448/534 [========================>.....] - ETA: 0s - loss: 21.8776
+534/534 [==============================] - 0s - loss: 22.1490     
+    Epoch 9/10
+    
+ 32/534 [>.............................] - ETA: 0s - loss: 21.9113
+416/534 [======================>.......] - ETA: 0s - loss: 19.6185
+534/534 [==============================] - 0s - loss: 21.7633     
+    Epoch 10/10
+    
+ 32/534 [>.............................] - ETA: 0s - loss: 5.4618
+534/534 [==============================] - 0s - loss: 21.5564
+
+
+
+
+Superb! You now know how to specify, compile, and fit a deep learning model using keras!
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+
+Understanding your classification data
+Now you will start modeling with a new dataset for a classification problem. This data includes information about passengers on the Titanic. You will use predictors such as age, fare and where each passenger embarked from to predict who will survive. This data is from a tutorial on data science competitions. Look here for descriptions of the features.
+
+The data is pre-loaded in a pandas DataFrame called df.
+
+ Q : 
+
+
+
+ It's smart to review the maximum and minimum values of each variable to ensure the data isn't misformatted or corrupted. What was the maximum age of passengers on the Titanic? Use the .describe() method in the IPython Shell to answer this question.
+
+
+
+
+
+ A : 
+
+
+
+80.
+
+
+
+
+In [1]: df.describe()
+Out[1]: 
+         survived            ...              embarked_from_southampton
+count  891.000000            ...                             891.000000
+mean     0.383838            ...                               0.722783
+std      0.486592            ...                               0.447876
+min      0.000000            ...                               0.000000
+25%      0.000000            ...                               0.000000
+50%      0.000000            ...                               1.000000
+75%      1.000000            ...                               1.000000
+max      1.000000            ...                               1.000000
+
+[8 rows x 10 columns]
+
+
+
+In [2]: df.age.max()
+Out[2]: 80.0
+
+
+
+
+Exactly! The maximum age in the data is 80.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+ Ref : 
+
+
+Last steps in classification models
+You'll now create a classification model using the titanic dataset, which has been pre-loaded into a DataFrame called df. You'll take information about the passengers and predict which ones survived.
+
+The predictive variables are stored in a NumPy array predictors. The target to predict is in df.survived, though you'll have to manipulate it for keras. The number of predictive features is stored in n_cols.
+
+Here, you'll use the 'sgd' optimizer, which stands for Stochastic Gradient Descent. You'll learn more about this in the next chapter!
+
+
+
+
+ Q : 
+
+
+
+Convert df.survived to a categorical variable using the to_categorical() function.
+Specify a Sequential model called model.
+Add a Dense layer with 32 nodes. Use 'relu' as the activation and (n_cols,) as the input_shape.
+Add the Dense output layer. Because there are two outcomes, it should have 2 units, and because it is a classification model, the activation should be 'softmax'.
+Compile the model, using 'sgd' as the optimizer, 'categorical_crossentropy' as the loss function, and metrics=['accuracy'] to see the accuracy (what fraction of predictions were correct) at the end of each epoch.
+Fit the model using the predictors and the target.
+
+
+
+
+
+ # Import necessary modules
+import keras
+from keras.layers import Dense
+from keras.models import Sequential
+from keras.utils import to_categorical
+
+# Convert the target to categorical: target
+target = to_categorical(df.survived)
+
+# Set up the model
+model = Sequential()
+
+# Add the first layer
+model.add(Dense(32 , activation='relu' , input_shape = (n_cols , )))
+
+# Add the output layer
+model.add(Dense(2 , activation = 'softmax'))
+
+# Compile the model
+model.compile(optimizer = 'sgd' , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
+
+# Fit the model
+model.fit(predictors , target)
+
+
+
+
+
+
+<script.py> output:
+    Epoch 1/10
+    
+ 32/891 [>.............................] - ETA: 0s - loss: 7.6250 - acc: 0.2188
+480/891 [===============>..............] - ETA: 0s - loss: 2.8825 - acc: 0.6000
+891/891 [==============================] - 0s - loss: 2.5170 - acc: 0.5948     
+    Epoch 2/10
+    
+ 32/891 [>.............................] - ETA: 0s - loss: 1.1922 - acc: 0.3125
+704/891 [======================>.......] - ETA: 0s - loss: 1.2351 - acc: 0.5980
+891/891 [==============================] - 0s - loss: 1.1834 - acc: 0.6083     
+    Epoch 3/10
+    
+ 32/891 [>.............................] - ETA: 0s - loss: 2.1141 - acc: 0.5000
+576/891 [==================>...........] - ETA: 0s - loss: 0.8728 - acc: 0.6372
+891/891 [==============================] - 0s - loss: 0.7783 - acc: 0.6700     
+    Epoch 4/10
+    
+ 32/891 [>.............................] - ETA: 0s - loss: 0.7271 - acc: 0.5625
+512/891 [================>.............] - ETA: 0s - loss: 0.6539 - acc: 0.6719
+891/891 [==============================] - 0s - loss: 0.7257 - acc: 0.6689     
+    Epoch 5/10
+    
+ 32/891 [>.............................] - ETA: 0s - loss: 0.6173 - acc: 0.5938
+704/891 [======================>.......] - ETA: 0s - loss: 0.6383 - acc: 0.6605
+891/891 [==============================] - 0s - loss: 0.6529 - acc: 0.6588     
+    Epoch 6/10
+    
+ 32/891 [>.............................] - ETA: 0s - loss: 0.4729 - acc: 0.7500
+608/891 [===================>..........] - ETA: 0s - loss: 0.5998 - acc: 0.6908
+891/891 [==============================] - 0s - loss: 0.6164 - acc: 0.6936     
+    Epoch 7/10
+    
+ 32/891 [>.............................] - ETA: 0s - loss: 0.6736 - acc: 0.5938
+352/891 [==========>...................] - ETA: 0s - loss: 0.6553 - acc: 0.6591
+544/891 [=================>............] - ETA: 0s - loss: 0.6435 - acc: 0.6746
+891/891 [==============================] - 0s - loss: 0.6414 - acc: 0.6835     
+    Epoch 8/10
+    
+ 32/891 [>.............................] - ETA: 0s - loss: 0.5461 - acc: 0.7188
+416/891 [=============>................] - ETA: 0s - loss: 0.6616 - acc: 0.6659
+768/891 [========================>.....] - ETA: 0s - loss: 0.6666 - acc: 0.6745
+891/891 [==============================] - 0s - loss: 0.6651 - acc: 0.6779     
+    Epoch 9/10
+    
+ 32/891 [>.............................] - ETA: 0s - loss: 0.7452 - acc: 0.6562
+544/891 [=================>............] - ETA: 0s - loss: 0.6310 - acc: 0.6857
+891/891 [==============================] - 0s - loss: 0.6265 - acc: 0.6902     
+    Epoch 10/10
+    
+ 32/891 [>.............................] - ETA: 0s - loss: 0.5244 - acc: 0.7500
+608/891 [===================>..........] - ETA: 0s - loss: 0.6495 - acc: 0.6661
+891/891 [==============================] - 0s - loss: 0.6738 - acc: 0.6734
+
+
+
+
+Fantastic! This simple model is generating an accuracy of 68!
 
 
 
@@ -911,6 +1360,247 @@ Well done! The slope needed to update this weight is indeed 6. You're now ready 
 
 
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Making predictions
+The trained network from your previous coding exercise is now stored as model. New data to make predictions is stored in a NumPy array as pred_data. Use model to make predictions on your new data.
+
+In this exercise, your predictions will be probabilities, which is the most common way for data scientists to communicate their predictions to colleagues.
+
+
+
+
+ Q : 
+
+
+Create your predictions using the model's .predict() method on pred_data.
+Use NumPy indexing to find the column corresponding to predicted probabilities of survival being True. This is the second column (index 1) of predictions. Store the result in predicted_prob_true and print it.
+
+
+
+
+
+
+# Specify, compile, and fit the model
+model = Sequential()
+model.add(Dense(32, activation='relu', input_shape = (n_cols,)))
+model.add(Dense(2, activation='softmax'))
+model.compile(optimizer='sgd', 
+              loss='categorical_crossentropy', 
+              metrics=['accuracy'])
+model.fit(predictors, target)
+
+# Calculate predictions: predictions
+predictions = model.predict(pred_data)
+
+# Calculate predicted probability of survival: predicted_prob_true
+predicted_prob_true = predictions[: , 1]
+
+# print predicted_prob_true
+print(predicted_prob_true)
+
+
+
+
+
+<script.py> output:
+    Epoch 1/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 5.3679 - acc: 0.3438
+704/800 [=========================>....] - ETA: 0s - loss: 2.3865 - acc: 0.5852
+800/800 [==============================] - 0s - loss: 2.3207 - acc: 0.5825     
+    Epoch 2/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 2.9760 - acc: 0.3438
+672/800 [========================>.....] - ETA: 0s - loss: 1.3161 - acc: 0.5893
+800/800 [==============================] - 0s - loss: 1.2146 - acc: 0.6088     
+    Epoch 3/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.6110 - acc: 0.7188
+448/800 [===============>..............] - ETA: 0s - loss: 0.7580 - acc: 0.6897
+800/800 [==============================] - 0s - loss: 0.8469 - acc: 0.6562     
+    Epoch 4/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.5084 - acc: 0.7188
+480/800 [=================>............] - ETA: 0s - loss: 0.7820 - acc: 0.6917
+800/800 [==============================] - 0s - loss: 0.7347 - acc: 0.6663     
+    Epoch 5/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.5927 - acc: 0.6250
+512/800 [==================>...........] - ETA: 0s - loss: 0.6182 - acc: 0.6953
+800/800 [==============================] - 0s - loss: 0.6380 - acc: 0.6725     
+    Epoch 6/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.6296 - acc: 0.6250
+640/800 [=======================>......] - ETA: 0s - loss: 0.6502 - acc: 0.6734
+800/800 [==============================] - 0s - loss: 0.6339 - acc: 0.6875     
+    Epoch 7/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.5553 - acc: 0.7188
+672/800 [========================>.....] - ETA: 0s - loss: 0.6962 - acc: 0.6711
+800/800 [==============================] - 0s - loss: 0.6726 - acc: 0.6863     
+    Epoch 8/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.6178 - acc: 0.6250
+576/800 [====================>.........] - ETA: 0s - loss: 0.6730 - acc: 0.6580
+800/800 [==============================] - 0s - loss: 0.6694 - acc: 0.6638     
+    Epoch 9/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.6605 - acc: 0.6250
+256/800 [========>.....................] - ETA: 0s - loss: 0.6522 - acc: 0.6523
+608/800 [=====================>........] - ETA: 0s - loss: 0.6387 - acc: 0.6595
+800/800 [==============================] - 0s - loss: 0.6291 - acc: 0.6750     
+    Epoch 10/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.7398 - acc: 0.6250
+576/800 [====================>.........] - ETA: 0s - loss: 0.6051 - acc: 0.6910
+800/800 [==============================] - 0s - loss: 0.6184 - acc: 0.6837
+Traceback (most recent call last):
+  File "script.py", line 11, in <module>
+    predictions = pred_data.predict()
+AttributeError: 'numpy.ndarray' object has no attribute 'predict'
+
+<script.py> output:
+    Epoch 1/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 5.3679 - acc: 0.3438
+704/800 [=========================>....] - ETA: 0s - loss: 2.3865 - acc: 0.5852
+800/800 [==============================] - 0s - loss: 2.3207 - acc: 0.5825     
+    Epoch 2/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 2.9760 - acc: 0.3438
+736/800 [==========================>...] - ETA: 0s - loss: 1.2456 - acc: 0.6046
+800/800 [==============================] - 0s - loss: 1.2019 - acc: 0.6088     
+    Epoch 3/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.6071 - acc: 0.7500
+736/800 [==========================>...] - ETA: 0s - loss: 0.7400 - acc: 0.6671
+800/800 [==============================] - 0s - loss: 0.7325 - acc: 0.6650     
+    Epoch 4/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.5543 - acc: 0.6875
+736/800 [==========================>...] - ETA: 0s - loss: 0.7531 - acc: 0.6630
+800/800 [==============================] - 0s - loss: 0.7487 - acc: 0.6600     
+    Epoch 5/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.5900 - acc: 0.6875
+672/800 [========================>.....] - ETA: 0s - loss: 0.6145 - acc: 0.6890
+800/800 [==============================] - 0s - loss: 0.6201 - acc: 0.6800     
+    Epoch 6/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.6340 - acc: 0.6250
+736/800 [==========================>...] - ETA: 0s - loss: 0.6474 - acc: 0.6861
+800/800 [==============================] - 0s - loss: 0.6424 - acc: 0.6900     
+    Epoch 7/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.5620 - acc: 0.6562
+448/800 [===============>..............] - ETA: 0s - loss: 0.6586 - acc: 0.6719
+800/800 [==============================] - 0s - loss: 0.6492 - acc: 0.6875     
+    Epoch 8/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.6170 - acc: 0.6250
+448/800 [===============>..............] - ETA: 0s - loss: 0.6267 - acc: 0.6741
+800/800 [==============================] - 0s - loss: 0.6502 - acc: 0.6725     
+    Epoch 9/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.6680 - acc: 0.6562
+736/800 [==========================>...] - ETA: 0s - loss: 0.6167 - acc: 0.6875
+800/800 [==============================] - 0s - loss: 0.6204 - acc: 0.6863     
+    Epoch 10/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.7271 - acc: 0.5938
+736/800 [==========================>...] - ETA: 0s - loss: 0.6113 - acc: 0.6834
+800/800 [==============================] - 0s - loss: 0.6127 - acc: 0.6837
+Traceback (most recent call last):
+  File "script.py", line 11, in <module>
+    predictions = model.predict()
+TypeError: predict() missing 1 required positional argument: 'x'
+
+<script.py> output:
+    Epoch 1/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 5.3679 - acc: 0.3438
+704/800 [=========================>....] - ETA: 0s - loss: 2.3865 - acc: 0.5852
+800/800 [==============================] - 0s - loss: 2.3207 - acc: 0.5825     
+    Epoch 2/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 2.9760 - acc: 0.3438
+352/800 [============>.................] - ETA: 0s - loss: 1.5748 - acc: 0.6023
+608/800 [=====================>........] - ETA: 0s - loss: 1.3784 - acc: 0.5855
+800/800 [==============================] - 0s - loss: 1.2073 - acc: 0.6100     
+    Epoch 3/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.6073 - acc: 0.7812
+352/800 [============>.................] - ETA: 0s - loss: 0.7246 - acc: 0.7159
+800/800 [==============================] - 0s - loss: 0.8830 - acc: 0.6663     
+    Epoch 4/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.5449 - acc: 0.7500
+608/800 [=====================>........] - ETA: 0s - loss: 0.8819 - acc: 0.6480
+800/800 [==============================] - 0s - loss: 0.8260 - acc: 0.6462     
+    Epoch 5/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.5934 - acc: 0.7500
+384/800 [=============>................] - ETA: 0s - loss: 0.6390 - acc: 0.6771
+640/800 [=======================>......] - ETA: 0s - loss: 0.6587 - acc: 0.6828
+800/800 [==============================] - 0s - loss: 0.6574 - acc: 0.6663     
+    Epoch 6/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.6384 - acc: 0.7188
+512/800 [==================>...........] - ETA: 0s - loss: 0.6658 - acc: 0.6465
+800/800 [==============================] - 0s - loss: 0.6527 - acc: 0.6675     
+    Epoch 7/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.5457 - acc: 0.7188
+704/800 [=========================>....] - ETA: 0s - loss: 0.7391 - acc: 0.6676
+800/800 [==============================] - 0s - loss: 0.7152 - acc: 0.6750     
+    Epoch 8/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.6177 - acc: 0.6562
+704/800 [=========================>....] - ETA: 0s - loss: 0.6928 - acc: 0.6634
+800/800 [==============================] - 0s - loss: 0.6938 - acc: 0.6625     
+    Epoch 9/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.6659 - acc: 0.6875
+480/800 [=================>............] - ETA: 0s - loss: 0.6423 - acc: 0.6708
+800/800 [==============================] - 0s - loss: 0.6255 - acc: 0.6750     
+    Epoch 10/10
+    
+ 32/800 [>.............................] - ETA: 0s - loss: 0.7103 - acc: 0.5938
+384/800 [=============>................] - ETA: 0s - loss: 0.6318 - acc: 0.6615
+800/800 [==============================] - 0s - loss: 0.6304 - acc: 0.6737     
+    [0.23075886 0.3919376  0.9314901  0.5539349  0.22517131 0.19664165
+     0.07362746 0.34897628 0.18024808 0.5489332  0.23880436 0.28988546
+     0.18679921 0.49702787 0.2018731  0.14604193 0.281171   0.47834575
+     0.11558535 0.48707098 0.6478416  0.23828001 0.07811803 0.32875183
+     0.5278006  0.20104632 0.5747131  0.66741824 0.20612858 0.5816775
+     0.47644374 0.5159653  0.21328741 0.27285597 0.34868363 0.68506145
+     0.31306472 0.20077375 0.57387745 0.445574   0.3125129  0.39546937
+     0.48320794 0.17973681 0.37143055 0.12425762 0.49818137 0.1826446
+     0.48553818 0.7771548  0.46755302 0.025958   0.48294193 0.6054027
+     0.24389938 0.3942523  0.9462042  0.19549584 0.4800611  0.21328741
+     0.14465714 0.3339258  0.21992384 0.5207231  0.33333644 0.15739827
+     0.32266203 0.54352605 0.21490185 0.47364077 0.23885001 0.48033687
+     0.16243555 0.1039897  0.4165581  0.416623   0.35145557 0.32593837
+     0.20002693 0.58433735 0.48315674 0.18217586 0.34812167 0.2617394
+     0.2431282  0.4286744  0.30433047 0.5277541  0.38461083 0.49254283
+     0.19431975]
+
+
+
+
+Excellent work! You're now ready to begin learning how to fine-tune your models.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
