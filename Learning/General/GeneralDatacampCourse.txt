@@ -16,14 +16,99 @@ plt.title('Some title' , fontsize = 25)
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+plt.plot(x, y , linewidth = 3)
+
+Prints a line which has more width than normal line.
+
+linestyle arg in plt.plot can plot lines differently 
+
+Args it take =  - , -- , -. , : etc
+
+marker arg in plt.plot can plot lines differently 
+
+Args it take =  x, s , o , d , * , h
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+plt.style.use(arg)
+
+Arg can be :  fivethirtyfive , ggplot ,seaborn , default etc
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Line plots are to visualize Ordered data points
+
+
+Scatter plots are for Un ordered data points
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+When we plot the scatter plot if more points match on top of each other try alpha = 0.1 so that if more points lay on each other it'll be darker than the other
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+df.bar(x , y , yerr = df.error) #Add error bars
+
+ Q : 
+ 
+ 
+# Display the DataFrame hours using print
+print(hours)
+
+# Create a bar plot from the DataFrame hours
+plt.bar(hours.officer, hours.avg_hours_worked,
+        # Add error bars
+        yerr =hours.std_hours_worked)
+
+# Display the plot
+plt.show()
 
 
 
+Stacked Bar charts
 
 
 
+ Q : 
+ 
+ 
+ Create a bar plot for field_work whose bottom is the height of desk_work.
+Label the field_work bars as "Field Work" and add a legend.
 
 
+# Plot the number of hours spent on desk work
+plt.bar(hours.officer, hours.desk_work, label='Desk Work')
+
+# Plot the hours spent on field work on top of desk work
+plt.bar(hours.officer , hours.field_work , label='Field Work' , bottom = hours.desk_work)
+
+# Add a legend
+plt.legend()
+
+# Display the plot
+plt.show()
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+A histogram visualizes the distributions of value in a dataset.
+
+If we wanna zoom into specific part of hostogram , we can use range keyword
+
+plt.hist(data , range = (xmin , xmax))
+
+
+We can normalize our histogram (When we wanna compare 2 dataset's histogram in a single plot and one of the dataset is large in size)
+
+keyword : density = True
+
+plt.hist(a , density = True)
+plt.hist(b , density = True)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
