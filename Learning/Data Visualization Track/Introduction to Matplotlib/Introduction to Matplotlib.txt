@@ -752,6 +752,464 @@ Beautiful! In the next chapter, you will learn how make quantitative comparisons
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+ Ref : 
+
+
+Bar chart
+Bar charts visualize data that is organized according to categories as a series of bars, where the height of each bar represents the values of the data in this category.
+
+For example, in this exercise, you will visualize the number of gold medals won by each country in the provided medals DataFrame. The DataFrame contains the countries as the index, and a column called "Gold" that contains the number of gold medals won by each country, according to their rows.
+
+
+
+
+ Q : 
+
+
+
+Call the ax.bar method to plot the "Gold" column as a function of the country.
+Use the ax.set_xticklabels to set the x-axis tick labels to be the country names.
+In the call to ax.set_xticklabels rotate the x-axis tick labels by 90 degrees by using the rotation key-word argument.
+Set the y-axis label to "Number of medals".
+
+
+
+
+
+fig, ax = plt.subplots()
+
+# Plot a bar-chart of gold medals as a function of country
+ax.bar(medals.index , medals['Gold'])
+
+# Set the x-axis tick labels to the country names
+ax.set_xticklabels(medals.index , rotation = 90)
+
+# Set the y-axis label
+ax.set_ylabel("Number of medals")
+
+plt.show()
+
+
+
+
+               Bronze  Gold  Silver
+United States      67   137      52
+Germany            67    47      43
+Great Britain      26    64      55
+Russia             35    50      28
+China              35    44      30
+
+
+
+Well done! In the next exercise, you will create a stacked bar chart.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Stacked bar chart
+A stacked bar chart contains bars, where the height of each bar represents values. In addition, stacked on top of the first variable may be another variable. The additional height of this bar represents the value of this variable. And you can add more bars on top of that.
+
+In this exercise, you will have access to a DataFrame called medals that contains an index that holds the names of different countries, and three columns: "Gold", "Silver" and "Bronze". You will also have a Figure, fig, and Axes, ax, that you can add data to.
+
+You will create a stacked bar chart that shows the number of gold, silver, and bronze medals won by each country, and you will add labels and create a legend that indicates which bars represent which medals.
+
+
+
+
+ Q : 
+
+
+
+Call the ax.bar method to add the "Gold" medals. Call it with the label set to "Gold".
+Call the ax.bar method to stack "Silver" bars on top of that, using the bottom key-word argument so the bottom of the bars will be on top of the gold medal bars, and label to add the label "Silver".
+Use ax.bar to add "Bronze" bars on top of that, using the bottom key-word and label it as "Bronze".
+
+
+
+
+
+
+# Add bars for "Gold" with the label "Gold"
+ax.bar(medals.index , medals.Gold , label='Gold')
+
+# Stack bars for "Silver" on top with label "Silver"
+ax.bar(medals.index , medals['Silver'], bottom=medals['Gold'], label = 'Silver')
+
+# Stack bars for "Bronze" on top of that with label "Bronze"
+ax.bar(medals.index , medals['Bronze'] , bottom = medals['Gold'] + medals.Silver , label = 'Bronze')
+
+# Display the legend
+ax.legend()
+
+plt.show()
+
+
+
+
+Nicely done! Let's learn about other quantitative comparisons.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Creating histograms
+Histograms show the full distribution of a variable. In this exercise, we will display the distribution of weights of medalists in gymnastics and in rowing in the 2016 Olympic games for a comparison between them.
+
+You will have two DataFrames to use. The first is called mens_rowing and includes information about the medalists in the men's rowing events. The other is called mens_gymnastics and includes information about medalists in all of the Gymnastics events.
+
+
+
+ Q : 
+
+
+
+Use the ax.hist method to add a histogram of the "Weight" column from the mens_rowing DataFrame.
+Use ax.hist to add a histogram of "Weight" for the mens_gymnastics DataFrame.
+Set the x-axis label to "Weight (kg)" and the y-axis label to "# of observations".
+
+
+
+
+ 
+fig, ax = plt.subplots()
+# Plot a histogram of "Weight" for mens_rowing
+ax.hist(mens_rowing['Weight'])
+
+# Compare to histogram of "Weight" for mens_gymnastics
+ax.hist(mens_gymnastics['Weight'])
+
+# Set the x-axis label to "Weight (kg)"
+ax.set_xlabel('Weight (kg)')
+
+# Set the y-axis label to "# of observations"
+ax.set_ylabel('# of observations')
+
+plt.show()
+
+
+
+
+Nice. Now let's customize these histograms a bit by changing their default settings.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+ Ref : 
+
+
+"Step" histogram
+Histograms allow us to see the distributions of the data in different groups in our data. In this exercise, you will select groups from the Summer 2016 Olympic Games medalist dataset to compare the height of medalist athletes in two different sports.
+
+The data is stored in a Pandas DataFrame object called summer_2016_medals that has a column "Height". In addition, you are provided a Pandas GroupBy object that has been grouped by the sport.
+
+In the exercise below, you will visualize and label the histograms of two sports: "Gymnastics" and "Rowing" and see the marked difference between medalists in these two sports.
+
+
+
+
+ Q : 
+
+
+
+Use the hist method to display a histogram of the "Weight" column from the mens_rowing DataFrame, label this as "Rowing".
+Use hist to display a histogram of the "Weight" column from the mens_gymnastics DataFrame, and label this as "Gymnastics".
+For both histograms, use the 'histtype' argument to visualize the data using the 'step' type and set the number of bins to use to 5.
+Add a legend to the figure, before it is displayed.
+
+
+
+
+fig, ax = plt.subplots()
+
+# Plot a histogram of "Weight" for mens_rowing
+ax.hist(mens_rowing['Weight'] , label = 'Rowing' , histtype = 'step' , bins = 5)
+
+# Compare to histogram of "Weight" for mens_gymnastics
+ax.hist(mens_gymnastics['Weight'] , label = 'Gymnastics' , histtype = 'step' , bins = 5)
+
+ax.set_xlabel("Weight (kg)")
+ax.set_ylabel("# of observations")
+
+# Add the legend and show the Figure
+ax.legend()
+plt.show()
+
+
+
+
+Well done! Let's see how to use these distributions in statistical plots.
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Adding error-bars to a bar chart
+Statistical plotting techniques add quantitative information for comparisons into the visualization. For example, in this exercise, we will add error bars that quantify not only the difference in the means of the height of medalists in the 2016 Olympic Games, but also the standard deviation of each of these groups, as a way to assess whether the difference is substantial relative to the variability within each group.
+
+For the purpose of this exercise, you will have two DataFrames: mens_rowing holds data about the medalists in the rowing events and mens_gymnastics will hold information about the medalists in the gymnastics events.
+
+
+
+ Q : 
+
+
+Add a bar with size equal to the mean of the "Height" column in the mens_rowing DataFrame and an error-bar of its standard deviation.
+Add another bar for the mean of the "Height" column in mens_gymnastics with an error-bar of its standard deviation.
+Add a label to the the y-axis: "Height (cm)".
+
+
+
+
+
+fig, ax = plt.subplots()
+
+# Add a bar for the rowing "Height" column mean/std
+ax.bar("Rowing", mens_rowing['Height'].mean(), yerr=mens_rowing['Height'].std())
+
+# Add a bar for the gymnastics "Height" column mean/std
+ax.bar("Gymnastics" , mens_gymnastics['Height'].mean() , yerr = mens_gymnastics['Height'].std())
+
+# Label the y-axis
+ax.set_ylabel("Height (cm)")
+
+plt.show()
+
+
+
+
+That's great! These error bars can help you see that the difference in heights is rather large in terms of the standard deviation within every group.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+
+Adding error-bars to a plot
+Adding error-bars to a plot is done by using the errorbars method of the Axes object.
+
+Here, you have two DataFrames loaded: seattle_weather has data about the weather in Seattle and austin_weather has data about the weather in Austin. Each DataFrame has a column "MONTH" that has the names of the months, a column "MLY-TAVG-NORMAL" that has the average temperature in each month and a column "MLY-TAVG-STDDEV" that has the standard deviation of the temperatures across years.
+
+In the exercise, you will plot the mean temperature across months and add the standard deviation at each point as y errorbars.
+
+
+
+ Q : 
+
+
+Use the ax.errorbar method to add the Seattle data: the "MONTH" column as x values, the "MLY-TAVG-NORMAL" as y values and "MLY-TAVG-STDDEV" as yerr values.
+Add the Austin data: the "MONTH" column as x values, the "MLY-TAVG-NORMAL" as y values and "MLY-TAVG-STDDEV" as yerr values.
+Set the y-axis label as "Temperature (Fahrenheit)".
+
+
+
+
+
+
+fig, ax = plt.subplots()
+
+# Add Seattle temperature data in each month with error bars
+ax.errorbar(seattle_weather['MONTH'], seattle_weather['MLY-TAVG-NORMAL'], yerr = seattle_weather['MLY-TAVG-STDDEV'])
+
+# Add Austin temperature data in each month with error bars
+ax.errorbar(austin_weather['MONTH'] , austin_weather['MLY-TAVG-NORMAL'] , yerr =  austin_weather['MLY-TAVG-STDDEV'])
+
+# Set the y-axis label
+ax.set_ylabel("Temperature (Fahrenheit)")
+
+plt.show()
+
+
+
+
+Nicely done! Next, let's create boxplots.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Creating boxplots
+Boxplots provide additional information about the distribution of the data that they represent. They tell us what the median of the distribution is, what the inter-quartile range is and also what the expected range of approximately 99% of the data should be. Outliers beyond this range are particularly highlighted.
+
+In this exercise, you will use the data about medalist heights that you previously visualized as histograms, and as bar charts with error bars, and you will visualize it as boxplots.
+
+Again, you will have the mens_rowing and mens_gymnastics DataFrames available to you, and both of these DataFrames have columns called "Height" that you will compare.
+
+
+
+
+
+ Q : 
+
+
+Create a boxplot that contains the "Height" column for mens_rowing on the left and mens_gymnastics on the right.
+Add x-axis tick labels: "Rowing" and "Gymnastics".
+Add a y-axis label: "Height (cm)".
+
+
+
+
+
+fig, ax = plt.subplots()
+
+# Add a boxplot for the "Height" column in the DataFrames
+ax.boxplot([mens_rowing['Height'] , mens_gymnastics['Height']])
+
+# Add x-axis tick labels:
+ax.set_xticklabels(["Rowing" , "Gymnastics"])
+
+# Add a y-axis label
+ax.set_ylabel("Height (cm)")
+
+plt.show()
+
+
+
+
+Very good. This provides even more information. For example, we can see how many individuals are outliers within their group. Next, let's see how we compare two variables within a single sample.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Simple scatter plot
+Scatter are a bi-variate visualization technique. They plot each record in the data as a point. The location of each point is determined by the value of two variables: the first variable determines the distance along the x-axis and the second variable determines the height along the y-axis.
+
+In this exercise, you will create a scatter plot of the climate_change data. This DataFrame, which is already loaded, has a column "co2" that indicates the measurements of carbon dioxide every month and another column, "relative_temp" that indicates the temperature measured at the same time.
+
+
+
+ Q : 
+
+
+Using the ax.scatter method, add the data to the plot: "co2" on the x-axis and "relative_temp" on the y-axis.
+Set the x-axis label to "CO2 (ppm)".
+Set the y-axis label to "Relative temperature (C)".
+
+
+
+
+fig, ax = plt.subplots()
+
+# Add data: "co2" on x-axis, "relative_temp" on y-axis
+ax.scatter(climate_change['co2'] , climate_change['relative_temp'])
+
+# Set the x-axis label to "CO2 (ppm)"
+ax.set_xlabel('CO2 (ppm)')
+
+# Set the y-axis label to "Relative temperature (C)"
+ax.set_ylabel('Relative temperature (C)')
+
+plt.show()
+
+
+
+
+
+Nicely done. Now, let's encode the time dimension with color.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+
+Encoding time by color
+The screen only has two dimensions, but we can encode another dimension in the scatter plot using color. Here, we will visualize the climate_change dataset, plotting a scatter plot of the "co2" column, on the x-axis, against the "relative_temp" column, on the y-axis. We will encode time using the color dimension, with earlier times appearing as darker shades of blue and later times appearing as brighter shades of yellow.
+
+
+
+ Q : 
+
+
+Using the ax.scatter method add a scatter plot of the "co2" column (x-axis) against the "relative_temp" column.
+Use the c key-word argument to pass in the index of the DataFrame as input to color each point according to its date.
+Set the x-axis label to "CO2 (ppm)" and the y-axis label to "Relative temperature (C)".
+
+
+
+
+fig, ax = plt.subplots()
+
+# Add data: "co2", "relative_temp" as x-y, index as color
+ax.scatter(climate_change['co2'] , climate_change['relative_temp'] , c = climate_change.index)
+
+# Set the x-axis label to "CO2 (ppm)"
+ax.set_xlabel("CO2 (ppm)")
+
+# Set the y-axis label to "Relative temperature (C)"
+ax.set_ylabel("Relative temperature (C)")
+
+plt.show()
+
+
+
+
+In [1]: climate_change.head()
+Out[1]: 
+               co2  relative_temp
+date                             
+1958-03-06  315.71           0.10
+1958-04-06  317.45           0.01
+1958-05-06  317.50           0.08
+1958-06-06     NaN          -0.05
+1958-07-06  315.86           0.06
+
+
+
+
+
+This is beautiful! In the next chapter you will learn to share you figures with others and how to automate their creation.
 
 
 
@@ -759,22 +1217,278 @@ Beautiful! In the next chapter, you will learn how make quantitative comparisons
 
 
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Selecting a style for printing
+You are creating a figure that will be included in a leaflet printed on a black-and-white printer. What style should you choose for your figures?
+
+
+ Q : 
+
+ 
+In the console, we have loaded the medals dataset. Before initializing Axes and Figure objects and plotting them, you can try setting a style to use.
+
+
+
+
+ A : 
+
+
+'grayscale'
+
+
+
+Correct! This style would make sure that your figures appear the same on your screen and on the page.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Switching between styles
+Selecting a style to use affects all of the visualizations that are created after this style is selected.
+
+Here, you will practice plotting data in two different styles. The data you will use is the same weather data we used in the first lesson: you will have available to you the DataFrame seattle_weather and the DataFrame austin_weather, both with records of the average temperature in every month.
+
+
+
+
+ Q : 
+
+
+Select the 'ggplot' style, create a new Figure called fig, and a new Axes object called ax with plt.subplots.
+
+
+# Use the "ggplot" style and create new Figure/Axes
+fig , ax = plt.subplots()
+plt.style.use('ggplot')
+ax.plot(seattle_weather["MONTH"], seattle_weather["MLY-TAVG-NORMAL"])
+plt.show()
+
+
+ Select the 'Solarize_Light2' style, create a new Figure called fig, and a new Axes object called ax with plt.subplots.
+
+
+
+# Use the "Solarize_Light2" style and create new Figure/Axes
+fig , ax = plt.subplots()
+plt.style.use('Solarize_Light2')
+ax.plot(austin_weather["MONTH"], austin_weather["MLY-TAVG-NORMAL"])
+plt.show()
+
+
+
+Great! As you've seen, the style will only apply to a figure that is created after the style to use is selected.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Saving a file several times
+If you want to share your visualizations with others, you will need to save them into files. Matplotlib provides as way to do that, through the savefig method of the Figure object. In this exercise, you will save a figure several times. Each time setting the parameters to something slightly different. We have provided and already created Figure object.
+
+
+
+ Q : 
+
+
+
+Examine the figure by calling the plt.show() function.
+
+
+
+
+# Show the figure
+plt.show()
+
+
+
+ Save the figure into the file my_figure.png, using the default resolution.
+
+
+# Save as a PNG file
+fig.savefig('my_figure.png')
+
+
+Save the figure into the file my_figure_300dpi.png and set the resolution to 300 dpi.
+
+
+
+
+# Save as a PNG file with 300 dpi
+fig.savefig('my_figure_300dpi.png' , dpi = 300)
+
+
+Nice! You are ready to share your visualizations in all kinds of formats! Don't forget that you can also use other formats. For example, JPG can be used to save images with lossy compression.
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Save a figure with different sizes
+Before saving your visualization, you might want to also set the size that the figure will have on the page. To do so, you can use the Figure object's set_size_inches method. This method takes a sequence of two values. The first sets the width and the second sets the height of the figure.
+
+Here, you will again have a Figure object called fig already provided (you can run plt.show if you want to see its contents). Use the Figure methods set_size_inches and savefig to change its size and save two different versions of this figure.
+
+
+
+
+ Q : 
+
+
+Set the figure size as width of 5 inches and height of 3 inches and save it as 'figure_3_5.png' with default resolution.
+
+
+
+# Set figure dimensions and save as a PNG
+fig.set_size_inches([3,5])
+fig.savefig('figure_3_5.png')
+
+
+
+
+ Set the figure size to width of 3 inches and height of 5 inches and save it as 'figure_5_3.png' with default settings.
+
+
+
+# Set figure dimensions and save as a PNG
+fig.set_size_inches([5,3])
+fig.savefig('figure_5_3.png')
+
+
+Great work! This gives you two versions of your figure to choose between.
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Unique values of a column
+One of the main strengths of Matplotlib is that it can be automated to adapt to the data that it receives as input. For example, if you receive data that has an unknown number of categories, you can still create a bar plot that has bars for each category.
+
+In this exercise and the next, you will be visualizing the weight of medalis in the 2016 summer Olympic Games again, from a dataset that has some unknown number of branches of sports in it. This will be loaded into memory as a Pandas DataFrame object called summer_2016_medals, which has a column called "Sport" that tells you to which branch of sport each row corresponds. There is also a "Weight" column that tells you the weight of each athlete.
+
+In this exercise, we will extract the unique values of the "Sport" column
+
+
+
+ Q : 
+
+
+Create a variable called sports_column that holds the data from the "Sport" column of the DataFrame object.
+Use the unique method of this variable to find all the unique different sports that are present in this data, and assign these values into a new variable called sports.
+Print the sports variable to the console.
+
+
+
+
+
+# Extract the "Sport" column
+sports_column = summer_2016_medals.Sport
+
+# Find the unique values of the "Sport" column
+sports = sports_column.unique()
+
+# Print out the unique sports values
+print(sports)
+
+
+
+
+
+<script.py> output:
+    ['Rowing' 'Taekwondo' 'Handball' 'Wrestling' 'Gymnastics' 'Swimming'
+     'Basketball' 'Boxing' 'Volleyball' 'Athletics']
+
+
+
+
+Well done! Now you are ready to use these unique values to visualize the data.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+
+Automate your visualization
+One of the main strengths of Matplotlib is that it can be automated to adapt to the data that it receives as input. For example, if you receive data that has an unknown number of categories, you can still create a bar plot that has bars for each category.
+
+This is what you will do in this exercise. You will be visualizing data about medal winners in the 2016 summer Olympic Games again, but this time you will have a dataset that has some unknown number of branches of sports in it. This will be loaded into memory as a Pandas DataFrame object called summer_2016_medals, which has a column called "Sport" that tells you to which branch of sport each row corresponds. There is also a "Weight" column that tells you the weight of each athlete.
+
+
+
+ Q : 
+
+
+Iterate over the values of sports setting sport as your loop variable.
+In each iteration, extract the rows where the "Sport" column is equal to sport.
+Add a bar to the provided ax object, labeled with the sport name, with the mean of the "Weight" column as its height, and the standard deviation as a y-axis error bar.
+Save the figure into the file "sports_weights.png".
+
+
+
+
+
+fig, ax = plt.subplots()
+
+# Loop over the different sports branches
+for sport in sports:
+  # Extract the rows only for this sport
+  sport_df = summer_2016_medals[summer_2016_medals['Sport'] == sport]
+  # Add a bar for the "Weight" mean with std y error bar
+  ax.bar(sport , sport_df['Weight'].mean() ,  yerr = sport_df['Weight'].std())
+
+ax.set_ylabel("Height (cm)")
+ax.set_xticklabels(sports, rotation=90)
+
+# Save the figure to file
+fig.savefig('sports_weights.png')
+
+
+
+
+That's great! You are now ready to create automated reports from your data.
 
 
 
 
 
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+Cheat Sheet URL : https://datacamp-community-prod.s3.amazonaws.com/28b8210c-60cc-4f13-b0b4-5b4f2ad4790b
 
 
-
-
-
-
-
-
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
