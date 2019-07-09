@@ -1,0 +1,231 @@
+
+
+ Ref : 
+ 
+ Hardcoding a highlight
+You are working with the city of Houston to look at the relationship between sulfur dioxide (SO2) and nitrogen dioxide (NO2) pollution, specifically, pollution in the most recent year data was collected (2014). You have singled out a particularly bad day, November 26th, where there was a bad spike in the SO2 levels. To draw the viewers attention to this bad day, you will highlight it in a bright orangish-red and color the rest of the points gray.
+
+pandas, matplotlib.pyplot, and seaborn are loaded as pd, plt, and sns, respectively, and will be available in your workspace for the rest of the course.
+
+This course touches on a lot of concepts you may have forgotten, so if you ever need a quick refresher, download the Seaborn Cheat Sheet and keep it handy!
+
+
+ Q : 
+ 
+ Modify the list comprehension to color the value corresponding to the 330th day (November 26th) of the year 2014 to orangered and the rest of the points to lightgray.
+Pass the houston_colors array to regplot() using the scatter_kws argument to color the points.
+
+
+houston_pollution = pollution[pollution.city  ==  'Houston']
+
+# Make array orangred for day 330 of year 2014, otherwise lightgray
+houston_colors = ['orangered' if (day  ==  330) & (year  ==  2014) else 'lightgray' 
+                  for day,year in zip(houston_pollution.day, houston_pollution.year)]
+
+sns.regplot(x = 'NO2',
+            y = 'SO2',
+            data = houston_pollution,
+            fit_reg = False, 
+            # Send scatterplot argument to color points 
+            scatter_kws = {'facecolors': houston_colors, 'alpha': 0.7})
+plt.show()
+
+
+
+Great job! In just a few lines of code you've made a plot that clearly highlights a given datapoint. The gray color of the non-highlighted points here helps them provide context but does not overcrowd the main points of interest. Here you see that Nov 26th happened to be on the high end for both SO2 and NO2.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+ 
+ Programmatically creating a highlight
+You are continuing your work for the city of Houston. Now you want to look at the behavior of both NO2 and SO2 when the un-plotted ozone (O3) value was at its highest.
+
+To do this, replace the logic in the current list comprehension with one that compares a row's O3 value with the highest observed O3 in the dataset. Note: use sns.scatterplot() instead of sns.regplot(). This is because sns.scatterplot() can take a non-color vector as its hue argument and colors the points automatically while providing a helpful legend.
+
+
+ Q : 
+ 
+ Find the value corresponding to the highest observed O3 value in the houston_pollution DataFrame.
+Append the column 'point type' to the houston_pollution DataFrame to mark if the row contains the highest observed O3.
+Pass this newly created column to the hue argument of sns.scatterplot() to color the points.
+
+
+
+houston_pollution = pollution[pollution.city  ==  'Houston'].copy()
+
+# Find the highest observed O3 value
+max_O3 = houston_pollution.O3.max()
+
+# Make a column that denotes which day had highest O3
+houston_pollution['point type'] = ['Highest O3 Day' if O3  ==  max_O3 else 'Others' for O3 in houston_pollution.O3]
+
+# Encode the hue of the points with the O3 generated column
+sns.scatterplot(x = 'NO2',
+                y = 'SO2',
+                hue = 'point type',
+                data = houston_pollution)
+plt.show()
+
+
+Highlights are great for making plots to show others, but they can also help you explore a dataset. Sometimes you will want to highlight a point in a plot based upon its value for some variable not displayed. In this plot, we used automatic filtering to see that the highest O3 day fell in the upper (but not highest) values of NO2 and SO2. This indicates a potentially weak interaction between O3 and the other variables.
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
