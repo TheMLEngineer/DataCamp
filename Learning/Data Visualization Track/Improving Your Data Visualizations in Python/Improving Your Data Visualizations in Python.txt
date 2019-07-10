@@ -439,6 +439,66 @@ Good! Adding borders is an easy and quick way to improve default bar charts with
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+ Ref : 
+
+
+
+Making a custom continuous palette
+You are interested in the pollution levels of Cincinnati for the year 2014. Specifically, you're interested in CO and NO2, so you make a simple scatter plot to show the relationship between the two pollutants.
+
+(Image URL : https://assets.datacamp.com/production/repositories/3841/datasets/38b3a61c19aec974f73ddb0dc06fdc4a2805857a/basic_no_color_scatter.png)
+
+Scatterplot of CO and NO2 with uncolored points
+
+However, there may be some interesting information in how the value of O3 relates to the two plotted pollutants, so you decide to color the points by their O3 levels. To do this, you need to define an appropriate continuous palette and map your O3 column to it in your scatter plot.
+
+
+ Q : 
+
+
+
+Create a palette that continuously maps from white to 'orangered'.
+Map the column for O3 values to the color of the points.
+Pass your created palette to the plotting function.
+
+
+
+
+# Filter the data
+cinci_2014 = pollution.query("city  ==  'Cincinnati' & year  ==  2014")
+
+# Define a custom continuous color palette
+color_palette = sns.light_palette('orangered',
+                         as_cmap = True)
+
+# Plot mapping the color of the points with custom palette
+sns.scatterplot(x = 'CO',
+                y = 'NO2',
+                hue = 'O3', 
+                data = cinci_2014,
+                palette = color_palette)
+plt.show()
+
+
+
+
+Judging by the plot, there doesn't appear to be much of an association of O3 to either CO or NO2. By adding color to this simple scatter plot, you added a large amount of information on a previously un-visualized variable to the chart while still maintaining high precision in your main goal of comparing the CO and NO2 values to each other.
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Customizing a diverging palette heatmap
+The default color scheme used by Seaborn's heatmap() doesn't give the value of 0 any special treatment. This is fine for instances when 0 isn't special for the variable you're visualizing but means you will need to customize the palette 0 is special, such as when it represents a neutral value.
+
+For this visualization, you want to compare all the cities against the average pollution value for CO in November 2015. (As is provided in the DataFrame nov_2015_CO).
+
+To do this, use a heat map to encode the number of standard deviations away from the average each city's CO pollution was for the day. You'll need to replace the default palette by creating your own custom diverging palette and passing it to the heatmap and informing the function what your neutral value is.
 
 
 
@@ -446,12 +506,1051 @@ Good! Adding borders is an easy and quick way to improve default bar charts with
 
 
 
+ Q : 
+
+
+Pass the diverging palette to sns.heatmap().
+Add your neutral value to the heat map.
+Set the upper and lower boundaries to the color bar to -4 and 4 to make legend symmetric.
+
+
+
+
+
+# Define a custom palette
+color_palette = sns.diverging_palette(250, 0, as_cmap = True)
+
+# Pass palette to plot and set axis ranges
+sns.heatmap(nov_2015_CO,
+            center = 0,
+            cmap = color_palette,
+            vmin = -4 ,
+            vmax = 4)
+plt.yticks(rotation = 0)
+plt.show()
+
+
+
+Instantly, you can see that Vandenberg Air Force Base always has below average CO values whereas Long Beach, especially towards the end of the month, has much higher than average values. By correctly mapping the zero-point of our values you can immediately pick out patterns in our data in the context of a meaningful data anchor-point.
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Adjusting your palette according to context
+You've been asked to make a figure for your company's website. The website has a slick black theme, and it would be pretty jarring if your plot were white. To make your plot match the company aesthetic, you can swap the background to a black one with plt.style.use("dark_background").
+
+The figure you've been asked to make plots O3 values during October 2015 for various cities (provided as oct_2015_o3). You will plot this as a heatmap with the color of each cell encoding how many standard deviations from the overall average O3 value the measurement falls. Due to the website's dark background, you will want to adjust your color palette to encode null value (or 0 standard deviations from the mean) as dark rather than the default white.
+
+
+
+ Q : 
+
+
+Set the theme of the plot to black with plt.style.use().
+Modify the custom palette to be black for the middle value instead of white.
+
+
+
+
+# Dark plot background
+plt.style.use("dark_background")
+
+# Modify palette for dark background
+color_palette = sns.diverging_palette(250, 0,
+                                      center = 'dark',
+                                      as_cmap = True)
+
+# Pass palette to plot and set center
+sns.heatmap(oct_2015_o3,
+            cmap = color_palette,
+            center = 0)
+plt.yticks(rotation = 0)
+plt.show()
+
+
+
+Not only does the black background make this chart look very cool, it helps the patterns really pop out. Furthermore, matching the null-value to the background of the chart makes it much more natural to read. You can easily see that Fairbanks has much lower than average O3 pollution values than the rest of the cities and that Houston has much higher values, especially in the earlier days of the month.
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Using a custom categorical palette
+When you have a line chart with lots of categories choosing your palette carefully is essential. Often default palettes have very similar hues, that are hard to differentiate when spread over the small surface of a line. ColorBrewer palettes are built with this in mind and keep the colors as distinct as possible.
+
+In this exercise, you will make a line plot of the O3 values over the year of 2013 for all the cities where the color of each line is encoded by city. You will use the ColorBrewer palette 'Set2' to improve upon the default color scheme.
+
+
+
+ Q : 
+
+
+Query data to January of 2013.
+Encode the color of the lines as the city.
+Change the palette to the 'Set2' ColorBrewer palette.
+
+
+
+# Filter our data to Jan 2013
+pollution_jan13 = pollution.query('year  ==  2013 & month  ==  1')
+
+# Color lines by the city and use custom ColorBrewer palette
+sns.lineplot(x = "day", 
+             y = "CO", 
+             hue = "city",
+             palette = "Set2", 
+             linewidth = 3,
+             data = pollution_jan13)
+plt.show()
+
+
+
+By carefully choosing your categorical palettes you can increase the speed and accuracy with which your visualization is read. Here, thanks to the well-separated colors, it is easy to determine that the large spike around 23 days belongs to Denver.
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Dealing with too many categories
+Sometimes you may be short on figure space and need to show a lot of data at once. Here you want to show the year-long trajectory of every pollutant for every city in the pollution dataset. Each pollutant trajectory will be plotted as a line with the y-value corresponding to standard deviations from year's average. This means you will have a lot of lines on your plot at once -- way more than you could separate clearly with color.
+
+To deal with this, you have decided to highlight on a small subset of city pollutant combinations (wanted_combos). This subset is the most important to you, and the other trajectories will provide valuable context for comparison. To focus attention, you will set all the non-highlighted trajectories lines to of the same 'other' color.
+
+
+
+ Q : 
+
+
+Modify the list comprehension to isolate the desired combinations of city and pollutant (wanted_combos).
+Tell the line plot to color the lines by the newly created color_cats column in your DataFrame.
+Use the units argument to determine how, i.e., from which column, the data points should be connected to form each line.
+Disable the binning of points with the estimator argument.
+
+
+
+
+
+# Choose the combos that get distinct colors
+wanted_combos = ['Vandenberg Air Force Base NO2', 'Long Beach CO', 'Cincinnati SO2']
+
+# Assign a new column to DataFrame for isolating the desired combos
+city_pol_month['color_cats'] = [x if x in wanted_combos else 'other' for x in city_pol_month['city_pol']]
+
+# Plot lines with color driven by new column and lines driven by original categories
+sns.lineplot(x = "month",
+             y = "value",
+             hue = 'color_cats',
+             units = 'city_pol',
+             estimator = None,
+             palette = 'Set2',
+             data = city_pol_month)
+plt.show()
+
+
+
+
+Here by subsetting our colors to be those that you care about you can make a bit more sense of the spaghetti of lines. You see that Long Beach has a bathtub shape for its CO values: going from more than four standard deviations above mean CO values to below average and then back up to more than three standard deviations above by the end of the year. Whereas Vandenberg stays way below average for the entire year. 
+
+While the best solution for this plot may be to not plot the other lines at all, they can often provide valuable context for the data of interest.
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Coloring ordinal categories
+You are working for the Des Moines city council to assess the associations of various pollutant levels in the city. The two most important pollutants are SO2 and NO2 but CO is also of interest. You've only been allowed enough space for a single plot for your part of the report.
+
+You start with a scatter plot of the SO2 and NO2 values as they are most important and then decide to show the CO values using a color scale corresponding to CO quartiles. By binning the continuous CO values, you have turned CO into an ordinal variable that can illuminate broad patterns without requiring much effort from the viewer to compare subtly different shades.
+
+
+
+ Q : 
+
+
+Set the qcut() function to break 'CO' into quartiles.
+Map the color of your scatter plot to the new quartile column.
+Change the palette to the ColorBrewer palette 'GnBu'.
+
+
+
+# Divide CO into quartiles
+pollution['CO quartile'] = pd.qcut(pollution['CO'], q = 4, labels = False)
+#q = 4 coz they asked  quartiles
+
+# Filter to just Des Moines
+des_moines = pollution.query("city  ==  'Des Moines'")
+
+# Color points with by quartile and use ColorBrewer palette
+sns.scatterplot(x = 'SO2',
+                y = 'NO2',
+                hue = 'CO quartile', 
+                  data = des_moines,
+                palette = 'GnBu')
+plt.show()
+
+
+
+
+By simplifying the color encoding to just four distinct values, you get a clear picture of the patterns between CO, SO2, and NO2. Here you see the low quartiles of CO seem to relate with NO2 and appear much less related to the SO2 values. By categorizing the continuous color variable, you allow the viewer to investigate patterns along a third variable in a clear and simple way at the expense of some precision: a tradeoff that is often worth it.
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Choosing the right variable to encode with color
+You're tasked with visualizing pollution values for Long Beach and nearby cities over time. The supplied code makes the below (hard-to-read plot), which consists of maximum pollution values (provided as max_pollutant_values) with the bars colored by the city.
+
+Mutlicolor and busy bar plots with four rows corresponding to the four pollutants in dataset
+
+(Image URL : https://assets.datacamp.com/production/repositories/3841/datasets/bfdc5024f8b0dba94ef0302824d88affed8180b7/exercise_swap_color_encoding.png)
+
+You can quickly improve this with a few tweaks. By modifying the cities shown to only those in the western half of the country you will avoid clutter. Next, swapping the color-encoding from city to year allows you to use an ordinal palette, saving the reader from continually referring to the legend to check which color corresponds to which city.
+
+
+
+
+ Q : 
+
+
+Remove 'Indianapolis', 'Des Moines', 'Cincinnati', 'Houston' from the cities vector.
+Swap the encodings of the city and year variables.
+Use the 'BuGn' ColorBrewer palette to map your colors appropriately for the newly ordinal variable.
+
+
+
+
+
+# Reduce to just cities in the western half of US
+cities = ['Fairbanks', 'Long Beach', 'Vandenberg Air Force Base', 'Denver']
+
+# Filter data to desired cities
+city_maxes = max_pollutant_values[max_pollutant_values.city.isin(cities)]
+
+# Swap city and year encodings
+sns.catplot(x = 'city', hue = 'year',
+              y = 'value', row = 'pollutant',    
+              # Change palette to one appropriate for ordinal categories
+              data = city_maxes, palette = 'BuGn',
+              sharey = False, kind = 'bar')
+plt.show()
+
+
+
+
+Wonderful! By simply switching just a few values, the plot is much clearer, and the presentation has more impact. Also, the use of hue as the years go on puts a greater emphasis on the later (more recent) years.
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Basic confidence intervals
+You are a data scientist for a fireworks manufacturer in Des Moines, Iowa. You need to make a case to the city that your company's large fireworks show has not caused any harm to the city's air. To do this, you look at the average levels for pollutants in the week after the fourth of July and how they compare to readings taken after your last show. By showing confidence intervals around the averages, you can make a case that the recent readings were well within the normal range.
+
+This data is loaded as average_ests with a row for each measured pollutant.
+
+
+
+
+
+ Q : 
+
+
+Create the lower and upper 95% interval boundaries by subtracting and adding 1.96 standard errors from the mean of estimates.
+Pass pollutant as the faceting variable to sns.FacetGrid().
+Unlink the x-axes of the plots, so intervals are all well-sized.
+Pass the constructed interval boundaries to the mapped plt.hlines() function.
+
+
+
+
+# Construct CI bounds for averages
+average_ests['lower'] = average_ests['mean'] - 1.96*average_ests['std_err']
+average_ests['upper'] = average_ests['mean'] + 1.96*average_ests['std_err']
+
+# Setup a grid of plots, with non-shared x axes limits
+g = sns.FacetGrid(average_ests, row = 'pollutant', sharex = False)
+
+# Plot CI for average estimate
+g.map(plt.hlines, 'y', 'lower', 'upper')
+
+# Plot observed values for comparison and remove axes labels
+g.map(plt.scatter, 'seen', 'y', color = 'orangered').set_ylabels('').set_xlabels('') 
+
+plt.show()
+
+
+
+
+Well done! This simple visualization shows that all the observed values fall well within the confidence intervals for all the pollutants except for O3.
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Annotating confidence intervals
+Your data science work with pollution data is legendary, and you are now weighing job offers in both Cincinnati, Ohio and Indianapolis, Indiana. You want to see if the SO2 levels are significantly different in the two cities, and more specifically, which city has lower levels. To test this, you decide to look at the differences in the cities' SO2 values (Indianapolis' - Cincinnati's) over multiple years (provided as diffs_by_year).
+
+Instead of just displaying a p-value for a significant difference between the cities, you decide to look at the 95% confidence intervals (columns lower and upper) of the differences. This allows you to see the magnitude of the differences along with any trends over the years.
+
+
+
+
+ Q : 
+
+
+
+Provide starting and ending limits (columns lower and upper) for your confidence intervals to plt.hlines().
+Set interval thickness to 5.
+Draw a vertical line representing a difference of 0 with plt.axvline().
+Color the null line 'orangered' to make it stand out.
+
+
+
+
+
+# Set start and ends according to intervals 
+# Make intervals thicker
+plt.hlines(y = 'year', xmin = 'lower', xmax = 'upper', 
+           linewidth = 5 , color = 'steelblue', alpha = 0.7,
+           data = diffs_by_year)
+# Point estimates
+plt.plot('mean', 'year', 'k|', data = diffs_by_year)
+
+# Add a 'null' reference line at 0 and color orangered
+plt.axvline(x = 0, color = 'orangered', linestyle = '--')
+
+# Set descriptive axis labels and title
+plt.xlabel('95% CI')
+plt.title('Avg SO2 differences between Cincinnati and Indianapolis')
+plt.show()
+
+
+
+
+By looking at the confidence intervals you can see that the difference flipped from generally positive (more pollution in Cincinnati) in 2013 to negative (more pollution in Indianapolis) in 2014 and 2015. Given that every year's confidence interval contains the null value of zero, no P-Value would be significant, and a plot that only showed significance would have been entirely hidden this trend.
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Making a confidence band
+Vandenberg Air Force Base is often used as a location to launch rockets into space. You have a theory that a recent increase in the pace of rocket launches could be harming the air quality in the surrounding region. To explore this, you plotted a 25-day rolling average line of the measurements of atmospheric NO2. To help decide if any pattern observed is random-noise or not, you decide to add a 99% confidence band around your rolling mean. Adding a confidence band to a trend line can help shed light on the stability of the trend seen. This can either increase or decrease the confidence in the discovered trend.
+
+
+
+ Q : 
+
+
+Construct upper and lower 99% interval bands by adding and subtracting 2.58 standard errors from the mean.
+Make the point-estimate line white.
+Make the point-estimate line semi-transparent by setting alpha to 0.4.
+Tell plt.fill_between() what values to fill between for each day.
+
+
+
+# Draw 99% inverval bands for average NO2
+vandenberg_NO2['lower'] = vandenberg_NO2['mean'] - 2.58*vandenberg_NO2['std_err']
+vandenberg_NO2['upper'] = vandenberg_NO2['mean'] + 2.58*vandenberg_NO2['std_err']
+
+# Plot mean estimate as a white semi-transparent line
+plt.plot('day', 'mean', data = vandenberg_NO2,
+         color = 'white', alpha = 0.4)
+
+# Fill between the upper and lower confidence band values
+plt.fill_between(x = 'day', 
+                 y1 = 'lower', y2 = 'upper', 
+                 data = vandenberg_NO2)
+
+plt.show()
+
+
+
+
+Excellent! This plot shows that the middle of the year's NO2 values are not only lower than the beginning and end of the year but also are less noisy. If just the moving average line were plotted, then this potentially interesting observation would be completely missed. (Can you think of what may cause reduced variance at the lower values of the pollutant?)
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Separating a lot of bands
+It is relatively simple to plot a bunch of trend lines on top of each other for rapid and precise comparisons. Unfortunately, if you need to add uncertainty bands around those lines, the plot becomes very difficult to read. Figuring out whether a line corresponds to the top of one class' band or the bottom of another's can be hard due to band overlap. Luckily in Seaborn, it's not difficult to break up the overlapping bands into separate faceted plots.
+
+To see this, explore trends in SO2 levels for a few cities in the eastern half of the US. If you plot the trends and their confidence bands on a single plot - it's a mess. To fix, use Seaborn's FacetGrid() function to spread out the confidence intervals to multiple panes to ease your inspection.
+
+
+
+
+ Q : 
+
+
+
+Set up a facet grid to separate the plots by the city column in eastern_SO2.
+Send the confidence interval plotting function to map().
+Color the confidence intervals 'coral'.
+Help the overlaid mean line drawn with g.map(plt.plot,...) stand out against the confidence bands by coloring it white.
+
+
+
+
+# Setup a grid of plots with columns divided by location
+g = sns.FacetGrid(eastern_SO2, col = 'city', col_wrap = 2)
+
+# Map interval plots to each cities data with corol colored ribbons
+g.map(plt.fill_between, 'day', 'lower', 'upper', color = 'coral')
+
+# Map overlaid mean plots with white line
+g.map(plt.plot, 'day', 'mean', color = 'white')
+
+plt.show()
+
+
+
+
+By separating each band into its own plot you can investigate each city with ease. Here, you see that Des Moines and Houston on average have lower SO2 values for the entire year than the two cities in the Midwest. Cincinnati has a high and variable peak near the beginning of the year but is generally more stable and lower than Indianapolis.
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Cleaning up bands for overlaps
+You are working for the city of Denver, Colorado and want to run an ad campaign about how much cleaner Denver's air is than Long Beach, California's air. To investigate this claim, you will compare the SO2 levels of both cities for the year 2014 (provided as the DataFrame SO2_compare). Since you are solely interested in how the cities compare, you want to keep the bands on the same plot. To make the bands easier to compare, decrease the opacity of the confidence bands and set a clear legend.
+
+
+
+ Q : 
+
+
+
+Filter the SO2_compare to the for loops currently selected city.
+Color both the intervals and mean lines with the color accompanying each city.
+Lower the interval and mean line opacities to 0.4 and 0.25, respectively.
+Pass the city name to plt.plot() so the legend is labeled correctly.
+
+
+
+
+
+for city, color in [('Denver',"#66c2a5"), ('Long Beach', "#fc8d62")]:
+    # Filter data to desired city
+    city_data = SO2_compare[SO2_compare.city  ==  city]
+
+    # Set city interval color to desired and lower opacity
+    plt.fill_between(x = 'day', y1 = 'lower', y2 = 'upper', data = city_data,
+                     color = color, alpha = 0.4)
+    
+    # Draw a faint mean line for reference and give a label for legend
+    plt.plot('day','mean', data = city_data, label = city,
+             color = color, alpha = 0.25)
+
+plt.legend()
+plt.show()
+
+
+
+
+From these two curves you can see that during the first half of the year Long Beach generally has a higher average SO2 value than Denver, in the middle of the year they are very close, and at the end of the year Denver seems to have higher averages. However, by showing the confidence intervals, you can see however that almost none of the year shows a statistically meaningful difference in average values between the two cities.
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+90, 95, and 99% intervals
+You are a data scientist for an outdoor adventure company in Fairbanks, Alaska. Recently, customers have been having issues with SO2 pollution, leading to costly cancellations. The company has sensors for CO, NO2, and O3 but not SO2 levels.
+
+You've built a model that predicts SO2 values based on the values of pollutants with sensors (loaded as pollution_model, a statsmodels object). You want to investigate which pollutant's value has the largest effect on your model's SO2 prediction. This will help you know which pollutant's values to pay most attention to when planning outdoor tours. To maximize the amount of information in your report, show multiple levels of uncertainty for the model estimates.
+
+
+
+
+ Q : 
+
+
+
+Fill in the appropriate interval width percents (from 90,95, and 99%) according to the values list in alpha.
+In the for loop, color the interval by its assigned color.
+Pass the loop's width percentage value to plt.hlines() to label the legend.
 
 
 
 
 
 
+# Add interval percent widths
+alphas = [     0.01,  0.05,   0.1] 
+widths = ['99% CI', '95%', '90%']
+colors = ['#fee08b','#fc8d59','#d53e4f']
+
+for alpha, color, width in zip(alphas, colors, widths):
+    # Grab confidence interval
+    conf_ints = pollution_model.conf_int(alpha)
+    
+    # Pass current interval color and legend label to plot
+    plt.hlines(y = conf_ints.index, xmin = conf_ints[0], xmax = conf_ints[1],
+               colors = color, label = width, linewidth = 10) 
+
+# Draw point estimates
+plt.plot(pollution_model.params, pollution_model.params.index, 'wo', label = 'Point Estimate')
+
+plt.legend()
+plt.show() 
+
+
+
+
+This one little plot has a lot of information in it! For instance, you see that CO's effect-size on SO2 is larger than all other pollutants at not just a 90% confidence level, but a 99% confidence level. By displaying multiple interval widths for your estimates, you can provide a much more complete picture of the uncertainty in your model.
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+
+
+90 and 95% bands
+You are looking at a 40-day rolling average of the NO2 pollution levels for the city of Cincinnati in 2013. To provide as detailed a picture of the uncertainty in the trend you want to look at both the 90 and 99% intervals around this rolling estimate.
+
+To do this, set up your two interval sizes and an orange ordinal color palette. Additionally, to enable precise readings of the bands, make them semi-transparent, so the Seaborn background grids show through.
+
+
+
+ Q : 
+
+
+
+Set the opacity of the intervals to 40%.
+Calculate the lower and upper confidence bounds.
+
+
+
+
+
+
+int_widths = ['90%', '99%']
+z_scores = [1.67, 2.58]
+colors = ['#fc8d59', '#fee08b']
+
+for percent, Z, color in zip(int_widths, z_scores, colors):
+    
+    # Pass lower and upper confidence bounds and lower opacity
+    plt.fill_between(
+        x = cinci_13_no2.day, alpha = 0.4, color = color,
+        y1 = cinci_13_no2['mean'] - Z *cinci_13_no2['std_err'],
+        y2 = cinci_13_no2['mean'] + Z*cinci_13_no2['std_err'],
+        label = percent)
+    
+plt.legend()
+plt.show()
+
+
+
+
+This plot shows us that throughout 2013, the average NO2 values in Cincinnati followed a cyclical pattern with the seasons. However, the uncertainty bands show that for most of the year you can't be sure this pattern is not noise at both a 90 and 99% confidence level.
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+ Ref : 
+
+
+
+Using band thickness instead of coloring
+You are a researcher investigating the elevation a rocket reaches before visual is lost and pollutant levels at Vandenberg Air Force Base. You've built a model to predict this relationship (stored in the DataFrame rocket_height_model), and since you are working independently, you don't have the money to pay for color figures in your journal article. You need to make your model results plot work in black and white. To do this, you will plot the 90, 95, and 99% intervals of the effect of each pollutant as successively smaller bars.
+
+
+ Q : 
+
+
+
+Use a thickness of 15 for 90%, 10 for 95%, and 5 for 99% interval lines.
+Pass the interval thickness value to plt.hlines().
+Set the interval color to 'gray' to lighten contrast.
+
+
+
+
+
+# Decrase interval thickness as interval widens
+sizes =      [    15 ,  10 ,  5]
+int_widths = ['90% CI', '95%', '99%']
+z_scores =   [    1.67,  1.96,  2.58]
+
+for percent, Z, size in zip(int_widths, z_scores, sizes):
+    plt.hlines(y = rocket_model.pollutant, 
+               xmin = rocket_model['est'] - Z*rocket_model['std_err'],
+               xmax = rocket_model['est'] + Z*rocket_model['std_err'],
+               label = percent, 
+               # Resize lines and color them gray
+               linewidth = size, 
+               color = 'gray') 
+    
+# Add point estimate
+plt.plot('est', 'pollutant', 'wo', data = rocket_model, label = 'Point Estimate')
+plt.legend(loc = 'center left', bbox_to_anchor = (1, 0.5))
+plt.show()
+
+
+
+
+
+While less elegant than using color to differentiate interval sizes, this plot still clearly allows the reader to access the effect each pollutant has on rocket visibility. You can see that of all the pollutants, O3 has the largest effect and also the tightest confidence bounds
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+The bootstrap histogram
+You are considering a vacation to Cincinnati in May, but you have a severe sensitivity to NO2. You pull a few years of pollution data from Cincinnati in May and look at a bootstrap estimate of the average NO2 levels. You only have one estimate to look at the best way to visualize the results of your bootstrap estimates is with a histogram.
+
+While you like the intuition of the bootstrap histogram by itself, your partner who will be going on the vacation with you, likes seeing percent intervals. To accommodate them, you decide to highlight the 95% interval by shading the region.
+
+
+
+ Q : 
+
+
+
+Provide the percentile() function with the upper and lower percentiles needed to get a 95% interval.
+Shade the background of the plot in the 95% interval.
+Draw histogram of bootstrap means with 100 bins.
+
+
+
+
+cinci_may_NO2 = pollution.query("city  ==  'Cincinnati' & month  ==  5").NO2
+
+# Generate bootstrap samples
+boot_means = bootstrap(cinci_may_NO2, 1000)
+
+# Get lower and upper 95% interval bounds
+lower, upper = np.percentile(boot_means, [2.5 , 97.5])
+
+# Plot shaded area for interval
+plt.axvspan(lower , upper , color = 'gray', alpha = 0.2)
+
+# Draw histogram of bootstrap samples
+sns.distplot(boot_means , bins = 100, kde = False)
+
+plt.show()
+
+
+
+
+Your bootstrap histogram looks stable and uniform. You're now confident that the average NO2 levels in Cincinnati during your vacation should be in the range of 16 to 23.
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Bootstrapped regressions
+While working for the Long Beach parks and recreation department investigating the relationship between NO2 and SO2 you noticed a cluster of potential outliers that you suspect might be throwing off the correlations.
+
+
+(Image URL : https://assets.datacamp.com/production/repositories/3841/datasets/79c91397ef0aa461017354cefaf90bfeb9474ac4/boot_regression_ex_intro.png)
+
+SO2 NO2 scatter
+
+Investigate the uncertainty of your correlations through bootstrap resampling to see how stable your fits are. For convenience, the bootstrap sampling is complete and is provided as no2_so2_boot along with no2_so2 for the non-resampled data.
+
+
+
+
+
+ Q : 
+
+
+Let sns.lmplot() know that it needs to draw a separate regression line for each bootstrap sample.
+Color every regression line 'steelblue' and make them 20% opaque.
+Disable the default Seaborn confidence bands around the regression lines.
+
+
+
+
+
+sns.lmplot('NO2', 'SO2', data = no2_so2_boot,
+           # Tell seaborn to a regression line for each sample
+           hue = 'sample', 
+           # Make lines blue and transparent
+           line_kws = {'color': 'steelblue', 'alpha': 0.2},
+           # Disable built-in confidence intervals
+           ci = None, legend = False, scatter = False)
+
+# Draw scatter of all points
+plt.scatter('NO2', 'SO2', data = no2_so2)
+
+plt.show()
+
+
+
+
+
+The outliers appear to drag down the regression lines as evidenced by the cluster of lines with more severe slopes than average. In a single plot, you have not only gotten a good idea of the variability of your correlation estimate but also the potential effects of outliers.
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Lots of bootstraps with beeswarms
+As a current resident of Cincinnati, you're curious to see how the average NO2 values compare to Des Moines, Indianapolis, and Houston: a few other cities you've lived in.
+
+To look at this, you decide to use bootstrap estimation to look at the mean NO2 values for each city. Because the comparisons are of primary interest, you will use a swarm plot to compare the estimates.
+
+The DataFrame pollution_may is provided along with the bootstrap() function seen in the slides for performing your bootstrap resampling.
+
+
+
+ Q : 
+
+
+Run bootstrap resampling on each city_NO2 vector.
+Add city name as a column in the bootstrap DataFrame, cur_boot.
+Color all swarm plot points 'coral' to avoid the color-size problem.
+
+
+
+
+
+# Initialize a holder DataFrame for bootstrap results
+city_boots = pd.DataFrame()
+
+for city in ['Cincinnati', 'Des Moines', 'Indianapolis', 'Houston']:
+    # Filter to city
+    city_NO2 = pollution_may[pollution_may.city  ==  city].NO2
+    # Bootstrap city data & put in DataFrame
+    cur_boot = pd.DataFrame({'NO2_avg': bootstrap(city_NO2, 100), 'city': city})
+    # Append to other city's bootstraps
+    city_boots = pd.concat([city_boots,cur_boot])
+
+# Beeswarm plot of averages with citys on y axis
+sns.swarmplot(y = "city", x = "NO2_avg", data = city_boots, color = 'coral')
+
+plt.show()
+
+
+
+The beeswarm plots show that Indianapolis and Houston both have the highest average NO2 values, with Cincinnati falling roughly in the middle. Interestingly, you can rather confidently say that Des Moines has the lowest as nearly all its sample estimates fall below those of the other cities.
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+ Ref : 
+
+
+
+Looking at the farmers market data
+Loaded is a new dataset, markets. Each row of this DataFrame belongs to an individual farmers market in the continental United States with various information about the market contained in the columns. In this exercise, explore the columns of the data to get familiar with them for future analysis and plotting.
+
+As a first step, print out the first three lines of markets to get an idea of what type of data the columns encode. Then look at the summary descriptions of all of the columns. Since there are so many columns in the DataFrame, you'll want to turn the results 'sideways' by transposing the output to avoid cutting off rows.
+
+
+
+
+ Q : 
+
+
+Print the first three rows of the data and transpose by chaining the transpose() method to the DataFrame.
+Print the basic description of every column along with its median and transpose.
+
+
+
+
+
+
+
+# Print first three rows of data and transpose
+first_rows = markets.head(3).transpose()
+print(first_rows)
+
+# Get descriptions of every column
+col_descriptions = markets.describe(include = 'all',
+                                percentiles = [0.5]).transpose()
+print(col_descriptions)
+
+
+
+<script.py> output:
+                                0                              1                              2
+    name            Island Market  COFFO Harvest Farmers' Market  COFFO Harvest Farmers' Market
+    city                Key Largo                   Florida City                      Homestead
+    county                 Monroe                     Miami-Dade                     Miami-Dade
+    state                 Florida                        Florida                        Florida
+    lat                  -80.4272                       -80.4823                       -80.4834
+    lon                   25.1092                        25.4499                        25.4635
+    months_open                 6                             12                             12
+    Bakedgoods                  1                              0                              0
+    Beans                       1                              0                              0
+    Cheese                      1                              0                              0
+    Coffee                      1                              0                              0
+    Crafts                      1                              0                              0
+    Eggs                        1                              0                              0
+    Flowers                     1                              1                              1
+    Fruits                      1                              0                              0
+    Grains                      1                              0                              0
+    Herbs                       1                              1                              1
+    Honey                       0                              0                              0
+    Jams                        1                              0                              0
+    Juices                      1                              0                              0
+    Maple                       1                              0                              0
+    Meat                        0                              0                              0
+    Mushrooms                   0                              0                              0
+    Nursery                     0                              1                              1
+    Nuts                        0                              0                              0
+    PetFood                     0                              0                              0
+    Plants                      1                              1                              1
+    Poultry                     0                              0                              0
+    Prepared                    1                              1                              1
+    Seafood                     1                              0                              0
+    Soap                        1                              0                              0
+    Tofu                        0                              0                              0
+    Trees                       0                              1                              1
+    Vegetables                  1                              1                              1
+    WildHarvested               0                              0                              0
+    Wine                        0                              0                              0
+    num_items_sold             18                              7                              7
+    state_pop         1.98933e+07                    1.98933e+07                    1.98933e+07
+                   count unique                         top freq         mean          std      min          50%          max
+    name            5343   5075  Main Street Farmers Market    8          NaN          NaN      NaN          NaN          NaN
+    city            5340   3177                  Washington   39          NaN          NaN      NaN          NaN          NaN
+    county          5341   1122                  Washington   64          NaN          NaN      NaN          NaN          NaN
+    state           5343     49                    New York  450          NaN          NaN      NaN          NaN          NaN
+    lat             5339    NaN                         NaN  NaN     -89.8885      15.7504 -124.416     -85.7017     -67.2774
+    lon             5339    NaN                         NaN  NaN      39.4539      4.48365  25.1092      40.0566      48.9433
+    months_open     5343    NaN                         NaN  NaN      6.37657      2.67489        1            6           12
+    Bakedgoods      5343    NaN                         NaN  NaN     0.885458     0.318499        0            1            1
+    Beans           5343    NaN                         NaN  NaN     0.144862     0.351995        0            0            1
+    Cheese          5343    NaN                         NaN  NaN     0.492981     0.499998        0            0            1
+    Coffee          5343    NaN                         NaN  NaN     0.360659     0.480237        0            0            1
+    Crafts          5343    NaN                         NaN  NaN     0.627176     0.483601        0            1            1
+    Eggs            5343    NaN                         NaN  NaN      0.75744     0.428671        0            1            1
+    Flowers         5343    NaN                         NaN  NaN     0.689875     0.462588        0            1            1
+    Fruits          5343    NaN                         NaN  NaN     0.810968     0.391571        0            1            1
+    Grains          5343    NaN                         NaN  NaN     0.148044     0.355177        0            0            1
+    Herbs           5343    NaN                         NaN  NaN     0.776904     0.416361        0            1            1
+    Honey           5343    NaN                         NaN  NaN     0.814898     0.388417        0            1            1
+    Jams            5343    NaN                         NaN  NaN     0.813588     0.389475        0            1            1
+    Juices          5343    NaN                         NaN  NaN     0.251731     0.434048        0            0            1
+    Maple           5343    NaN                         NaN  NaN     0.330526     0.470447        0            0            1
+    Meat            5343    NaN                         NaN  NaN     0.560547     0.496367        0            1            1
+    Mushrooms       5343    NaN                         NaN  NaN     0.238443     0.426171        0            0            1
+    Nursery         5343    NaN                         NaN  NaN    0.0578327     0.233449        0            0            1
+    Nuts            5343    NaN                         NaN  NaN     0.302452     0.459363        0            0            1
+    PetFood         5343    NaN                         NaN  NaN     0.198765     0.399108        0            0            1
+    Plants          5343    NaN                         NaN  NaN      0.65787     0.474467        0            1            1
+    Poultry         5343    NaN                         NaN  NaN      0.46079     0.498507        0            0            1
+    Prepared        5343    NaN                         NaN  NaN     0.620438     0.485323        0            1            1
+    Seafood         5343    NaN                         NaN  NaN     0.248362     0.432104        0            0            1
+    Soap            5343    NaN                         NaN  NaN     0.690249     0.462434        0            1            1
+    Tofu            5343    NaN                         NaN  NaN    0.0402396     0.196539        0            0            1
+    Trees           5343    NaN                         NaN  NaN     0.279057     0.448577        0            0            1
+    Vegetables      5343    NaN                         NaN  NaN      0.95714      0.20256        0            1            1
+    WildHarvested   5343    NaN                         NaN  NaN     0.148231     0.355362        0            0            1
+    Wine            5343    NaN                         NaN  NaN     0.178551     0.383012        0            0            1
+    num_items_sold  5343    NaN                         NaN  NaN      13.5441      5.79113        0           14           28
+    state_pop       5343    NaN                         NaN  NaN  1.10719e+07  1.02398e+07   584153  6.74541e+06  3.88025e+07
+
+
+
+Great! It may seem boring, but these preliminary explorations of your data help set up the foundations of a successful data science project. Now that you've investigated the data, you can see that it is very "wide" – with many columns corresponding to the different goods sold. The goods are encoded with 1s and 0s that indicate whether the market sells the good or not.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Scatter matrix of numeric columns
+You've investigated the new farmer's market data, and it's rather wide – with lots of columns of information for each market's row. Rather than painstakingly going through every combination of numeric columns and making a scatter plot to look at correlations, you decide to make a scatter matrix using the pandas built-in function.
+
+Increasing the figure size with the figsize argument will help give the dense visualization some breathing room. Since there will be a lot of overlap for the points, decreasing the point opacity will help show the density of these overlaps.
+
+
+
+ Q : 
+
+
+Subset the columns of the markets DataFrame to numeric_columns so the scatter matrix only shows numeric non-binary columns.
+Increase figure size to 15 by 10 to avoid crowding.
+Reduce point opacity to 50% to show regions of overlap.
+
+
+
+
+# Select just the numeric columns (exluding individual goods)
+numeric_columns = ['lat', 'lon', 'months_open', 'num_items_sold', 'state_pop']
+
+# Make a scatter matrix of numeric columns
+pd.plotting.scatter_matrix(markets[numeric_columns], 
+                             # Make figure large to show details
+                             figsize = (15 , 10), 
+                           # Lower point opacity to show overlap
+                           alpha = 0.5)
+
+plt.show()
+
+
+
+Great! Scatter matrices can be a lot of information to take in but are super helpful exploration tools. In this plot, we see that, due to many of the variables taking integers values (e.g., days of the week = 1,2,3,...), there is a lot of 'banding' with points clustering in a line along a given axis. Also, you will likely want to log-transform the population values as the distribution is highly skewed.
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Digging in with basic transforms
+You are curious to see if the population of a state correlates to the number of items sold at farmer's markets. To check this, take the log of the population and draw a scatter plot against the number of items sold by a market. From your previous explorations of the dataset, you know there will be a lot of overlap, so to get a better handle on the patterns you want to reduce the marker opacity.
+
+
+
+ Q : 
+
+
+Use numpy (imported as np) to create a new column: log_pop by taking the log of the state population.
+Pass this newly created logged column to the scatter plot function's x-mapping.
+Set the scatter plot's opacity to 25% to show overlap.
+
+
+
+
+
+
+# Create a new logged population column 
+markets['log_pop'] = np.log(markets['state_pop'])
+
+# Draw a scatterplot of log-population to # of items sold
+sns.scatterplot(x = 'log_pop', 
+                  y = 'num_items_sold', 
+                  # Reduce point opacity to show overlap
+                  alpha = 0.25, 
+                  data = markets)
+
+plt.show()
+
+
+
+
+Wonderful! This plot shows you that even after transforming the population to remove skew and lowering the opacity it's hard to see if there's any relationship between the population and number of items sold. 
+
+In the next lesson, you'll look into more sophisticated ways to visually explore these patterns.
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
