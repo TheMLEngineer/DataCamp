@@ -80,6 +80,365 @@ Highlights are great for making plots to show others, but they can also help you
 
 
 
+ Ref : 
+ 
+ Comparing with two KDEs
+Imagine that you work for the premier air-filter provider. Your company has asked you to build a report that looks into why 2012 was a particularly good year for sales of your ozone (O3) filter. You downloaded some helpful pollution data from the USGS, and you want to make a concise visualization that compares the general pattern of O3 pollution for 2012 to all other years on record.
+
+To do this, you can build two overlaid kernel density estimation plots (KDEs): one for 2012 O3 data and one for all other years.
+
+
+ Q : 
+ 
+ Filter the data in the first sns.kdeplot() call to include only the year 2012.
+Shade under the first KDE with the shade argument.
+Add the label '2012' for the plot legend.
+Repeat the first three steps for second sns.kdeplot() call, but filter the data to not include 2012. Use the label 'other years'.
+
+
+
+
+# Filter dataset to the year 2012
+sns.kdeplot(pollution[pollution.year == 2012].O3, 
+            # Shade under kde and add a helpful label
+            shade = True,
+            label = '2012')
+
+# Filter dataset to everything except the year 2012
+sns.kdeplot(pollution[pollution.year != 2012].O3, 
+            # Again, shade under kde and add a helpful label
+            shade = True,
+            label = 'other years')
+plt.show()
+
+
+From this plot, we can see that 2012 had slightly higher than typical O3 levels, which may explain the filter sales. However, keen observers will note that some of our cities don't have full data for 2012, which could skew the trends. Next up we will look at techniques that can help out KDE's be more honest about this lack of data.
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ 
+ 
+ Improving your KDEs
+One way of enhancing KDEs is with the addition of a rug plot. Rug plots are little dashes drawn beneath the density that show precisely where each data point falls. Adding a rug plot is particularly useful when you don't have a ton of data.
+
+With small amounts of data you often have gaps along your support with no data, and it can be hard to tell whether a non-zero KDE line means data was present or is due to a wide kernel. A rug plot helps address this.
+
+Let's return to the sns.distplot() function to draw two KDEs: one looking at the data for Vandenberg Air Force Base and the other looking at all the other cities in the pollution data. Since there is much less data contributing to the shape of the Vandenberg plot, add a rug plot beneath it.
+
+
+ Q : 
+ 
+ 
+ 
+ Turn off the histogram overlay for the first plot.
+Make the Vandenberg plot 'steelblue'.
+Turn on rug plot functionality in the Vandenberg plot.
+Remove histogram from the non-Vandenberg plot and set its color to 'gray'.
+
+
+
+
+
+sns.distplot(pollution[pollution.city == 'Vandenberg Air Force Base'].O3, 
+             label = 'Vandenberg', 
+             # Turn of the histogram and color blue to stand out
+             hist = False,
+             color = 'steelblue', 
+             # Turn on rugplot
+             rug = True)
+
+sns.distplot(pollution[pollution.city != 'Vandenberg Air Force Base'].O3, 
+             label = 'Other cities',
+             # Turn off histogram and color gray
+             hist = False,  
+             color = 'gray')
+plt.show()
+
+
+
+Rug plots can improve KDEs as they help you see those gaps that you may have otherwise assumed were filled with data. In this plot, the rug plot shows that there is a small, but not neglible gap, in the data around O3 = 0.065.
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+ Beeswarms
+Build a beeswarm plot using sns.swarmplot() that looks at the Ozone levels for all the cities in the pollution data for the month of March. To make the beeswarm a bit more legible, decrease the point size to avoid the overcrowding caused by the many points drawn on the screen. Last, since you've done some manipulation of the data to make this plot, provide a title to help the reader orient with what they are viewing.
+
+
+ Q : 
+ 
+ Subset the pollution data to include just the observations in March.
+Plot the O3 levels as the continuous value in the swarmplot().
+Decrease the point size to 3 to avoid crowding of the points.
+Title the plot 'March Ozone levels by city'.
+
+
+
+
+
+# Filter data to just March
+pollution_mar = pollution[pollution.month == 3]
+
+# Plot beeswarm with x as O3
+sns.swarmplot(y = "city",
+              x = 'O3', 
+              data = pollution_mar, 
+              # Decrease the size of the points to avoid crowding 
+              size = 3)
+
+# Give a descriptive title
+plt.title('March Ozone levels by city')
+plt.show()
+
+
+Beeswarms are a nice (and nice looking) way of comparing a bunch of classes to each other. In the plot, you can see that Vandenberg on average has high O3 levels in March. However, Houston has a much wider range and can sometimes reach much higher levels. 
+
+Additionally, you can also get a sense of data quantities. Here, you see that Des Moines and Fairbanks have far fewer observations than the other sites.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+A basic text annotation
+On the current scatter plot, you can see a particularly prominent point that contains the largest SO2 value observed for August. This point is Cincinnati on August 11th, 2013; however, you would not be able to learn this information from the plot in its current form. Basic text annotations are great for pointing out interesting outliers and giving a bit more information. Draw the readers attention to this Cincinnati value by adding a basic text annotation that gives a bit of the background about this outlier.
+
+
+
+
+ Q : 
+ 
+ Filter the data plotted in scatter plot to just August.
+Draw text annotation at x = 0.57 and y = 41 to call out the highest SO2 value.
+Label annotation with 'Cincinnati had highest observed\nSO2 value on Aug 11, 2013' (note the line break).
+Change the font-size to 'large' for the annotation.
+
+
+# Draw basic scatter plot of pollution data for August
+sns.scatterplot(x = 'CO', y = 'SO2', data = pollution[pollution.month  ==  8])
+
+# Label highest SO2 value with text annotation
+plt.text(0.57 , 41,
+         'Cincinnati had highest observed\nSO2 value on Aug 11, 2013', 
+         # Set the font to large
+         fontdict = {'ha': 'left', 'size': 'large'})
+plt.show()
+
+
+
+It's amazing how something as simple as adding a bit of text on a plot can take it from something the reader mindlessly scans to a learning experience. Here we have managed to convey the large-scale relationship of the two pollutants while also giving the viewer a glimpse into an outlier.
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Arrow annotations
+Imagine you are a city planner for Long Beach, California. Long Beach is located on the Pacific Ocean and has a large firework show every New Year's Eve. You want to look into if this show negatively impacts the air quality of the city. To do this, you will look at CO and NO2 levels on New Year's Day. However, it turns out that New Year's Day is not one of the outliers in the plot on the right, it's located in one of the more crowded areas.
+
+To help guide the reader to this point, you'll use an annotation along with an arrow that points to the New Year's Day value. This will provide a nice annotation that explains what the viewer is looking while printing the text in a less crowded region of the plot.
+
+
+ Q : 
+ 
+ Grab the row from jan_pollution that corresponds to New Years Day 2012 in the city of Long Beach using the pandas' .query() method.
+Use the CO and NO2 column values from the lb_newyears DataFrame to place the endpoint of the arrow.
+Place the annotation arrow's text in the bottom left corner of the display at x = 2, y = 15.
+'shrink' the arrow to 0.03, so it doesn't occlude the point of interest.
+
+
+# Query and filter to New Years in Long Beach
+jan_pollution = pollution.query("(month  ==  1) & (year  ==  2012)")
+lb_newyears = jan_pollution.query("(day  ==  1) & (city  ==  'Long Beach')")
+
+sns.scatterplot(x = 'CO', y = 'NO2',
+                data = jan_pollution)
+
+# Point arrow to lb_newyears & place text in lower left 
+plt.annotate('Long Beach New Years',
+             xy = (lb_newyears.CO , lb_newyears.NO2),
+             xytext = (2 , 15), 
+             # Shrink the arrow to avoid occlusion
+             arrowprops = {'facecolor':'gray', 'width': 3, 'shrink': 0.03},
+             backgroundcolor = 'white')
+plt.show()
+
+
+
+Using arrows with annotations is a great way to keep your text in a nice point-free area of the plot while precisely calling out a given point in a more-crowded location. In this plot, there is what appears to be a slightly higher than normal quantity of NO2 in the air compared to usual. The viewer's attention is driven to the point of interest at first rather than the more obvious outliers, thus kicking off their exploration of the chart in a guided way.
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Combining annotations and color
+You believe that Long Beach, California has a smog problem. Using the pollution data, you'll attempt to make a point for increasing smog reduction regulations using your data visualization wizardry. Specifically, you want to focus on the relationship of CO to O3 levels during 2014 at a city council meeting.
+
+To emphasize how Long Beach compares to a set of peer cities, you've decided to highlight Long Beach and draw attention to a particularly bad day where the CO level was 1.6 and O3 was 0.072 using an annotation.
+
+
+ Q : 
+ 
+ Using a list comprehension, make a vector of colors for each point with'orangered' if the point belongs to Long Beach, and 'lightgray' if it doesn't.
+ 
+ 
+ 
+# Make a vector where Long Beach is orangered; else lightgray
+is_lb = ['orangered' if city  ==  'Long Beach' else 'lightgray' for city in pollution['city']]
+
+
+
+
+Use the is_lb vector to provide custom colors for each point using the additional keyword argument facecolors in the scatter_kws argument.
+In the same scatter_kws dictionary, set the opacity to 0.3.
+
+
+
+
+# Make a vector where Long Beach is orangered; else lightgray
+is_lb = ['orangered' if city  ==  'Long Beach' else 'lightgray' for city in pollution['city']]
+
+# Map facecolors to the list is_lb and set alpha to 0.3
+sns.regplot(x = 'CO',
+            y = 'O3',
+            data = pollution,
+            fit_reg = False, 
+            scatter_kws = {'facecolors':is_lb, 'alpha':0.3})
+plt.show() 
+
+
+Add an annotation at x = 1.6 and y = 0.072 using the text 'April 30th, Bad Day' to draw attention to a specific point in the data.
+
+
+
+# Make a vector where Long Beach is orangered; else lightgray
+is_lb = ['orangered' if city  ==  'Long Beach' else 'lightgray' for city in pollution['city']]
+
+# Map facecolors to the list is_lb and set alpha to 0.3
+sns.regplot(x = 'CO',
+            y = 'O3',
+            data = pollution,
+            fit_reg = False,
+            scatter_kws = {'facecolors':is_lb, 'alpha': 0.3})
+
+# Add annotation to plot
+plt.text(1.6 , 0.072, 'April 30th, Bad Day')
+plt.show() 
+
+Great! List comprehensions are a great tool for quickly controlling colors or other aspects for a plot. It's often easier and cleaner to directly pass a vector of the desired aesthetics to your plot rather than adding a new column to your DataFrame (for instance in this example a column containing True or False for if a city is Long Beach) and then telling your plot how to map that column to aesthetics.
+In this course, you'll continue exploring techniques to make your data visualizations more efficient, attractive, and impactful. 
+
+Next up, colors!
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Getting rid of unnecessary color
+You might want to compare the relationship CO to NO2 values across cities using a simple scatter plot with color to differentiate the different cities' data.
+
+Scatter plot of CO and NO2 with lots of overlapping plots
+
+(Image URL : https://assets.datacamp.com/production/repositories/3841/datasets/3d05d15adfc2f44884a5abd866bc2fa67fc0cb05/messy_colored_scatter.png)
+
+Unfortunately, the resulting plot is very convoluted. It's hard to make out differences between the cities because one has to differentiate between similar colors. It turns out that sometimes the best color palette for your plot is no color at all.
+
+To remedy this hard-to-read chart, get rid of the color component and facet by each city. While the resulting plot may not be as pretty, it will be a much better tool to decipher the differences.
+
+
+ Q : 
+ 
+ To set up a chart faceted by the city, pass the plotting function the pollution data, map the city to the columns, and make the facet three columns wide.
+Use the g.map() function to map a scatterplot() over our grid with the same aesthetic as the original scatter but without the hue argument.
+
+
+# Hard to read scatter of CO and NO2 w/ color mapped to city
+# sns.scatterplot('CO', 'NO2',
+#                 alpha = 0.2,
+#                 hue = 'city',
+#                 data = pollution)
+
+# Setup a facet grid to separate the cities apart
+g = sns.FacetGrid(data = pollution,
+                  col = 'city',
+                  col_wrap = 3)
+
+# Map sns.scatterplot to create separate city scatter plots
+g.map(sns.scatterplot, 'CO', 'NO2', alpha = 0.2)
+plt.show()
+
+
+Excellent! This new faceted plot removes the pretty colors but becomes a whole lot more informative. In certain situations, if you can take something that is encoded in color and encode it in position instead, you often will increase the legibility of your chart. The balance between attractiveness and utility is something you need to balance in every plot you make.
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Fixing Seaborn's bar charts
+Seaborn's default values for the colors of bars in a bar chart are not ideal for the most accurate perception. By drawing each bar as a different color, there is a risk of the viewer seeing two identical sized bars as different sizes as people tend to see some colors as 'larger' than others.
+
+Basic rainbow colored bar plot
+
+(Image URL : https://assets.datacamp.com/production/repositories/3841/datasets/623d266d2194ed81a37d15b895cbd3641f6f5d38/bars_no_border.png)
+
+We discussed two easy ways to fix this. First, to put a border around the bars; second, change all bar colors to the same value. Try both of these solutions on our pollution data.
+
+
+ Q : 
+ 
+ Modify the default barplot by adding a black border around each bar.
+
+
+
+import numpy as np
+
+sns.barplot(y = 'city', x = 'CO', 
+              estimator = np.mean,
+            ci = False,
+              data = pollution,
+              # Add a border to the bars
+            edgecolor = 'black')
+plt.show()
+
+
+
+Now, make your plot more perceptually precise by coloring all bars 'cadetblue'.
+
+
+
+import numpy as np
+
+sns.barplot(y = 'city', x = 'CO', 
+              estimator = np.mean,
+            ci = False,
+              data = pollution , 
+              # Replace border with bar colors
+            color = 'cadetblue')
+plt.show()
+
+
+
+Good! Adding borders is an easy and quick way to improve default bar charts without sacrificing some of the trippy colors. Spending a tiny bit more time to adjust the default colors will result in a more accurate and easy to read chart.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 
 
