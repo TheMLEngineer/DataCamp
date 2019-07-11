@@ -1,0 +1,2057 @@
+
+
+ Q : 
+
+Plotting a scatterplot from longitude and latitude
+When using latitude and longitude to create a scatterplot, which value is plotted along the horizontal axis (as x)?
+
+
+
+ A : 
+
+Longitude is plotted as x on the horizontal axis.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+
+
+Styling a scatterplot
+In this exercise, you'll be using plt.scatter() to plot the father and son height data from the video. The father_son DataFrame is available in your workspace. In each scatterplot, plot father_son.fheight as x-axis and father_son.sheight as y-axis.
+
+
+
+ Q : 
+
+
+Import the pyplot module from matplotlib with the usual alias.
+Create a scatterplot of father and son heights with a square marker (encoded as s) that is 'darkred'. Show your plot.
+
+
+
+
+# Import matplotlib.pyplot
+import matplotlib.pyplot as plt
+
+# Scatterplot 1 - father heights vs son heights with darkred square markers
+plt.scatter(father_son.fheight, father_son.sheight, c = 'darkred', marker = 's')
+
+# Show your plot
+plt.show()
+
+
+Edit the code to change the markers for your scatterplot of father heights vs son heights. Make the markers 'yellow' with a 'darkblue' edgecolor.
+
+
+
+
+# Import matplotlib.pyplot
+import matplotlib.pyplot as plt
+
+# Scatterplot 2 - yellow markers with darkblue borders
+plt.scatter(father_son.fheight, father_son.sheight, c = 'yellow', edgecolor = 'darkblue')
+
+# Show the plot
+plt.show()
+
+
+
+Add gridlines and axes labels ('father height (inches)' and 'son height (inches)') to your scatterplot.
+Give the plot a title of 'Son Height as a Function of Father Height'.
+
+
+
+# Import matplotlib.pyplot
+import matplotlib.pyplot as plt
+
+# Scatterplot 3
+plt.scatter(father_son.fheight, father_son.sheight,  c = 'yellow', edgecolor = 'darkblue')
+plt.grid()
+plt.xlabel('father height (inches)')
+plt.ylabel('son height (inches)')
+plt.title('Son Height as a Function of Father Height')
+
+# Show your plot
+plt.show()
+
+
+
+
+Great! You have shown how additional arguments can be given to control the look of your scatterplots.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Extracting longitude and latitude
+A DataFrame named df has been loaded to your workspace. Complete the code to extract longitude and latitude to new, separate columns.
+
+
+
+ Q : 
+
+
+Print the first few rows with print() and df.head().
+Use a list comprehension to extract latitude to a new column called lat.
+Use a list comprehension to extract longitude to a new column called lng.
+Print the first few rows with print() and df.head() again to confirm the new columns.
+
+
+
+
+# print the first few rows of df 
+print(df.head())
+
+# extract latitude to a new column: lat
+df['lat'] = [loc[0] for loc in df.Location]
+
+# extract longitude to a new column: lng
+df['lng'] = [loc[1] for loc in df.Location]
+
+# print the first few rows of df again
+print(df.head())
+
+
+
+<script.py> output:
+       StopID                             StopName                 Location
+    0    4431      MUSIC CITY CENTRAL 5TH - BAY 11   (36.16659, -86.781996)
+    1     588         CHARLOTTE AVE & 7TH AVE N WB      (36.165, -86.78406)
+    2     590         CHARLOTTE AVE & 8TH AVE N WB  (36.164393, -86.785451)
+    3     541  11TH AVE / N GULCH STATION OUTBOUND  (36.162249, -86.790464)
+
+
+       StopID                             StopName                 Location        lat        lng
+    0    4431      MUSIC CITY CENTRAL 5TH - BAY 11   (36.16659, -86.781996)  36.166590 -86.781996
+    1     588         CHARLOTTE AVE & 7TH AVE N WB      (36.165, -86.78406)  36.165000 -86.784060
+    2     590         CHARLOTTE AVE & 8TH AVE N WB  (36.164393, -86.785451)  36.164393 -86.785451
+    3     541  11TH AVE / N GULCH STATION OUTBOUND  (36.162249, -86.790464)  36.162249 -86.790464
+
+
+
+
+Nicely done. Now you can pass longitude and latitude more easily to the x and y arguments of a scatterplot.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+ Ref : 
+
+
+Plotting chicken locations
+Now you will create a scatterplot that shows where the Nashville chickens are!
+
+
+
+ Q : 
+
+
+The path to the chicken dataset is in the variable chickens_path. Use the read_csv function of pandas to load it into a DataFrame called chickens.
+Use the .head() function to look at the first few rows.
+Next add the x and y arguments to plt.scatter() to plot the locations of the Nashville chickens. Use the default marker and color options.
+Show the plot using plt.show().
+
+
+
+
+
+# Import pandas and matplotlib.pyplot using their customary aliases
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+chickens = pd.read_csv(chickens_path)
+
+# Look at the first few rows of the chickens DataFrame
+print(chickens.head())
+
+# Plot the locations of all Nashville chicken permits
+plt.scatter(x = chickens.lng , y = chickens.lat)
+
+# Show the plot
+plt.show()
+
+
+
+<script.py> output:
+       Unnamed: 0  permit       city state    zip  district date_issued        lat        lng
+    0           0   288.0  Nashville    TN  37211      30.0  11/26/2014  36.029132 -86.724578
+    1           1   435.0  Nashville    TN  37211      19.0  05/18/2015  36.069132 -86.754578
+    2           2   270.0  Nashville    TN  37216       7.0  11/20/2014  36.236134 -86.711204
+    3           3   249.0  Nashville    TN  37216      25.0  12/29/2014  36.246134 -86.751204
+    4           4   200.0  Nashville    TN  37221      22.0  12/10/2014  36.029367 -86.935290
+
+
+
+We can see the relative location of the Nashville chickens using longitude for the x-axis and latitude for the y-axis. Next, now you'll up your game by plotting the locations on an actual map!
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+
+
+Creating a GeoDataFrame & examining the geometry
+Let's see where service districts are in Nashville. The path to the service district shapefile has been stored in the variable shapefile_path.
+
+
+
+
+ Q : 
+
+
+Import geopandas with its common alias gpd.
+Read in the service district shapefile using geopandas and look at the first 5 rows using the head() method.
+Print the geometry field in the first row (rowname is '0') to see the data contained in that field. You will pass service_district.loc[0, 'geometry'] to the print() function to do this.
+
+
+
+
+# Import geopandas
+import geopandas as gpd 
+
+# Read in the services district shapefile and look at the first few rows.
+service_district = gpd.read_file(shapefile_path)
+print(service_district.head())
+
+# Print the contents of the service districts geometry in the first row
+print(service_district.loc[0, 'geometry'])
+
+
+
+
+That's right! The geometry field holds a series of latitude/longitude pairs that define the border of a polygon. Printing a geometry field gives all of the latitude/longitude pairs that make up the polygon boundary.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Plotting shapefile polygons
+The next step is to show the map of polygons. We have imported matplotlib.pyplot as plt and geopandas as gpd, A GeoDataFrame of the service districts called service_district is in your workspace.
+
+
+
+
+ Q : 
+
+
+
+First plot the service districts without additonal arguments by calling .plot() on the GeoDataFrame.
+Take a look at it with plt.show(). This has been done for you.
+Now use the .plot() method again, but this time add column='name' to color the shapes according to their names and legend=True to see those names. Remember to show the plot.
+
+
+
+# Import packages
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# Plot the Service Districts without any additional arguments
+service_district.plot()
+plt.show()
+
+# Plot the Service Districts, color them according to name, and show a legend
+service_district.plot(column = 'name', legend = True)
+plt.show()
+
+
+
+Notice how easy it is to add style to the plot. Now you have a map of service districts that you can plot with the chicken data.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q : 
+
+
+Geometry
+Geometry is a special type of data structure. What types of geometries might be stored in a geometry field?
+
+
+
+ A : 
+
+
+lines, points, and polygons
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Plotting points over polygons - part 1
+Make a basic plot of the service districts with the chicken locations. The packages needed have already been imported for you. The chickens DataFrame and service_district GeoDataFrame are in your workspace.
+
+
+
+ Q : 
+
+
+Plot the shapefile for the service districts, using the name column to color the polygons.
+Add chicken locations, using the lat and lng columns from the chickens DataFrame, and make them black.
+Show your plot.
+
+
+
+
+
+# Plot the service district shapefile
+service_district.plot(column='name')
+
+# Add the chicken locations
+plt.scatter(x=chickens.lng, y=chickens.lat,  c = 'black')
+
+# Show the plot
+plt.show()
+
+
+Wow! It looks like most of the chickens are in the urban services district! Next, you'll add the finishing touches.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Plotting points over polygons - part 2
+We have loaded the usual libraries as pd, plt, and gpd, the chickens dataset as chickens, and the service districts as service_district. Plot the service districts and chicken permits together to see what story your visualization tells.
+
+
+
+ Q : 
+
+
+Start by plotting the GeoDataFrame with the service districts. Use the name column for your legend color.
+Next plot latitude and longitude from the chicken data to create a scatterplot. Specify 'black' for the marker color and give them a 'white' outline.
+Give the plot a title: 'Nashville Chicken Permits' and label the x-axis as 'longitude' and the y-axis as 'latitude'.
+Add grid lines and show your plot.
+
+
+
+# Plot the service district shapefile
+service_district.plot(column='name', legend=True)
+
+# Add the chicken locations
+plt.scatter(x=chickens.lng , y=chickens.lat , c= 'black', edgecolor = 'white')
+
+
+# Add labels and title
+plt.title('Nashville Chicken Permits')
+plt.xlabel('longitude')
+plt.ylabel('latitude')
+
+# Add grid lines and show the plot
+plt.grid()
+plt.show()
+
+
+That's excellent work! Congratulations on building your first 2-layer map in Python.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Q : 
+
+
+Working with GeoJSON
+The advantage of GeoJSON over shapefiles is:
+
+
+
+The file is human readable, so you can open it in a text editor and understand the contents.
+press
+1
+The file stands alone and doesn't rely on other files.
+press
+2
+GeoJSON supports multi-part geometries.
+press
+3
+All of these are advantages.              (A)
+
+
+
+ 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Colormaps
+When you want to differentiate regions, but not imply any type of relationship between the regions, a qualitative colormap is the best choice. In this exercise you'll compare a qualitative colormap to a sequential (quantitative) colormap using the school districts GeoDataFrame. It is available in your workspace as school_districts.
+
+
+
+ Q : 
+
+
+
+Plot school_districts with the tab20 colormap. Use 'district' to create a legend and set legend_kwds = lgnd_kwds.
+
+
+
+
+# Set legend style
+lgnd_kwds = {'title': 'School Districts',
+               'loc': 'upper left', 'bbox_to_anchor': (1, 1.03), 'ncol': 1}
+
+# Plot the school districts using the tab20 colormap (qualitative)
+school_districts.plot(column = 'district', cmap = 'tab20', legend = True, legend_kwds = lgnd_kwds)
+plt.xlabel('Latitude')
+plt.ylabel('Longitude')
+plt.title('Nashville School Districts')
+plt.show();
+
+
+
+
+Plot school_districts with the sequential summer colormap. Keep the other arguments as they are.
+
+
+
+# Set legend style
+lgnd_kwds = {'title': 'School Districts',
+               'loc': 'upper left', 'bbox_to_anchor': (1, 1.03), 'ncol': 1}
+
+# Plot the school districts using the summer colormap (sequential)
+school_districts.plot(column = 'district', cmap = 'summer', legend = True, legend_kwds = lgnd_kwds)
+plt.xlabel('Latitude')
+plt.ylabel('Longitude')
+plt.title('Nashville School Districts')
+plt.show();
+
+
+
+
+Plot the school districts without setting the column. Use the qualitative Set3 colormap and set legend = True.
+
+
+# Set legend style
+lgnd_kwds = {'title': 'School Districts',
+               'loc': 'upper left', 'bbox_to_anchor': (1, 1.03), 'ncol': 1}
+
+# Plot the school districts using Set3 colormap without the column argument
+school_districts.plot(cmap = 'Set3', legend = True, legend_kwds = lgnd_kwds)
+plt.xlabel('Latitude')
+plt.ylabel('Longitude')
+plt.title('Nashville School Districts')
+plt.show();
+
+
+
+There is no legend when the column argument is not supplied even if you set legend to True!
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Map Nashville neighborhoods
+This time you'll read a GeoJSON file in to a GeoDataFrame to take a quick peek at where Nashville neighborhoods are.
+
+
+
+ Q : 
+
+
+Import geopandas and matplotlib.pyplot using the customary aliases.
+Read in the neighborhoods GeoJSON file to a GeoDataFrame called neighborhoods and print the first few rows with .head(). The path to this file is stored in a variable called neighborhoods_path.
+Plot neighborhoods coloring the polygons by the name column of the GeoDataFrame and using the Dark2 color map. This time, don't include a legend.
+Show the plot.
+
+
+
+
+
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+# Read in the neighborhoods geojson file
+neighborhoods = gpd.read_file(neighborhoods_path)
+
+# Print the first few rows of neighborhoods
+print(neighborhoods.head())
+
+# Plot the neighborhoods, color according to name and use the Dark2 colormap
+neighborhoods.plot(column = 'name', cmap = 'Dark2')
+
+# Show the plot.
+plt.show()
+
+
+
+<script.py> output:
+                       name                                           geometry
+    0  Historic Buena Vista  (POLYGON ((-86.79511056795417 36.1757596496334...
+    1        Charlotte Park  (POLYGON ((-86.87459668651866 36.1575770268129...
+    2              Hillwood  (POLYGON ((-86.87613708067906 36.1355409894979...
+    3            West Meade  (POLYGON ((-86.9038380396094 36.1255414807897,...
+    4          White Bridge  (POLYGON ((-86.86321427797685 36.1288622289404...
+
+
+
+Whoa! That's a lot of neighborhoods! How will we find one to stroll through and look at public art?
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Changing coordinate reference systems
+In this exercise you will learn how to find a GeoDataFrame's coordinate reference system and how to change it. The school districts GeoDataFrame is available in your workspace as school_districts.
+
+
+
+ Q : 
+
+
+Print the first row of school_districts and the crs property of this GeoDataFrame.
+Convert the coordinate reference system of school_districts to epsg:3857.
+Print the crs property again to confirm that it was changed.
+
+
+
+
+# Print the first row of school districts GeoDataFrame and the crs
+print(school_districts.head(1))
+print(school_districts.crs)
+
+# Convert the crs to epsg:3857
+school_districts.geometry = school_districts.geometry.to_crs(epsg = 3857)
+                        
+# Print the first row of school districts GeoDataFrame and the crs again
+print(school_districts.head(1))
+print(school_districts.crs)
+
+
+
+
+<script.py> output:
+       first_name       city    zip                           email state  ... position term_expir district         phone                                           geometry
+    0  Dr. Sharon  Nashville  37218  gentryfordistrict1@comcast.net    TN  ...   Member       2016        1  615-268-5269  (POLYGON ((-86.77136400034288 36.3835669997190...
+    
+    [1 rows x 12 columns]
+    {'init': 'epsg:4326'}
+       first_name       city    zip                           email state  ... position term_expir district         phone                                           geometry
+    0  Dr. Sharon  Nashville  37218  gentryfordistrict1@comcast.net    TN  ...   Member       2016        1  615-268-5269  (POLYGON ((-9659344.055955959 4353528.76657080...
+    
+    [1 rows x 12 columns]
+    {'init': 'epsg:3857', 'no_defs': True}
+
+
+
+
+
+Nicely done! You can change the coordinate reference system of a GeoDataFrame by changing the crs property of the GeoDataFrame. Notice that the units for geometry change when you change the CRS. You always need to ensure two GeoDataFrames share the same crs before you spatially join them.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Construct a GeoDataFrame from a DataFrame
+In this exercise, you will construct a geopandas GeoDataFrame from the Nashville Public Art DataFrame. You will need to import the Point constructor from the shapely.geometry module to create a geometry column in art before you can create a GeoDataFrame from art. This will get you ready to spatially join the art data and the neighborhoods data in order to discover which neighborhood has the most art.
+
+The Nashville Public Art data has been loaded for you as art.
+
+
+
+ Q : 
+
+
+Import Point from the shapely.geometry module.
+Print the head() of the art data.
+Complete the code for a lambda expression that will create a Point geometry column from the lng and lat columns in art. Remember that longitude comes first!
+Build a GeoDataFrame using art and call it art_geo. Set crs equal to neighborhoods.crs and set geometry equal to the column you just created. Print the type() of art_geo to verify it is a GeoDataFrame.
+
+
+
+
+
+import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
+import matplotlib.pyplot as plt
+
+# Print the first few rows of the art DataFrame
+print(art.head())
+
+# Create a geometry column from lng & lat
+art['geometry'] = art.apply(lambda x: Point(float(x.lng), float(x.lat)), axis=1)
+
+# Create a GeoDataFrame from art and verify the type
+art_geo = gpd.GeoDataFrame(art, crs = neighborhoods.crs, geometry = art.geometry)
+print(type(art_geo))
+
+
+
+
+
+
+<script.py> output:
+                                 title                                 last_name                 first_name                            address                                             medium  \
+    0          [Cross Country Runners]                                     Frost                      Miley     4001 Harding Rd., Nashville TN                                             Bronze   
+    1  [Fourth and Commerce Sculpture]                                    Walker                        Lin  333 Commerce Street, Nashville TN                                                NaN   
+    2              12th & Porter Mural                                   Kennedy                        Kim                  114 12th Avenue N                   Porter all-weather outdoor paint   
+    3                A Splash of Color  Stevenson and Stanley and ROFF (Harroff)  Doug and Ronnica and Lynn                   616 17th Ave. N.  Steel, brick, wood, and fabric on frostproof c...   
+    4             A Story of Nashville                                    Ridley                       Greg    615 Church Street, Nashville TN                           Hammered copper repousse   
+    
+            type                                               desc       lat       lng                    loc  
+    0  Sculpture                                                NaN  36.12856 -86.83660   (36.12856, -86.8366)  
+    1  Sculpture                                                NaN  36.16234 -86.77774  (36.16234, -86.77774)  
+    2      Mural  Kim Kennedy is a musician and visual artist wh...  36.15790 -86.78817   (36.1579, -86.78817)  
+    3      Mural  Painted wooden hoop dancer on a twenty foot po...  36.16202 -86.79975  (36.16202, -86.79975)  
+    4     Frieze  Inside the Grand Reading Room, this is a serie...  36.16215 -86.78205  (36.16215, -86.78205)  
+    <class 'geopandas.geodataframe.GeoDataFrame'>
+
+
+
+
+
+Great work! Now that the public art data is in a GeoDataFrame we can join it to the neighborhoods with a special kind of join called a spatial join. Let's go learn about how that's done!
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Spatial join practice
+Is there a difference between art (point data) that intersects with neighborhoods (polygon data) and art (point data) within neighborhoods (polygon data)? Explore different spatial joins with the art_geo and neighborhoods GeoDataFrames, which are available in your workspace.
+
+
+
+ Q : 
+
+
+Write a spatial join to find the art in art_geo that intersects with neighborhoods. Call this art_intersect_neighborhoods and print the .shape property to see how many rows and columns resulted.
+
+
+
+# Spatially join art_geo and neighborhoods 
+art_intersect_neighborhoods = gpd.sjoin(art_geo, neighborhoods, op = 'intersects')
+
+# Print the shape property of art_intersect_neighborhoods
+print(art_intersect_neighborhoods.shape)
+
+
+
+
+Now write a spatial join to find the art in art_geo that is within neighborhoods. Call this art_within_neighborhoods and take a look at the .shape property to see how many rows and columns resulted.
+
+
+# Create art_within_neighborhoods by spatially joining art_geo and neighborhoods
+art_within_neighborhoods = gpd.sjoin(art_geo, neighborhoods, op = 'within')
+
+# Print the shape property of art_within_neighborhoods
+print(art_within_neighborhoods.shape)
+
+
+
+Finally, write a spatial join to find the art locations in art_geo that contain neighborhoods. Call this GeoDataFrame art_containing_neighborhoods and take a look at the .shape property to see how many rows and columns resulted.
+
+
+
+# Spatially join art_geo and neighborhoods and using the contains op
+art_containing_neighborhoods = gpd.sjoin(art_geo, neighborhoods, op = 'contains')
+
+# Print the shape property of art_containing_neighborhoods
+print(art_containing_neighborhoods.shape)
+
+
+
+
+<script.py> output:
+    (40, 13)
+
+<script.py> output:
+    (40, 13)
+
+<script.py> output:
+    (0, 13)
+
+
+
+There are no neighborhood polygons contained within an artworks point location. That's not too surprising is it?
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Finding the neighborhood with the most public art
+Now that you have created art_geo, a GeoDataFrame, from the art DataFrame, you can join it spatially to the neighborhoods data to see what art is in each neighborhood.
+
+
+
+
+ Q : 
+
+
+
+Merge the art_geo and neighborhoods GeoDataFrames with a spatial join to create a new GeoDataFrame called neighborhood_art. Find the art that is within neighborhoods.
+Print the first few rows of the neighborhood art GeoDataFrame.
+
+
+
+
+# import packages
+import geopandas as gpd
+import pandas as pd
+
+# Spatially join neighborhoods with art_geo
+neighborhood_art = gpd.sjoin(art_geo, neighborhoods, op = "within")
+
+# Print the first few rows
+print(neighborhood_art.head())
+
+
+
+
+<script.py> output:
+                                    title last_name first_name                                            address                                       medium  ...       lng                    loc  \
+    1     [Fourth and Commerce Sculpture]    Walker        Lin                  333 Commerce Street, Nashville TN                                          NaN  ... -86.77774  (36.16234, -86.77774)   
+    4                A Story of Nashville    Ridley       Greg                    615 Church Street, Nashville TN                     Hammered copper repousse  ... -86.78205  (36.16215, -86.78205)   
+    21                        Chet Atkins     Faxon    Russell  Corner of Fifth Avenue North and Union Street,...  Bronze stool and guitar on a granite plynth  ... -86.78102  (36.16466, -86.78102)   
+    22  Children's Chairs For The Seasons    McGraw     Deloss                    615 Church Street, Nashville TN                 Mixed Media - wood and paint  ... -86.78205  (36.16215, -86.78205)   
+    34                    Foliated Scroll   Bloomer       Kent                    615 Church Street, Nashville TN                                     Aluminum  ... -86.78205  (36.16215, -86.78205)   
+    
+                                   geometry  index_right             name  
+    1   POINT (-86.77774000000001 36.16234)           41  Urban Residents  
+    4            POINT (-86.78205 36.16215)           41  Urban Residents  
+    21           POINT (-86.78102 36.16466)           41  Urban Residents  
+    22           POINT (-86.78205 36.16215)           41  Urban Residents  
+    34           POINT (-86.78205 36.16215)           41  Urban Residents  
+    
+    [5 rows x 13 columns]
+
+
+
+Now that you have successfully joined art and neighborhoods you can see the title and other information about the artwork along with the name of the neighborhood where it is located. Next you'll do the work to see what art is in which neighborhood!
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Aggregating points within polygons
+Now that you have spatially joined art and neighborhoods, you can group, aggregate, and sort the data to find which neighborhood has the most public art. You can count artwork titles to see how many artworks are in each neighborhood.
+
+
+
+ Q : 
+
+
+
+Get just name and title from neighborhood_art and then group by each neighborhood's name (name). Save this as neighborhood_art_grouped
+Aggregate neighborhood_art_grouped to see how many artworks are within each polygon. Use the .agg('count') function to get a count of art in each neighborhood and sort the results with .sort_values(), sorting by title with ascending set to False. Print it.
+
+
+
+
+# Get name and title from neighborhood_art and group by name
+neighborhood_art_grouped = neighborhood_art[['name', 'title']].groupby('name')
+
+# Aggregate the grouped data and count the artworks within each polygon
+print(neighborhood_art_grouped.agg('count').sort_values(by = 'title', ascending = False))
+
+
+
+
+
+<script.py> output:
+                              title
+    name                           
+    Urban Residents              22
+    Lockeland Springs             3
+    Edgehill (ONE)                2
+    Germantown                    2
+    Hillsboro-West End            2
+    Inglewood                     2
+    Sunnyside                     2
+    Chestnut Hill (TAG)           1
+    Historic Edgefield            1
+    McFerrin Park                 1
+    Renraw                        1
+    Wedgewood Houston (SNAP)      1
+
+
+
+It looks like most of the public art is in the Urban Residents neighborhood. Next you'll subset neighborhood art and neighborhoods to get only the Urban Residents art and neighborhood.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Plotting the Urban Residents neighborhood and art
+Now you know that most art is in the Urban Residents neighborhood. In this exercise, you'll create a plot of art in that neighborhood. First you will subset just the urban_art from neighborhood_art and you'll subset the urban_polygon from neighborhoods. Then you will create a plot of the polygon as ax before adding a plot of the art.
+
+
+
+ Q : 
+
+
+Create a GeoDataFrame called urban_art using the .loc[] accessor to get only the art in the "Urban Residents" neighborhood.
+Use .loc[] again to create a GeoDataFrame called urban_polygon from neighborhoods with only the "Urban Residents" polygon.
+Plot urban_polygon as ax and set color to lightgreen.
+Plot the art in urban_art. Pass three arguments: Set ax = ax to add this plot to the urban_polygon, use type to label the points, and set legend = True.
+
+
+
+
+
+# Create urban_art from neighborhood_art where the neighborhood name is Urban Residents
+urban_art = neighborhood_art.loc[neighborhood_art.name == "Urban Residents"]
+
+# Get just the Urban Residents neighborhood polygon and save it as urban_polygon
+urban_polygon = neighborhoods.loc[neighborhoods.name == "Urban Residents"]
+
+# Plot the urban_polygon as ax 
+ax = urban_polygon.plot(color = 'lightgreen')
+
+# Add a plot of the urban_art and show it
+urban_art.plot( ax = ax, column = 'type', legend = True);
+plt.show()
+
+
+
+
+Great work! The light green area shows the boundary of the Urban Residents neighborhood and the art locations are color coded by type of work.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Find the area of the Urban Residents neighborhood
+How big is the Urban Residents neighborhood?
+
+
+
+
+ Q : 
+
+
+Print the urban polygon and notice the units of each longitude/latitude pair.
+Create urban_poly_3857 by calling to_crs() on urban_polygon and print the head again. Notice the units of each longitude/latitude pair have changed.
+Print the area of the urban_poly_3857 geometry. Remember to divide by 10**6 to get kilometers squared.
+
+
+
+
+# Print the head of the urban polygon 
+print(urban_polygon.head())
+
+# Create a copy of the urban_polygon using EPSG:3857 and print the head
+urban_poly_3857 = urban_polygon.to_crs(epsg = 3857)
+print(urban_poly_3857.head())
+
+# Print the area of urban_poly_3857 in kilometers squared
+area = urban_poly_3857.geometry.area / 10**6
+print('The area of the Urban Residents neighborhood is ', area[0], ' km squared')
+
+
+
+
+
+<script.py> output:
+       index             name                                           geometry
+    0     41  Urban Residents  (POLYGON ((-86.78122053774267 36.1645653773768...
+       index             name                                           geometry
+    0     41  Urban Residents  (POLYGON ((-9660441.280680289 4323289.00479539...
+    The area of the Urban Residents neighborhood is  1.1289896057984288  km squared
+
+
+
+
+The Urban Residents neighborhood is around 1.13 square km. That seems manageable for walking to see the public art!
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+The center of the Urban Residents neighborhood
+Now you'll find the center point of the urban_poly_3857 and plot it over the polygon.
+
+
+
+ Q : 
+
+
+Create downtown_center, from urban_poly_3857 using the GeoSeries centroid attribute.
+Print the datatype of downtown_center.
+Plot urban_poly_3857 as ax using lightgreen for the color.
+Plot the downtown_center, setting ax = ax and color = black. The x-axis ticks are rotated for you. We've included the code to show the plot.
+
+
+
+
+# Create downtown_center from urban_poly_3857
+downtown_center = urban_poly_3857.geometry.centroid
+
+# Print the type of downtown_center 
+print(type(downtown_center))
+
+# Plot the urban_poly_3857 as ax and add the center point
+ax = urban_poly_3857.plot(color = 'lightgreen')
+downtown_center.plot(ax = ax, color = 'black')
+plt.xticks(rotation = 45)
+
+# Show the plot
+plt.show()
+
+
+
+
+
+<script.py> output:
+    <class 'geopandas.geoseries.GeoSeries'>
+
+
+
+
+
+You can see the centroid of the Urban Residents neighborhood. Notice that latitude and longitude are in meters instead of degrees. In the next exercise you will calculate the distance in meters of each artwork from the centroid of the Urban Residents neighborhood.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+
+Prepare to calculate distances
+In this exercise you will prepare a GeoDataFrame called art_dist_meters with the locations of downtown art converted to meters using EPSG:3857. You will use art_dist_meters in the next exercise to calculate the distance of each artwork from the center of the Urban Residents neighborhood in meters.
+
+The art data is in your workspace, along with urban_poly_3857 and center_point, the center point of the Urban Residents neighborhood. A geometry column called geometry that uses degrees has already been created in the art DataFrame.
+
+
+
+
+ Q : 
+
+
+
+Create a GeoDataFrame called art_dist_meters, using the art DataFrame and the geometry column from art. Set crs = {'init': 'epsg:4326'} since the geometry is in decimal degrees. Print the first two rows.
+Now explicitly set the coordinate reference system to EPSG:3857 for art_dist_meters by using to_crs(). Print the first two rows again.
+Add a column called center to art_dist_meters, setting it equal to center_point for every row .
+
+
+
+
+# Import packages
+from shapely.geometry import Point
+import geopandas as gpd
+import pandas as pd
+
+# Create art_dist_meters using art and the geometry from art
+art_dist_meters = gpd.GeoDataFrame(art, geometry = art.geometry, crs = {'init': 'epsg:4326'})
+print(art_dist_meters.head(2))
+
+# Set the crs of art_dist_meters to use EPSG:3857
+art_dist_meters.geometry = art_dist_meters.geometry.to_crs(epsg = 3857)
+print(art_dist_meters.head(2))
+
+# Add a column to art_meters, center
+art_dist_meters['center'] = center_point
+
+
+
+
+
+Well done! The art_dist_meters Data Frame has the location of each artwork and the center point of the Urban Residents neighborhood -- both using meters for distance.
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+
+Art distances from neighborhood center
+Now that you have the center point and the art locations in the units we need to calculate distances in meters, it's time to perform that step.
+
+
+
+ Q : 
+
+
+
+Import the package to help with pretty printing.
+Create a dictionary, art_distances by iterating through art_dist_meters, using title as the key and the distance() from center as the value. Pass center as the other argument to GeoSeries.distance().
+Pretty print art_distances using the pprint method of pprint.
+
+
+
+# Import package for pretty printing
+import pprint
+
+# Build a dictionary of titles and distances for Urban Residents art
+art_distances = {}
+for row in art_dist_meters.iterrows():
+    vals = row[1]
+    key = vals['title']
+    ctr = vals['center']
+    art_distances[key] = vals['geometry'].distance(ctr)
+
+# Pretty print the art_distances
+pprint.pprint(art_distances)
+
+
+
+
+<script.py> output:
+    {'12th & Porter Mural': 1269.1502879119878,
+     'A Splash of Color': 2471.774738455904,
+     'A Story of Nashville': 513.5632030470281,
+     'Aerial Innovations Mural': 4516.755210408422,
+     'Airport Sun Project': 12797.594229783645,
+     'Andrew Jackson': 948.9812821640502,
+     'Angel': 10202.565989739454,
+     'Anticipation': 688.8349105273556,
+     'April Baby': 4779.394424949201,
+     'Arial Triangle [from the Gravity Series]': 4315.322141146862,
+     'Ariel': 4380.927773956353,
+     'Athena Parthenos': 4294.778095689335,
+     'Benedictio': 5313.624214291833,
+     'Bicycle Bus-Green Fleet': 468.08286355623386,
+     'Blowing Bubbles': 10202.565989739454,
+     'Breaking Bread': 1279.2562933101267,
+     'Building a Positive Community': 2253.4179974171784,
+     'Can-Do': 5648.0863220822475,
+     'Chet Atkins': 604.4489448101176,
+     "Children's Chairs For The Seasons": 513.5632030470281,
+     'Confederate Memorial': 5313.624214291833,
+     'Confederate Private Monument': 4316.459103419423,
+     'Confluence': 2918.52441210167,
+     'Cool Fences': 6491.846030117232,
+     'Dancing on Air': 12740.992598288678,
+     'Demonbreun Hill Mural': 1836.745541558719,
+     'Dragon Wall Mural': 4202.685636643363,
+     'Eastside Mural': 3844.0419035683785,
+     'Ed and Bernice Johnson and Mary': 4386.085951504967,
+     'Edward Ward Carmack': 887.585020866261,
+     'Flights of Fantasy': 12774.65773678049,
+     'Foliated Scroll': 513.5632030470281,
+     'Founding Fathers Cenotaph': 3106.06279590863,
+     'Founding of Nashville': 524.6437333038283,
+     'Furman Monument': 5313.624214291833,
+     'Gold Star Monument to World War I Veterans': 4357.379534876932,
+     'Gone Fishing': 530.616188245072,
+     'Happy Times at The Arcade': 569.4912044238603,
+     'Headstones': 2096.7510079424032,
+     'Hillsboro Village Mural': 3866.5643774109235,
+     'History in Stained Glass': 3106.06279590863,
+     'I BELIEVE IN NASHVILLE 12 South': 5441.609262190194,
+     'I BELIEVE IN NASHVILLE East Nashville': 8331.604019727105,
+     'I BELIEVE IN NASHVILLE North Nashville': 2244.83767876048,
+     'In Concert': 11872.744952002198,
+     'Industry - The TVA Group': 3656.412714581351,
+     'Industry, Agriculture, Commerce, Statesmanship': 873.7828608570214,
+     'Isabella': 854.171816066617,
+     'Isabelle and Calvin': 2371.2131934515573,
+     'John L. Nolen Monument': 5313.624214291833,
+     'John W. Thomas': 4357.379534876932,
+     'Johnny Cash Mural': 502.9116412214602,
+     'La Storia della Terra': 513.5632030470281,
+     'Lane Motor Museum': 5605.468565678456,
+     'Les Paul Guitar Mural': 333.5369487971349,
+     'Library Doors': 513.5632030470281,
+     'Lightning Wire Fountain': 153.9480594577744,
+     'M&M Furniture-Riverside Village': 8405.315599594685,
+     'Major General William Bate Monument': 5313.624214291833,
+     'Maybelle Carter': 1449.49295820323,
+     'Migration': 5499.186846246761,
+     'Music City Center - Art Collection': 621.0235475308206,
+     'Nashville, A History through Maps and Aerial Views': 513.5632030470281,
+     'Oh, Roy': 73.56377211370494,
+     'Orpheus and Eurydice': 253.3046306555855,
+     'Our Past, Your Future': 5897.465650989722,
+     'Owen Bradley': 2053.095133334595,
+     'Paint Waterfalls': 3004.7099763342744,
+     'Parthenon East Pediment': 4244.824359401518,
+     'Parthenon West Pediment': 4334.959058293624,
+     'Phillips Monument': 5313.624214291833,
+     'Phillips Toy Mart': 13065.826512554317,
+     'Phoenix': 4386.085951504967,
+     'Piecing It All Together': 522.7121179959199,
+     'Pioneer Family - The Mountain Group': 976.2784909542801,
+     'Polarbears with Snowballs': 2771.446344841677,
+     'President Andrew Johnson': 874.1410051776407,
+     'Raccoons and the Magic Horseshoes': 10483.431746974386,
+     'Rolf and Daughters Mural': 2820.0250532101322,
+     'Rolling Hills': 18155.933454805603,
+     'Rose on 65th Street': 854.171816066617,
+     'Roy Orbison Tribute Statue': 2311.007529787831,
+     'Safe Haven Family Shelter Mural': 2836.0848072776653,
+     'Sam Davis': 7970.6434308398275,
+     'Sam Davis of Tennessee': 913.6890525931815,
+     'Samaritan': 10202.565989739454,
+     'Sea Serpent': 4633.8474270161105,
+     'Sergeant Alvin C. York': 829.6197273608212,
+     'Servant or Master': 4223.173298465153,
+     'Sir Draco Star (a.k.a Eli)': 1386.1992340409206,
+     'Soldier and Farmer - The Equestrian Group': 1026.1965547701525,
+     'Something in the Air': 4008.964761786244,
+     'St. George and the Maiden': 10202.565989739454,
+     'St. Vincent de Paul': 3399.9511634425003,
+     'Statue of Dr. W. E. B. Dubois': 3131.6307094011554,
+     'Stay Tuned': 2536.216308257965,
+     'Teacher and Student': 7970.6434308398275,
+     "Tennessee Confederate Women's Memorial": 747.6388184103594,
+     'Tennessee Falls': 723.171524733401,
+     'Tennessee Korean War Memorial': 712.1168144799824,
+     "Tennessee Vietnam Veteran's Memorial": 735.2390623391431,
+     'Tennessee WWII Memorial': 1927.1453797143797,
+     'The Birth of Apollo': 246.551190147003,
+     'The Flutist': 292.6207753962336,
+     'The Peace Monument': 6634.10093079624,
+     'The Prince': 513.5632030470281,
+     'The Readers': 7902.429541194598,
+     'The Recording Angel': 353.19575820811764,
+     'The Three Graces': 1073.7183646553046,
+     'The Waterfall Mural': 3141.6428548236745,
+     'Thomas Gleen Ryman': 53.09549558496942,
+     'Threshold': 714.6470564953827,
+     'Timeless': 195.45154728648956,
+     'Timothy Demonbreun': 739.7424895011637,
+     'Tomatoes': 5712.321996391173,
+     'Tommy Owen': 7970.6434308398275,
+     'Two Musicians': 3844.0419035683785,
+     'Untitled': 9605.272218987997,
+     'Vanderbilt University - Public Collection': 3580.042166502797,
+     'Various': 2603.6284947378836,
+     'Victory': 811.9419184341999,
+     'Voices Gathering': 3573.019493477844,
+     'Volume': 3369.120101582387,
+     'Warner Monument': 5313.624214291833,
+     'Waveform: Pan American Blues': 12715.668863373066,
+     'We Are Our Stories': 4997.655053539718,
+     'Welcome to Flatrock': 10831.864322894839,
+     'Wind Reeds': 12760.076942281505,
+     'Women Suffrage Memorial': 887.585020866261,
+     'Youth Opportunity Center-STARS Nashville - Peace Jam mural': 2407.4850702596023,
+     '[Cross Country Runners]': 7970.6434308398275,
+     '[Fourth and Commerce Sculpture]': 147.67163378543282}
+
+
+
+Great work! You can see each art title and its distance in meters from the center of the Urban Residents neighborhood.
+
+
+
+
+
+ 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Create a folium location from the urban centroid
+In order to construct a folium map of the Urban Residents neighborhood, you need to build a coordinate pair location that is formatted for folium.
+
+
+
+ Q : 
+
+
+
+Print the head of urban_polygon, which is in your workspace.
+Store the first occurrence of center as urban_center and print urban_center. This has been done for you.
+Create an array from urban_center that reverses the order of longitude and latitude. Call this urban_location.
+Print urban_location. This has been done for you.
+
+
+
+
+# Print the head of the urban_polygon
+print(urban_polygon.head())
+
+# Create urban_center from the urban_polygon center
+urban_center = urban_polygon.center[0]
+
+# Print urban_center
+print(urban_center)
+
+# Create array for folium called urban_location
+urban_location = [urban_center.y, urban_center.x]
+
+# Print urban_location
+print(urban_location)
+
+
+
+
+<script.py> output:
+       index             name                                           geometry                                        center
+    0     41  Urban Residents  (POLYGON ((-86.78122053774267 36.1645653773768...  POINT (-86.77756457127047 36.16127820928791)
+    POINT (-86.77756457127047 36.16127820928791)
+    [36.161278209287914, -86.77756457127047]
+
+
+
+Folium locations are arrays with latitude first. You just created a folium location from the center of the Urban Residents neighborhood.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Create a folium map of downtown Nashville
+In this exercise you will create a street map of downtown Nashville using folium.
+
+
+
+
+ Q : 
+
+
+Construct a folium map called downtown_map. Use the urban_location array you created in the previous exercise and set the initial zoom level to 15.
+Display your folium map object with the provided display function.
+
+
+
+
+
+# Construct a folium map with urban_location
+downtown_map = folium.Map(location = urban_location, zoom_start = 15)
+
+# Display the map
+display(downtown_map)
+
+
+
+You've created a map of Nashville's downtown area with Folium. Next we'll add to that map.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Folium street map of the downtown neighborhood
+This time you will create the folium map of downtown and add the Urban Residents neighborhood area from urban_polygon. The urban_polygon has been printed to your console.
+
+
+
+
+ Q : 
+
+
+
+Create an array called folium_loc from urban_polygon.center
+Create a folium map called downtown_map. Set the location argument equal to folium_loc and initialize the map with a zoom_start of 15.
+Pass the geometry from the urban_polygon GeoDataFrame to the folium.GeoJson() method. Then call add_to() on that.
+
+
+
+
+
+# Create array for called folium_loc from the urban_polygon center point
+point = urban_polygon.center[0]
+folium_loc = [point.y , point.x]
+
+# Construct a map from folium_loc: downtown_map
+downtown_map = folium.Map(location = folium_loc, zoom_start = 15)
+
+# Draw our neighborhood: Urban Residents
+folium.GeoJson(urban_polygon.geometry).add_to(downtown_map)
+
+# Display the map
+display(downtown_map)
+
+
+
+
+Excellent! You put everything together to create a folium map with the Urban Residents neighborhood polygon drawn on top of it.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Adding markers for the public art
+Now that you have added the polygon for the Urban Residents neighborhood to your folium street map, it's time to add the locations of the art within the neighborhood. You can do that by creating folium markers. Each marker needs a location assigned. Use iterrows() to loop through the data to grab the values you need.
+
+
+
+ Q : 
+
+
+
+First take a look at the tuple returned by iterrows() by printing the first and second values.
+Assign the second value of the iterrows() tuple to row_values. Create a location formatted for folium, use it to build a marker, and add it to the downtown_map.
+Display the map.
+
+
+
+
+
+# Iterate through the urban_art and print each part of tuple returned
+for row in urban_art.iterrows():
+  print('first part: ', row[0])
+  print('second part: ', row[1])
+
+# Create a location and marker with each iteration for the downtown_map
+for row in urban_art.iterrows():
+    row_values = row[1] 
+    location = [row_values['lat'], row_values['lng']]
+    marker = folium.Marker(location = location)
+    marker.add_to(downtown_map)
+
+# Display the map
+display(downtown_map)
+
+
+
+
+
+<script.py> output:
+    first part:  1
+    second part:  title              [Fourth and Commerce Sculpture]
+    last_name                                   Walker
+    first_name                                     Lin
+    address          333 Commerce Street, Nashville TN
+    medium                                         NaN
+    type                                     Sculpture
+    desc                                           NaN
+    lat                                        36.1623
+    lng                                       -86.7777
+    loc                          (36.16234, -86.77774)
+    geometry       POINT (-86.77774000000001 36.16234)
+    index_right                                     41
+    name                               Urban Residents
+    Name: 1, dtype: object
+    first part:  4
+    second part:  title                                       A Story of Nashville
+    last_name                                                 Ridley
+    first_name                                                  Greg
+    address                          615 Church Street, Nashville TN
+    medium                                  Hammered copper repousse
+    type                                                      Frieze
+    desc           Inside the Grand Reading Room, this is a serie...
+    lat                                                      36.1621
+    lng                                                      -86.782
+    loc                                        (36.16215, -86.78205)
+    geometry                              POINT (-86.78205 36.16215)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 4, dtype: object
+    first part:  21
+    second part:  title                                                Chet Atkins
+    last_name                                                  Faxon
+    first_name                                               Russell
+    address        Corner of Fifth Avenue North and Union Street,...
+    medium               Bronze stool and guitar on a granite plynth
+    type                                                   Sculpture
+    desc           A sculpture of a young Chet Atkins seated on a...
+    lat                                                      36.1647
+    lng                                                      -86.781
+    loc                                        (36.16466, -86.78102)
+    geometry                              POINT (-86.78102 36.16466)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 21, dtype: object
+    first part:  22
+    second part:  title          Children's Chairs For The Seasons
+    last_name                                 McGraw
+    first_name                                Deloss
+    address          615 Church Street, Nashville TN
+    medium              Mixed Media - wood and paint
+    type                                   Furniture
+    desc           chairs depicting the four seasons
+    lat                                      36.1621
+    lng                                      -86.782
+    loc                        (36.16215, -86.78205)
+    geometry              POINT (-86.78205 36.16215)
+    index_right                                   41
+    name                             Urban Residents
+    Name: 22, dtype: object
+    first part:  34
+    second part:  title                                            Foliated Scroll
+    last_name                                                Bloomer
+    first_name                                                  Kent
+    address                          615 Church Street, Nashville TN
+    medium                                                  Aluminum
+    type                                                      Frieze
+    desc           a contemporary adaptation of a classical folia...
+    lat                                                      36.1621
+    lng                                                      -86.782
+    loc                                        (36.16215, -86.78205)
+    geometry                              POINT (-86.78205 36.16215)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 34, dtype: object
+    first part:  39
+    second part:  title                                               Gone Fishing
+    last_name                                                 Cooper
+    first_name                                               Michael
+    address                                       Church Street Park
+    medium                                          Acrylic on Brick
+    type                                                       Mural
+    desc           Just having some fun with Trompe L'oeil balconies
+    lat                                                       36.163
+    lng                                                     -86.7818
+    loc                                        (36.16298, -86.78184)
+    geometry                              POINT (-86.78184 36.16298)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 39, dtype: object
+    first part:  40
+    second part:  title                              Happy Times at The Arcade
+    last_name                                             Cooper
+    first_name                                           Michael
+    address        In the Alley between 4th and 5th off of Union
+    medium            Silicate paint on brick and concrete block
+    type                                                   Mural
+    desc            Trompe L'oeil artwork celebrating The Arcade
+    lat                                                  36.1647
+    lng                                                 -86.7804
+    loc                                     (36.1647, -86.78043)
+    geometry                  POINT (-86.78043000000001 36.1647)
+    index_right                                               41
+    name                                         Urban Residents
+    Name: 40, dtype: object
+    first part:  54
+    second part:  title                                          Johnny Cash Mural
+    last_name                 Bryan Deese, Audie Adams, Ryan Shrader
+    first_name                                                   NaN
+    address                                           300 4th Avenue
+    medium                               Latex paint and spray paint
+    type                                                       Mural
+    desc           Classic street art by Thoughts Manifested crew...
+    lat                                                      36.1583
+    lng                                                      -86.775
+    loc                                      (36.158301, -86.774955)
+    geometry                    POINT (-86.77495500000001 36.158301)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 54, dtype: object
+    first part:  55
+    second part:  title                                      La Storia della Terra
+    last_name                              The Kubach - Wilmsen Team
+    first_name                             The Kubach - Wilmsen Team
+    address                       Church St & 7th Ave N Nashville TN
+    medium                                                     Stone
+    type                                                   Sculpture
+    desc           A 20 foot tower of stone books. There are 26 b...
+    lat                                                      36.1621
+    lng                                                      -86.782
+    loc                                        (36.16215, -86.78205)
+    geometry                              POINT (-86.78205 36.16215)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 55, dtype: object
+    first part:  57
+    second part:  title                       Les Paul Guitar Mural
+    last_name                                  Hughes
+    first_name                                 Milree
+    address          100 Broadway, Nashville TN 37201
+    medium                                   Painting
+    type                                        Mural
+    desc                                          NaN
+    lat                                       36.1624
+    lng                                      -86.7749
+    loc                          (36.1624, -86.77491)
+    geometry       POINT (-86.77490999999999 36.1624)
+    index_right                                    41
+    name                              Urban Residents
+    Name: 57, dtype: object
+    first part:  59
+    second part:  title                                              Library Doors
+    last_name                                                LeQuire
+    first_name                                                  Alan
+    address                          615 Church Street, Nashville TN
+    medium                                                    Bronze
+    type                                                     Bronzes
+    desc           images of local people as well as Tennessee an...
+    lat                                                      36.1621
+    lng                                                      -86.782
+    loc                                        (36.16215, -86.78205)
+    geometry                              POINT (-86.78205 36.16215)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 59, dtype: object
+    first part:  60
+    second part:  title                    Lightning Wire Fountain
+    last_name                                 Walker
+    first_name                                   Lin
+    address        333 Commerce Street, Nashville TN
+    medium                                       NaN
+    type                          Sculpture/Fountain
+    desc                                         NaN
+    lat                                      36.1623
+    lng                                     -86.7771
+    loc                         (36.16233, -86.7771)
+    geometry               POINT (-86.7771 36.16233)
+    index_right                                   41
+    name                             Urban Residents
+    Name: 60, dtype: object
+    first part:  66
+    second part:  title          Nashville, A History through Maps and Aerial V...
+    last_name                                                   Haas
+    first_name                                               Richard
+    address                          615 Church Street, Nashville TN
+    medium                                             Oil on Canvas
+    type                                                       Mural
+    desc           Eight scenes showing the development of Nashvi...
+    lat                                                      36.1621
+    lng                                                      -86.782
+    loc                                        (36.16215, -86.78205)
+    geometry                              POINT (-86.78205 36.16215)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 66, dtype: object
+    first part:  67
+    second part:  title                                                    Oh, Roy
+    last_name                                                  Faxon
+    first_name                                               Russell
+    address                              116 5th Ave N, Nashville TN
+    medium                                                    Bronze
+    type                                                   Sculpture
+    desc           Minnie Pearl and Roy Acuff seated on a bench i...
+    lat                                                      36.1615
+    lng                                                     -86.7782
+    loc                                        (36.16151, -86.77816)
+    geometry                              POINT (-86.77816 36.16151)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 67, dtype: object
+    first part:  68
+    second part:  title                                       Orpheus and Eurydice
+    last_name                                                 Kaskey
+    first_name                                                   Ray
+    address                           1 Symphony Place, Nashville TN
+    medium                                                 Limestone
+    type                                                   Sculpture
+    desc           Relief sculpture above main entrance of Scherm...
+    lat                                                      36.1602
+    lng                                                     -86.7758
+    loc                                        (36.16017, -86.77575)
+    geometry                              POINT (-86.77575 36.16017)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 68, dtype: object
+    first part:  75
+    second part:  title                      Piecing It All Together
+    last_name                                   Cooper
+    first_name                                 Michael
+    address            600 Church Street, Nashville TN
+    medium                           Painting on Stone
+    type                                         Mural
+    desc                                           NaN
+    lat                                        36.1628
+    lng                                       -86.7819
+    loc                          (36.16281, -86.78186)
+    geometry       POINT (-86.78185999999999 36.16281)
+    index_right                                     41
+    name                               Urban Residents
+    Name: 75, dtype: object
+    first part:  104
+    second part:  title                                        The Birth of Apollo
+    last_name                                               Eskridge
+    first_name                                                 Casey
+    address                           1 Symphony Place, Nashville TN
+    medium               Bronze sculpture as centerpiece of fountain
+    type                                                   Sculpture
+    desc           Two figures topping a fountain, one with a lyr...
+    lat                                                      36.1599
+    lng                                                     -86.7761
+    loc                                        (36.15993, -86.77611)
+    geometry                              POINT (-86.77611 36.15993)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 104, dtype: object
+    first part:  105
+    second part:  title                                                The Flutist
+    last_name                                                   Varo
+    first_name                                                Marton
+    address                           1 Symphony Place, Nashville TN
+    medium                                                    Marble
+    type                                                   Sculpture
+    desc           Statue commemorating Kenneth D Schermerhorn, M...
+    lat                                                      36.1596
+    lng                                                     -86.7759
+    loc                                        (36.15961, -86.77594)
+    geometry                     POINT (-86.77594000000001 36.15961)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 105, dtype: object
+    first part:  107
+    second part:  title                                                 The Prince
+    last_name                                                 Outlaw
+    first_name                                              Adrienne
+    address                          615 Church Street, Nashville TN
+    medium         Mixed Media Use of heavy guage aluminum wire a...
+    type                                                      Mobile
+    desc           The Little Prince\nOutlaw hung a whimsical mob...
+    lat                                                      36.1621
+    lng                                                      -86.782
+    loc                                        (36.16215, -86.78205)
+    geometry                              POINT (-86.78205 36.16215)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 107, dtype: object
+    first part:  109
+    second part:  title                                     The Recording Angel
+    last_name                                               Flack
+    first_name                                             Audrey
+    address                        1 Symphony Place, Nashville TN
+    medium                                                 Bronze
+    type                                                Sculpture
+    desc           Bronze angel holding a fountain pen and tablet
+    lat                                                   36.1592
+    lng                                                  -86.7757
+    loc                                      (36.1592, -86.77571)
+    geometry                            POINT (-86.77571 36.1592)
+    index_right                                                41
+    name                                          Urban Residents
+    Name: 109, dtype: object
+    first part:  112
+    second part:  title                                         Thomas Gleen Ryman
+    last_name                                                Shields
+    first_name                                                 Steve
+    address                              116 5th Ave N, Nashville TN
+    medium                          Bronze sculpture with brick base
+    type                                                   Sculpture
+    desc           Full-length standing figure of Ryman, holding ...
+    lat                                                      36.1616
+    lng                                                     -86.7779
+    loc                                        (36.16156, -86.77789)
+    geometry                     POINT (-86.77789 36.16155999999999)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 112, dtype: object
+    first part:  114
+    second part:  title                                                   Timeless
+    last_name                                                  Sorci
+    first_name                                                   Joe
+    address           3rd Avenue North between Commerce and Broadway
+    medium                           Steel and Civil War cannonballs
+    type                                                   Sculpture
+    desc           Two nearly interlinked hemicycles with cannonb...
+    lat                                                      36.1623
+    lng                                                     -86.7763
+    loc                                        (36.16227, -86.77631)
+    geometry                              POINT (-86.77631 36.16227)
+    index_right                                                   41
+    name                                             Urban Residents
+    Name: 114, dtype: object
+
+
+
+
+Nicely done! You have created a folium map of downtown Nashville, a polygon showing the Urban Residents neighborhood, and markers to show the location of the artworks. All that's left is to create some popups for the markers!
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Troubleshooting data issues
+You will be building popups for the downtown art using the title and desc columns from the urban_art DataFrame. Here, you will inspect those columns to identify and clean up any problematic values.
+
+
+
+ Q : 
+
+
+Print and inspect the values in the title column of the urban_art DataFrame.
+Print and inspect the values in the desc column of the urban_art DataFrame.
+Use the fillna() method to replace the NaN values in the desc column with empty strings, and use .str.replace to replace the apostrophes (') with back-ticks (`).
+Print the descriptions again to verify your work.
+
+
+
+
+
+# Print the urban_art titles
+print(urban_art.title)
+
+#Print the urban_art descriptions
+print(urban_art.desc)
+
+# Replace Nan and ' values in description
+urban_art.desc.fillna('', inplace = True)
+urban_art.desc = urban_art.desc.str.replace("'", "`")
+
+#Print the urban_art descriptions again
+print(urban_art.desc)
+
+
+
+
+<script.py> output:
+    1                        [Fourth and Commerce Sculpture]
+    4                                   A Story of Nashville
+    21                                           Chet Atkins
+    22                     Children's Chairs For The Seasons
+    34                                       Foliated Scroll
+    39                                          Gone Fishing
+    40                             Happy Times at The Arcade
+    54                                     Johnny Cash Mural
+    55                                 La Storia della Terra
+    57                                 Les Paul Guitar Mural
+    59                                         Library Doors
+    60                               Lightning Wire Fountain
+    66     Nashville, A History through Maps and Aerial V...
+    67                                               Oh, Roy
+    68                                  Orpheus and Eurydice
+    75                               Piecing It All Together
+    104                                  The Birth of Apollo
+    105                                          The Flutist
+    107                                           The Prince
+    109                                  The Recording Angel
+    112                                   Thomas Gleen Ryman
+    114                                             Timeless
+    Name: title, dtype: object
+    1                                                    NaN
+    4      Inside the Grand Reading Room, this is a serie...
+    21     A sculpture of a young Chet Atkins seated on a...
+    22                     chairs depicting the four seasons
+    34     a contemporary adaptation of a classical folia...
+    39     Just having some fun with Trompe L'oeil balconies
+    40          Trompe L'oeil artwork celebrating The Arcade
+    54     Classic street art by Thoughts Manifested crew...
+    55     A 20 foot tower of stone books. There are 26 b...
+    57                                                   NaN
+    59     images of local people as well as Tennessee an...
+    60                                                   NaN
+    66     Eight scenes showing the development of Nashvi...
+    67     Minnie Pearl and Roy Acuff seated on a bench i...
+    68     Relief sculpture above main entrance of Scherm...
+    75                                                   NaN
+    104    Two figures topping a fountain, one with a lyr...
+    105    Statue commemorating Kenneth D Schermerhorn, M...
+    107    The Little Prince\nOutlaw hung a whimsical mob...
+    109       Bronze angel holding a fountain pen and tablet
+    112    Full-length standing figure of Ryman, holding ...
+    114    Two nearly interlinked hemicycles with cannonb...
+    Name: desc, dtype: object
+    1                                                       
+    4      Inside the Grand Reading Room, this is a serie...
+    21     A sculpture of a young Chet Atkins seated on a...
+    22                     chairs depicting the four seasons
+    34     a contemporary adaptation of a classical folia...
+    39     Just having some fun with Trompe L`oeil balconies
+    40          Trompe L`oeil artwork celebrating The Arcade
+    54     Classic street art by Thoughts Manifested crew...
+    55     A 20 foot tower of stone books. There are 26 b...
+    57                                                      
+    59     images of local people as well as Tennessee an...
+    60                                                      
+    66     Eight scenes showing the development of Nashvi...
+    67     Minnie Pearl and Roy Acuff seated on a bench i...
+    68     Relief sculpture above main entrance of Scherm...
+    75                                                      
+    104    Two figures topping a fountain, one with a lyr...
+    105    Statue commemorating Kenneth D Schermerhorn, M...
+    107    The Little Prince\nOutlaw hung a whimsical mob...
+    109       Bronze angel holding a fountain pen and tablet
+    112    Full-length standing figure of Ryman, holding ...
+    114    Two nearly interlinked hemicycles with cannonb...
+    Name: desc, dtype: object
+
+
+
+
+Yes! Now that the data cleanup is done, it's time to build your marker popups!
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+A map of downtown art
+Now you will assign a popup to each marker to give information about the artwork at each location. In particular you will assign the art title and description to the popup for each marker. You will do so by creating the map object downtown_map, then add the popups, and finally use the display function to show your map.
+
+One warning before you start: you'll need to ensure that all instances of single quotes (') are removed from the pop-up message, otherwise your plot will not render!
+
+
+
+ Q : 
+
+
+For each row in urban_art, build a popup message that includes the title and description for the corresponding artwork.
+Complete the code to replace all instances of single quotes (') with backticks (`) in the popup messages.
+Display the finished map.
+
+
+
+
+
+
+# Construct downtown map
+downtown_map = folium.Map(location = nashville, zoom_start = 15)
+folium.GeoJson(urban_polygon).add_to(downtown_map)
+
+# Create popups inside the loop you built to create the markers
+for row in urban_art.iterrows():
+    row_values = row[1] 
+    location = [row_values['lat'], row_values['lng']]
+    popup = (str(row_values['title']) + ': ' + 
+             str(row_values['desc'])).replace("'", "`")
+    marker = folium.Marker(location = location, popup = popup)
+    marker.add_to(downtown_map)
+
+# Display the map.
+display(downtown_map)
+
+
+
+Well done! Your map of public art in the Downtown Residents neighborhood is complete with a street map, markers to show the art is located, and popups that give more information about each artwork.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Finding counts from a spatial join
+You will be using a dataset of the building permits issued in Nashville during 2017. This DataFrame called permits is in your workspace along with the council_districts GeoDataFrame.
+
+
+
+
+ Q : 
+
+
+
+Create a Point geometry column in permits from lat and lng.
+Create permits_geo, a GeoDataFrame, using permits, the crs from council_districts, and the geometry from permits.
+Use a spatial join to find permits issued within each council district. Print the first 2 rows.
+Create permit_counts to show the count of permits within each district, using groupby() and .size(). Print permit_counts.
+
+
+
+from shapely.geometry import Point
+
+# Create a shapely Point from lat and lng
+permits['geometry'] = permits.apply(lambda x: Point((x.lng , x.lat)), axis = 1)
+
+# Build a GeoDataFrame: permits_geo
+permits_geo = gpd.GeoDataFrame(permits , crs = council_districts.crs, geometry = permits.geometry)
+
+# Spatial join of permits_geo and council_districts
+permits_by_district = gpd.sjoin(permits_geo, council_districts, op = 'within')
+print(permits_by_district.head(2))
+
+# Create permit_counts
+permit_counts = permits_by_district.groupby(['district']).size()
+print(permit_counts)
+
+
+
+
+<script.py> output:
+         permit_id      issued      cost        lat        lng                              geometry  index_right district
+    0   2017032777  2017-05-24  226201.0  36.198241 -86.742235  POINT (-86.74223499999999 36.198241)            5        5
+    68  2017053890  2017-09-05       0.0  36.185442 -86.768239  POINT (-86.76823900000001 36.185442)            5        5
+    district
+    1     146
+    10    119
+    11    239
+    12    163
+    13    139
+    14    261
+    15    322
+    16    303
+    17    786
+    18    287
+    19    969
+    2     399
+    20    799
+    21    569
+    22    291
+    23    206
+    24    458
+    25    435
+    26    179
+    27    105
+    28    119
+    29    154
+    3     215
+    30     79
+    31    134
+    32    225
+    33    355
+    34    218
+    35    192
+    4     139
+    5     452
+    6     455
+    7     468
+    8     209
+    9     186
+    dtype: int64
+
+
+
+Great! Now you have a count of building permits issued for each council district. Next you'll get the area of each council_district.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
