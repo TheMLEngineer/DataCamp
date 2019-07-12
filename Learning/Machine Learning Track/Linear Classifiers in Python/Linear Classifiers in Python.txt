@@ -1,0 +1,412 @@
+
+
+ Ref : 
+ 
+ KNN classification
+In this exercise you'll explore a subset of the Large Movie Review Dataset. The variables X_train, X_test, y_train, and y_test are already loaded into the environment. The X variables contain features based on the words in the movie reviews, and the y variables contain labels for whether the review sentiment is positive (+1) or negative (-1).
+
+This course touches on a lot of concepts you may have forgotten, so if you ever need a quick refresher, download the Scikit-Learn Cheat Sheet and keep it handy!
+
+
+ Q : 
+ 
+ Create a KNN model with default hyperparameters.
+Fit the model.
+Print out the prediction for the test example 0.
+
+
+
+from sklearn.neighbors import KNeighborsClassifier
+
+# Create and fit the model
+knn = KNeighborsClassifier()
+knn.fit(X_train , y_train)
+
+# Predict on the test features, print the results
+pred = knn.predict(X_test)[0]
+print("Prediction for test example 0:", pred)
+
+
+
+
+<script.py> output:
+    Prediction for test example 0: 1.0
+	
+	
+
+Nice work! Looks like you remember how to use scikit-learn for supervised learning.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Q : 
+ 
+ Comparing models
+Compare k nearest neighbors classifiers with k=1 and k=5 on the handwritten digits data set, which is already loaded into the variables X_train, y_train, X_test, and y_test. You can set k with the n_neighbors parameter when creating the KNeighborsClassifier object, which is also already imported into the environment.
+
+Which model has a higher test accuracy?
+
+
+
+
+In [2]: from sklearn.neighbors import KNeighborsClassifier
+
+In [3]: knn = KNeighborsClassifier(n_neighbors=1)
+
+In [4]: knn.fit(X_train , y_train)
+Out[4]: 
+KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
+           metric_params=None, n_jobs=1, n_neighbors=1, p=2,
+           weights='uniform')
+
+In [5]: knn.predict(X_test)
+Out[5]: 
+array([1, 5, 0, 7, 1, 0, 6, 1, 5, 4, 9, 2, 7, 8, 4, 6, 9, 3, 7, 4, 7, 1,
+       8, 6, 0, 9, 6, 1, 3, 7, 5, 9, 8, 3, 2, 8, 8, 1, 1, 0, 7, 9, 0, 0,
+       8, 7, 2, 7, 4, 3, 4, 3, 4, 0, 4, 7, 0, 5, 5, 5, 2, 1, 7, 0, 5, 1,
+       8, 3, 3, 4, 0, 3, 7, 4, 3, 4, 2, 9, 7, 3, 2, 5, 3, 4, 1, 5, 5, 2,
+       9, 2, 2, 2, 2, 7, 0, 8, 1, 7, 4, 2, 3, 8, 2, 3, 3, 0, 2, 9, 3, 2,
+       3, 2, 8, 1, 1, 9, 1, 2, 0, 4, 8, 5, 4, 4, 7, 6, 7, 6, 6, 1, 7, 5,
+       6, 3, 8, 3, 7, 1, 8, 5, 3, 4, 7, 8, 5, 0, 6, 0, 6, 3, 7, 6, 5, 6,
+       2, 2, 2, 3, 0, 7, 6, 5, 6, 4, 1, 0, 6, 0, 6, 4, 0, 9, 3, 8, 1, 2,
+       3, 1, 9, 0, 7, 6, 2, 9, 3, 5, 3, 4, 6, 3, 3, 7, 4, 9, 2, 7, 6, 1,
+       6, 8, 4, 0, 3, 1, 0, 9, 9, 9, 0, 1, 8, 6, 8, 0, 9, 5, 9, 8, 2, 3,
+       5, 3, 0, 8, 7, 4, 0, 3, 3, 3, 6, 3, 3, 2, 9, 1, 6, 9, 0, 4, 2, 2,
+       7, 9, 1, 6, 7, 6, 3, 9, 1, 9, 3, 4, 0, 6, 4, 8, 5, 3, 6, 3, 1, 4,
+       0, 4, 4, 8, 7, 9, 1, 5, 2, 7, 0, 9, 0, 4, 4, 0, 1, 0, 6, 4, 2, 8,
+       5, 0, 2, 6, 0, 1, 8, 2, 0, 9, 5, 6, 7, 0, 5, 0, 9, 1, 4, 7, 1, 7,
+       0, 6, 6, 8, 0, 2, 2, 6, 9, 9, 7, 5, 1, 7, 6, 4, 6, 1, 9, 4, 7, 1,
+       3, 7, 8, 1, 6, 9, 8, 3, 2, 4, 8, 7, 5, 5, 6, 9, 9, 8, 5, 0, 0, 4,
+       9, 3, 0, 4, 9, 4, 2, 5, 4, 9, 6, 4, 2, 6, 0, 0, 5, 6, 7, 1, 9, 2,
+       5, 1, 5, 9, 8, 7, 7, 0, 6, 9, 3, 1, 9, 3, 9, 8, 7, 0, 2, 3, 9, 9,
+       2, 8, 1, 9, 3, 3, 0, 0, 7, 3, 8, 7, 9, 9, 7, 1, 0, 4, 5, 4, 1, 7,
+       3, 6, 5, 4, 9, 0, 5, 9, 1, 4, 5, 0, 4, 3, 4, 2, 3, 9, 0, 8, 7, 8,
+       6, 9, 4, 5, 7, 8, 3, 7, 8, 3])
+
+In [6]: knn.score()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+    knn.score()
+TypeError: score() missing 2 required positional arguments: 'X' and 'y'
+
+In [7]: knn.score(X_test , y_test)
+Out[7]: 0.9888888888888889
+
+In [8]: knn = KNeighborsClassifier(n_neighbors=5)
+
+In [9]: knn.fit(X_train , y_train)
+Out[9]: 
+KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
+           metric_params=None, n_jobs=1, n_neighbors=5, p=2,
+           weights='uniform')
+
+In [10]: knn.predict(X_test , y_test)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+    knn.predict(X_test , y_test)
+TypeError: predict() takes 2 positional arguments but 3 were given
+
+In [11]: knn.predict(X_test)
+Out[11]: 
+array([1, 5, 0, 7, 1, 0, 6, 1, 5, 4, 9, 2, 7, 8, 4, 6, 9, 3, 7, 4, 7, 1,
+       8, 6, 0, 9, 6, 1, 3, 7, 5, 9, 8, 3, 2, 8, 8, 1, 1, 0, 7, 9, 0, 0,
+       8, 7, 2, 7, 4, 3, 4, 3, 4, 0, 4, 7, 0, 5, 5, 5, 2, 1, 7, 0, 5, 1,
+       8, 3, 3, 4, 0, 3, 7, 4, 3, 4, 2, 9, 7, 3, 2, 5, 3, 4, 1, 5, 5, 2,
+       5, 2, 2, 2, 2, 7, 0, 8, 1, 7, 4, 2, 3, 8, 2, 3, 3, 0, 2, 9, 9, 2,
+       3, 2, 8, 1, 1, 9, 1, 2, 0, 4, 8, 5, 4, 4, 7, 6, 7, 6, 6, 1, 7, 5,
+       6, 3, 8, 3, 7, 1, 8, 5, 3, 4, 7, 8, 5, 0, 6, 0, 6, 3, 7, 6, 5, 6,
+       2, 2, 2, 3, 0, 7, 6, 5, 6, 4, 1, 0, 6, 0, 6, 4, 0, 9, 3, 8, 1, 2,
+       3, 1, 9, 0, 7, 6, 2, 9, 3, 5, 3, 4, 6, 3, 3, 7, 4, 9, 2, 7, 6, 1,
+       6, 8, 4, 0, 3, 1, 0, 9, 9, 9, 0, 1, 8, 6, 8, 0, 9, 5, 9, 8, 2, 3,
+       5, 3, 0, 8, 7, 4, 0, 3, 3, 3, 6, 3, 3, 2, 9, 1, 6, 9, 0, 4, 2, 2,
+       7, 9, 1, 6, 7, 6, 3, 9, 1, 9, 3, 4, 0, 6, 4, 8, 5, 3, 6, 3, 1, 4,
+       0, 4, 4, 8, 7, 9, 1, 5, 2, 7, 0, 9, 0, 4, 4, 0, 1, 0, 6, 4, 2, 8,
+       5, 0, 2, 6, 0, 1, 8, 2, 0, 9, 5, 6, 7, 0, 5, 0, 9, 1, 4, 7, 1, 7,
+       0, 6, 6, 8, 0, 2, 2, 6, 9, 9, 7, 5, 1, 7, 6, 4, 6, 1, 9, 4, 7, 1,
+       3, 7, 8, 1, 6, 9, 8, 3, 2, 4, 8, 7, 5, 5, 6, 9, 9, 8, 5, 0, 0, 4,
+       9, 3, 0, 4, 9, 4, 2, 5, 4, 9, 6, 4, 2, 6, 0, 0, 5, 6, 7, 1, 9, 2,
+       5, 1, 5, 9, 8, 7, 7, 0, 6, 9, 3, 1, 9, 3, 9, 8, 7, 0, 2, 3, 9, 9,
+       2, 8, 1, 9, 3, 3, 0, 0, 7, 3, 8, 7, 9, 9, 7, 1, 0, 4, 5, 4, 1, 7,
+       3, 6, 5, 4, 9, 0, 5, 9, 1, 4, 5, 0, 4, 3, 4, 2, 3, 9, 0, 8, 7, 8,
+       6, 9, 4, 5, 7, 8, 3, 7, 8, 3])
+
+In [12]: knn.score(X_test , y_test)
+Out[12]: 0.9933333333333333
+
+
+
+ A : 
+ 
+ k=5
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Q : 
+ 
+ Overfitting
+Which of the following situations looks like an example of overfitting?
+
+
+ A : 
+ 
+ Training accuracy 95%, testing accuracy 50%.
+press
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Running LogisticRegression and SVC
+In this exercise, you'll apply logistic regression and a support vector machine to classify images of handwritten digits.
+
+
+ Q : 
+ 
+ Apply logistic regression and SVM (using SVC()) to the handwritten digits data set using the provided train/validation split.
+For each classifier, print out the training and validation accuracy.
+
+
+from sklearn import datasets
+digits = datasets.load_digits()
+X_train, X_test, y_train, y_test = train_test_split(digits.data, digits.target)
+
+# Apply logistic regression and print scores
+lr = LogisticRegression()
+lr.fit(X_train , y_train)
+print(lr.score(X_train , y_train))
+print(lr.score(X_test , y_test))
+
+# Apply SVM and print scores
+svm = SVC()
+svm.fit(X_train , y_train)
+print(svm.score(X_train , y_train))
+print(svm.score(X_test , y_test))
+
+
+
+<script.py> output:
+    0.9985152190051967
+    0.9622222222222222
+    1.0
+    0.4
+	
+Nicely done! Later in the course we'll look at the similarities and differences of logistic regression vs. SVMs.
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Sentiment analysis for movie reviews
+In this exercise you'll explore the probabilities outputted by logistic regression on a subset of the Large Movie Review Dataset.
+
+The variables X and y are already loaded into the environment. X contains features based on the number of times words appear in the movie reviews, and y contains labels for whether the review sentiment is positive (+1) or negative (-1).
+
+
+
+
+ Q : 
+ 
+ Train a logistic regression model on the movie review data.
+Predict the probabilities of negative vs. positive for the two given reviews.
+Feel free to write your own reviews and get probabilities for those too!
+
+
+
+
+# Instantiate logistic regression and train
+lr = LogisticRegression()
+lr.fit(X , y)
+
+# Predict sentiment for a glowing review
+review1 = "LOVED IT! This movie was amazing. Top 10 this year."
+review1_features = get_features(review1)
+print("Review:", review1)
+print("Probability of positive review:", lr.predict_proba(review1_features )[0,1])
+
+# Predict sentiment for a poor review
+review2 = "Total junk! I'll never watch a film by that director again, no matter how good the reviews."
+review2_features = get_features(review2)
+print("Review:", review2)
+print("Probability of positive review:", lr.predict_proba( review2_features)[0,1])
+
+
+
+<script.py> output:
+    Review: LOVED IT! This movie was amazing. Top 10 this year.
+    Probability of positive review: 0.8079007873616059
+    Review: Total junk! I'll never watch a film by that director again, no matter how good the reviews.
+    Probability of positive review: 0.5855117402793947
+	
+	
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Q : 
+ 
+ Which decision boundary is linear?
+Which of the following is a linear decision boundary?
+(Image URL : https://s3.amazonaws.com/assets.datacamp.com/production/course_6199/datasets/multiple_choce_linear_boundary.png)
+
+ A : 
+ 
+ (1)
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Visualizing decision boundaries
+In this exercise, you'll visualize the decision boundaries of various classifier types.
+
+A subset of scikit-learn's built-in wine dataset is already loaded into X, along with binary labels in y.
+
+
+ Q : 
+ 
+ Create the following classifier objects with default hyperparameters: LogisticRegression, LinearSVC, SVC, KNeighborsClassifier.
+Fit each of the classifiers on the provided data using a for loop.
+Call the plot_4_classifers() function (similar to the code here), passing in X, y, and a list containing the four classifiers.
+
+
+
+
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC, LinearSVC
+from sklearn.neighbors import KNeighborsClassifier
+
+# Define the classifiers
+classifiers = [LogisticRegression(), LinearSVC(), SVC(), KNeighborsClassifier()]
+
+# Fit the classifiers
+for c in classifiers:
+    c.fit(X , y  )
+
+# Plot the classifiers
+plot_4_classifiers(X, y, classifiers)
+plt.show()
+
+
+Nice! As you can see, logistic regression and linear SVM are linear classifiers whereas the default SVM and KNN are not.
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
