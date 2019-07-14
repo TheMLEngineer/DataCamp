@@ -1,0 +1,1850 @@
+
+
+
+ Ref : 
+
+
+Reasons for Modeling: Interpolation
+One common use of modeling is interpolation to determine a value "inside" or "in between" the measured data points. In this exercise, you will make a prediction for the value of the dependent variable distances for a given independent variable times that falls "in between" two measurements from a road trip, where the distances are those traveled for the given elapse times.
+
+
+
+
+
+(Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/54e50fcc0edd78c85780200e6225902e8dd39b2c/ch01_ex02_fig02.png)
+
+
+ Q : 
+
+
+Inspect the predefined data arrays, times and distances, and the preloaded plot.
+Based on your rough inspection, estimate the distance_traveled away from the starting position as of elapse_time = 2.5 hours.
+Assign your answer to distance_traveled.
+
+
+# Compute the total change in distance and change in time
+total_distance = distances[-1] - distances[0]
+total_time = times[-1] - times[0]
+
+# Estimate the slope of the data from the ratio of the changes
+average_speed = total_distance / total_time
+
+# Predict the distance traveled for a time not measured
+elapse_time = 2.5
+distance_traveled = average_speed * elapse_time
+print("The distance traveled is {}".format(distance_traveled))
+
+
+
+times, distances
+[hours], [miles]
+ 0.0,     0.00
+ 1.0,    44.05
+ 2.0,   107.16
+ 3.0,   148.44
+ 4.0,   196.40
+ 5.0,   254.44
+ 6.0,   300.00
+
+<script.py> output:
+    The distance traveled is 125.0
+
+
+Correct! Notice that the answer distance is 'inside' that range of data values, so, less than the max(distances) but greater than the min(distances)
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Reasons for Modeling: Extrapolation
+Another common use of modeling extrapolation to estimate data values "outside" or "beyond" the range (min and max values of time) of the measured data. In this exercise, we have measured distances for times 0 through 5 hours, but we are interested in estimating how far we'd go in 8 hours. Using the same data set from the previous exercise, we have prepared a linear model distance = model(time). Use that model() to make a prediction about the distance traveled for a time much larger than the other times in the measurements.
+
+
+(Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/ba7464321089e724e40b06c36532c176e237145f/ch01_ex03_fig02.png)
+
+
+ Q : 
+
+
+
+Use distance = model(time) to extrapolate beyond the measured data to time=8 hours.
+Print the distance predicted and then check whether it is less than or equal to 400.
+If your car can travel, at most, 400 miles on a full tank, and it takes 8 hours to drive home, will you make it without refilling? You should have answer=True if you'll make it, or answer=False if you will run out of gas.
+
+
+
+
+# Select a time not measured.
+time = 8
+
+# Use the model to compute a predicted distance for that time.
+distance = model(time)
+
+# Inspect the value of the predicted distance traveled.
+print(distance)
+
+# Determine if you will make it without refueling.
+answer = (distance <= 400)
+print(answer)
+
+
+
+
+
+<script.py> output:
+    400
+    True
+
+
+
+Correct! Notice that the car can travel just to the range limit of 400 miles, so you'd run out of gas just as you completed the trip
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Reasons for Modeling: Estimating Relationships
+Another common application of modeling is to compare two data sets by building models for each, and then comparing the models. In this exercise, you are given data for a road trip two cars took together. The cars stopped for gas every 50 miles, but each car did not need to fill up the same amount, because the cars do not have the same fuel efficiency (MPG). Complete the function) efficiency_model(miles, gallons) to estimate efficiency as average miles traveled per gallons of fuel consumed. Use the provided dictionaries car1 and car2, which both have keys car['miles'] and car['gallons'].
+
+
+
+(Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/79778532773c5cee6fa1c29caff5d66bd4f798c3/ch01_ex04_fig03.png)
+
+
+ Q : 
+
+
+Complete the function definition for efficiency_model(miles, gallons).
+Use the function to compute the efficiency of the provided cars (dicts car1, car2).
+Store your answers as car1['mpg'] and car2['mpg'].
+Indicate which car has the best mpg by setting best_car=1, best_car=2, or best_car=0 if the same.
+
+
+
+
+
+
+# Complete the function to model the efficiency.
+def efficiency_model(miles, gallons):
+   return np.mean( miles / gallons )
+
+# Use the function to estimate the efficiency for each car.
+car1['mpg'] = efficiency_model( car1['miles'] , car1['gallons'] )
+car2['mpg'] = efficiency_model( car2['miles'] , car2['gallons'] )
+
+# Finish the logic statement to compare the car efficiencies.
+if car1['mpg'] >= car2['mpg'] :
+    print('car1 is the best')
+elif car1['mpg'] < car2['mpg'] :
+    print('car2 is the best')
+else:
+    print('the cars have the same efficiency')
+
+
+
+
+
+In [2]: car1
+Out[2]: 
+{'gallons': array([  0.        ,   1.66666667,   3.33333333,   5.        ,
+          6.66666667,   8.33333333,  10.        ,  11.66666667,
+         13.33333333,  15.        ,  16.66666667]),
+ 'miles': array([   0.,   50.,  100.,  150.,  200.,  250.,  300.,  350.,  400.,
+         450.,  500.])}
+
+<script.py> output:
+    the cars have the same efficiency
+
+
+
+
+Correct! Notice the original plot that visualized the raw data was plotgpm(), and the slope is 1/MPG and so car1 is steeper than car2, but if you call plotmpg(gallons, miles) the slope is MPG, and so car2 has a steeper slope than car1
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+
+
+Plotting the Data
+Everything in python is an object, even modules. Your goal in this exercise is to review the use of the object oriented interfaces to the python library matplotlib in order to visualize measured data in a more flexible and extendable work flow. The general plotting work flow looks like this:
+
+import matplotlib.pyplot as plt 
+fig, axis = plt.subplots()
+axis.plot(x, y, color="green", linestyle="--", marker="s")
+plt.show()
+
+
+
+
+# Create figure and axis objects using subplots()
+fig, axis = plt.subplots()
+
+# Plot line using the axis.plot() method
+line = axis.plot(times , distances , linestyle=" ", marker="o", color="red")
+
+# Use the plt.show() method to display the figure
+plt.show()
+
+
+
+
+times, distances
+ 0.0,     0.25
+ 1.0,     0.93
+ 2.0,     2.32
+ 3.0,     3.76
+ 4.0,     3.88
+ 5.0,     4.88
+ 6.0,     6.79
+ 7.0,     7.38
+ 8.0,     7.77
+ 9.0,     9.27
+10.0,     9.77
+
+
+
+Correct! Good job! Notice how linestyle=' ' means no line at all, just markers. Also note that your plot style is different than the context figure; I've hidden some more complex styling with title text and grid lines. More on that later! If you wish to experiment now, try different values for the style key-words to see the results. Set them to the requested values before submitting your answer
+
+
+ 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Plotting the Model on the Data
+Continuing with the same measured data from the previous exercise, your goal is to use a predefined model() and measured data times and measured_distances to compute modeled distances, and then plot both measured and modeled data on the same axis.
+
+
+
+(Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/5bd0ccfd857b7c4b5870c2cf8401bdddd6f2633f/ch01_ex07_fig01.png)
+
+
+ Q : 
+
+
+Use model_distances = model(times, measured_distances) to compute the modeled values.
+Use plt.subplots() to create figure and axis objects.
+Use axis.plot() to plot times vs measured_distances with options linestyle=" ", marker="o", color="black".
+Use axis.plot() to also plot times vs model_distances with options linestyle="-", color="red".
+
+
+
+
+# Pass times and measured distances into model
+model_distances = model(times , measured_distances)
+
+# Create figure and axis objects and call axis.plot() twice to plot data and model distances versus times
+fig, axis = plt.subplots()
+axis.plot(times , measured_distances , linestyle=" ", marker="o", color="black", label="Measured")
+axis.plot(times , model_distances , linestyle="-", marker=None, color="red", label="Modeled")
+
+# Add grid lines and a legend to your plot, and then show to display
+axis.grid(True)
+axis.legend(loc="best")
+plt.show()
+
+
+
+
+
+Good job! Notice a subtlety of python. 'None' is a special object that is often used as a place-holder to be replace by default values, so linestyle=None does not mean no line, it means the default which is a solid line style, whereas marker=None triggers the dafault marker, which happens to be no marker at all. If you use color=None, the resulting color will be blue, the default line color for matplotlib
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Visually Estimating the Slope & Intercept
+Building linear models is an automated way of doing something we can roughly do "manually" with data visualization and a lot of trial-and-error. The visual method is not the most efficient or precise method, but it does illustrate the concepts very well, so let's try it!
+
+Given some measured data, your goal is to guess values for slope and intercept, pass them into the model, and adjust your guess until the resulting model fits the data. Use the provided data xd, yd, and the provided function model() to create model predictions. Compare the predictions and data using the provided plot_data_and_model().
+
+
+
+
+(Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/b10af870f99d87f8adad221ed091483ff57c4aae/ch01_ex08_fig01.png)
+
+
+
+ Q : 
+
+
+Use the predefined function xm, ym = model(intercept, slope) to generate model predictions.
+Use the provided function fig = plot_data_and_model(xd, yd, xm, ym) to plot the measured data (xd, yd) and the modeled predictions (xm, ym) together.
+If the model does not fit the data, try different values for slope and intercept and rerun your code.
+Repeat until you believe you have the best values for slope and intercept, then submit your answer.
+
+
+
+
+
+# Look at the plot data and guess initial trial values
+trial_slope = 0.50/0.5
+trial_intercept = 2
+
+# input thoses guesses into the model function to compute the model values.
+xm, ym = model(trial_intercept, trial_slope)
+
+# Compare your your model to the data with the plot function
+fig = plot_data_and_model(xd, yd, xm, ym)
+plt.show()
+
+# Repeat the steps above until your slope and intercept guess makes the model line up with the data.
+final_slope = trial_slope
+final_intercept = trial_intercept
+
+
+
+Measured Dataset
+xd, yd
+ 2.0,     4.25
+ 2.5,     4.43
+ 3.0,     5.32
+ 3.5,     6.26
+ 4.0,     5.88
+ 4.5,     6.38
+ 5.0,     7.79
+ 5.5,     7.88
+ 6.0,     7.77
+ 6.5,     8.77
+ 7.0,     8.77
+
+
+
+
+Correct! Notice that you did not have to get the best values, slope = 1 and intercept = 2, just something close. Models almost NEVER match the data exactly, and a model created from slightly different model parameters might fit the data equally well. We'll cover quantifying model performance and comparison in more detail later in this course!
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Mean, Deviation, & Standard Deviation
+The mean describes the center of the data. The standard deviation describes the spread of the data. But to compare two variables, it is convenient to normalize both. In this exercise, you are provided with two arrays of data, which are highly correlated, and you will compute and visualize the normalized deviations of each array.
+
+
+
+
+
+(Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/a3f411c02f22e364363813ddf15864f061b7774a/ch01_ex10_fig01.png)
+
+
+
+
+ Q : 
+
+
+Compute the deviations dx and dy.
+Compute the normalized deviations zx and zy.
+Call plot_cdfs() to see how both the raw and the normalized data compares.
+
+
+
+
+
+# Compute the deviations by subtracting the mean offset
+dx = x - np.mean(x)
+dy = y - np.mean(y)
+
+# Normalize the data by dividing the deviations by the standard deviation
+zx = dx / np.std(x)
+zy = dy / np.std(y)
+
+# Plot comparisons of the raw data and the normalized data
+fig = plot_cdfs(dx, dy, zx, zy)
+
+
+
+Correct! Good job! Notice how hard it is to compare dx and dy, versus comparing the normalized zx and zy.
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+
+
+Covariance vs Correlation
+Covariance is a measure of whether two variables change ("vary") together. It is calculated by computing the products, point-by-point, of the deviations seen in the previous exercise, dx[n]*dy[n], and then finding the average of all those products.
+
+Correlation is in essence the normalized covariance. In this exercise, you are provided with two arrays of data, which are highly correlated, and you will visualize and compute both the covariance and the correlation
+
+
+
+
+(Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/a3f411c02f22e364363813ddf15864f061b7774a/ch01_ex10_fig01.png)
+
+
+
+ Q : 
+
+
+Compute the deviations, dx and dy by subtracting the mean, using np.mean(), and compute covariance as the mean of their product dx*dy.
+Compute the normalize deviations, zx and zy, by dividing by the standard deviation, using np.std(), and compute the correlation as the mean of their product, zx*zy.
+Use plot_normalized_deviations(zx, zy) to plot the product of the normalized deviations and visually check it against the correlation value.
+
+
+
+
+
+
+
+# Compute the covariance from the deviations.
+dx = x - np.mean(x)
+dy = y - np.mean(y)
+covariance = np.mean(dx * dy)
+print("Covariance: ", covariance)
+
+# Compute the correlation from the normalized deviations.
+zx = dx / np.std(x)
+zy = dy / np.std(y)
+correlation = np.mean(zx  * zy)
+print("Correlation: ", correlation)
+
+# Plot the normalized deviations for visual inspection. 
+fig = plot_normalized_deviations(zx, zy)
+
+
+
+
+
+<script.py> output:
+    Covariance:  69.6798182602
+    Correlation:  0.982433369757
+
+
+
+In [4]: zx
+Out[4]: 
+array([-2.36365721, -2.05102883, -1.5003113 , -1.46343943, -1.27735122,
+       -1.21210868, -1.06517132, -0.92373989, -0.79782037, -0.75049652,
+       -0.73974022, -0.73554939, -0.68814918, -0.59947461, -0.58182945,
+       -0.54821867, -0.54725156, -0.49752887, -0.38436839, -0.37627281,
+       -0.37170107, -0.33974738, -0.22603031, -0.15711461, -0.12889813,
+       -0.09076861, -0.02110075, -0.00876372,  0.22671645,  0.22726185,
+        0.27346282,  0.31347327,  0.33593902,  0.47118668,  0.56736578,
+        0.60867792,  0.75135896,  0.7684713 ,  0.811572  ,  0.82721514,
+        0.83285428,  0.97724891,  1.05299327,  1.24195717,  1.24250995,
+        1.3770458 ,  1.82706201,  1.8431545 ,  1.87023304,  1.99987239])
+
+In [5]: zy
+Out[5]: 
+array([-2.59325597, -2.23639614, -1.19692644, -1.60778365, -1.27635207,
+       -1.02816766, -0.91302913, -0.61973352, -0.53976428, -0.56761993,
+       -0.88130919, -0.60105637, -0.63840574, -0.83886039, -0.33807543,
+       -0.41198388, -0.54517349, -0.54462921, -0.60172012, -0.34746641,
+       -0.29554555, -0.49254362, -0.02803301, -0.3571922 , -0.50971682,
+        0.08534288, -0.09930132, -0.03815018,  0.07147704, -0.06331319,
+        0.48667822,  0.18421027,  0.62046077,  0.60505362,  0.50339617,
+        0.40880229,  0.61339607,  0.54592281,  1.17003611,  0.84703262,
+        1.02626581,  0.74455674,  1.07520595,  1.43928407,  1.173397  ,
+        1.54821291,  1.62457629,  1.59151228,  1.92547234,  1.92121268])
+
+In [6]: dx
+Out[6]: 
+array([-2.81186055, -2.43995068, -1.78480455, -1.74094094, -1.51956616,
+       -1.44195214, -1.26715211, -1.09890204, -0.94910531, -0.89280778,
+       -0.88001184, -0.87502634, -0.81863796, -0.71314868, -0.69215759,
+       -0.65217344, -0.65102294, -0.59187169, -0.4572534 , -0.44762272,
+       -0.44218407, -0.40417123, -0.26889081, -0.18690712, -0.15334016,
+       -0.10798041, -0.02510194, -0.01042553,  0.26970706,  0.27035588,
+        0.32531761,  0.37291496,  0.39964072,  0.56053442,  0.67495127,
+        0.72409713,  0.89383375,  0.91419099,  0.96546456,  0.98407401,
+        0.99078246,  1.1625576 ,  1.25266482,  1.47746059,  1.47811819,
+        1.6381651 ,  2.17351465,  2.19265864,  2.2248719 ,  2.37909382])
+
+In [7]: dy
+Out[7]: 
+array([-154.61086363, -133.33475084,  -71.36118933,  -95.85664589,
+        -76.09657424,  -61.2997298 ,  -54.43512874,  -36.94873772,
+        -32.18094245,  -33.84170658,  -52.54397408,  -35.83519925,
+        -38.06198243,  -50.01316153,  -20.15618006,  -24.56262869,
+        -32.50344174,  -32.4709917 ,  -35.87477247,  -20.71607347,
+        -17.62053315,  -29.36562949,   -1.67133848,  -21.29592859,
+        -30.38950215,    5.08817354,   -5.92038059,   -2.27452732,
+          4.26148685,   -3.77475526,   29.01593252,   10.98268316,
+         36.99209667,   36.07351661,   30.01266255,   24.37294112,
+         36.57089646,   32.54811625,   69.75797811,   50.50039278,
+         61.18634062,   44.39074326,   64.10416933,   85.8106393 ,
+         69.95835584,   92.30501621,   96.85782891,   94.88654045,
+        114.79736089,  114.54339827])
+
+
+
+Correct! Notice that you've plotted the product of the normalized deviations, and labeled the plot with the correlation, a single value that is the mean of that product. The product is always positive and the mean is typical of how the two vary together.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+
+Correlation Strength
+Intuitively, we can look at the plots provided and "see" whether the two variables seem to "vary together".
+
+Data Set A: x and y change together and appear to have a strong relationship.
+Data Set B: there is a rough upward trend; x and y appear only loosely related.
+Data Set C: looks like random scatter; x an y do not appear to change together and are unrelated.
+
+
+
+Image URLs of Dataset:
+
+
+A : https://assets.datacamp.com/production/repositories/1480/datasets/0b432ae4f447613dfef3143baa53fef637552cab/ch1_ex12_fig01.png
+
+B : https://assets.datacamp.com/production/repositories/1480/datasets/a826178cf3d5132dbd64ea346eaf1233d113102d/ch1_ex12_fig02.png
+
+C : https://assets.datacamp.com/production/repositories/1480/datasets/d07e0410be1912ba1bdbd3d091ea4f78f1a88cd9/ch1_ex12_fig03.png
+
+
+Recall that deviations differ from the mean, and we normalized by dividing the deviations by standard deviation. In this exercise you will compare the 3 data sets by computing correlation, and determining which data set has the most strongly correlated variables x and y. Use the provided data table data_sets, a dictionary of records, each having keys 'name', 'x', 'y', and 'correlation'.
+
+
+
+# Complete the function that will compute correlation.
+def correlation(x,y):
+    x_dev = x - np.mean(x)
+    y_dev = y - np.mean(y)
+    x_norm = x_dev / np.std(x)
+    y_norm = y_dev / np.std(y)
+    return np.mean(x_norm * y_norm)
+
+# Compute and store the correlation for each data set in the list.
+for name, data in data_sets.items():
+    data['correlation'] = correlation(data['x'], data['y'])
+    print('data set {} has correlation {:.2f}'.format(name, data['correlation']))
+
+# Assign the data set with the best correlation.
+best_data = data_sets['A']
+
+
+
+
+
+<script.py> output:
+    data set A has correlation 1.00
+    data set B has correlation 0.54
+    data set C has correlation 0.09
+
+
+
+
+Correct! Good job! Note that the strongest relationship is in Dataset A, with correlation closest to 1.0 and the weakest is Datatset C with corrlation value closest to zero.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+ Q : 
+
+Terms in a Model
+Given a scatter plot of data, select the linear model that best fits the data. To test your answer, use the predefined function fig = plot_data_with_model(a0, a1, a2) to plot any general model you wish to try, where the coefficients are for a general model y=a0 + a1*x + a2*x*x, with all defaults set to zero.
+
+
+(Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/9577d9e670be94e2b58556d6e103dfac87d3db49/ch02_ex02_fig01_rev2.png)
+
+    
+
+ A : 
+
+y=100+75x
+
+
+Hint
+Test each possible answer by plotting it over the data.
+For example, use the "hidden" plot function: fig, msg = plot_possible_answer(answer='A').
+
+In [4]: fig, msg = plot_possible_answer(answer='D')
+
+
+Correct! Notice that while another answer may be pretty close, if you plot_possible_answer(answer='D') you get the best allignment of the model (the red line) passing through the measured data (the black dots)
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+
+Model Components
+Previously, you have been given a pre-defined model to work with. In this exercise, you will implement a model function that returns model values for y, computed from input x data, and any input coefficients for the "zero-th" order term a0, the "first-order" term a1, and a quadratic term a2 of a model. Recall that "first order" is linear, so we'll set the defaults for this general linear model with a2=0, but later, we will change this for comparison.
+
+
+
+ Q : 
+
+
+
+Complete the function definition model() so it takes x, and default inputs a0=3, a1=2, a2=0 as input, and returns y.
+Create an array of values x using the numpy method np.linspace().
+Pass x into your model() without specifying a0, a1, a2, to get default predicted y values.
+Use the pre-defined plot_prediction() to see a plot of the resulting data x and y.
+
+
+
+
+# Define the general model as a function
+def model(x, a0=3, a1=2, a2=0):
+    return a0 + (a1*x) + (a2*x**2)
+
+# Generate array x, then predict ym values for specific, non-default a0 and a1
+x = np.linspace(-10, 10, 21)
+ym = model(x)
+
+# Plot the results, ym versus x
+fig = plot_prediction(x , ym)
+
+
+
+
+Correct! Notice that we used model() to compute predicted values of ym for given possibly measured values of x. The model takes the independent data and uses it to generate a model for the dependent variables corresponding values.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Model Parameters
+Now that you've built a general model, let's "optimize" or "fit" it to a new (preloaded) measured data set, xd, yd, by finding the specific values for model parameters a0, a1 for which the model data and the measured data line up on a plot.
+
+This is an iterative visualization strategy, where we start with a guess for model parameters, pass them into the model(), over-plot the resulting modeled data on the measured data, and visually check that the line passes through the points. If it doesn't, we change the model parameters and try again.
+
+
+
+(Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/0e55d370f291374e0431de0caecb2a95e0186644/ch02_ex04_fig01.png)
+
+
+ Q : 
+
+
+Complete the function plot_data_and_model(xd, yd, ym), passing xd, yd and xd, ym into the internal plotting calls.
+Compute model predictions using ym = model(), by passing in both the data and guessed model parameters xd, a0, a1.
+Use plot_data_and_model() to plot xd, yd, and ym together.
+Change the values of a0, a1 and repeat the previous 2 steps until the line passes through all the points.
+
+
+
+
+# Complete the plotting function definition
+def plot_data_with_model(xd, yd, ym):
+    fig = plot_data(xd , yd)  # plot measured data
+    fig.axes[0].plot(xd , ym , color='red')  # over-plot modeled data
+    plt.show()
+    return fig
+
+# Select new model parameters a0, a1, and generate modeled `ym` from them.
+a0 = 150
+a1 = 24
+ym = model(xd, a0, a1)
+
+# Plot the resulting model to see whether it fits the data
+fig = plot_data_with_model(xd, yd, ym)
+
+
+
+
+
+Correct! Notice again that the measured x-axis data xd is used to generate the modeled y-axis data ym so to plot the model, you are plotting ym vs xd, which may seem counter-intuitive at first. But we are modeling the y response to a given x; we are not modeling x.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Linear Proportionality
+The definition of temperature scales is related to the linear expansion of certain liquids, such as mercury and alcohol. Originally, these scales were literally rulers for measuring length of fluid in the narrow marked or "graduated" tube as a proxy for temperature. The alcohol starts in a bulb, and then expands linearly into the tube, in response to increasing temperature of the bulb or whatever surrounds it.
+
+In this exercise, we will explore the conversion between the Fahrenheit and Celsius temperature scales as a demonstration of interpreting slope and intercept of a linear relationship within a physical context.
+
+
+
+
+
+(Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/d2b4bffcd39b3b6034b4ed857f2b0dc8f47d936e/ch03_ex01_fig02.png)
+
+
+
+
+ Q : 
+
+
+Complete the function temps_F = convert_scale(temps_C) as a linear model where "x" is temps_C and "y" is temps_F.
+Compute the intercept zero_offset as the difference between the freezing points freeze_F and freeze_C.
+Compute the slope as a unit_ratio, change in temps_F divided by change in temps_C.
+Use the predefined plot_temperatures() to plot the resulting model.
+
+
+
+
+
+
+# Complete the function to convert C to F
+def convert_scale(temps_C):
+    (freeze_C, boil_C) = (0, 100)
+    (freeze_F, boil_F) = (32, 212)
+    change_in_C = boil_C - freeze_C
+    change_in_F = boil_F - freeze_F
+    slope = change_in_F / change_in_C
+    intercept = change_in_C - freeze_C
+    temps_F = intercept + (slope * temps_C)
+    return temps_F
+
+# Use the convert function to compute values of F and plot them
+temps_C = np.linspace(0, 100, 101)
+temps_F = convert_scale(temps_C)
+fig = plot_temperatures(temps_C, temps_F)
+
+
+
+
+Correct! Compare your plot with the one that was pre-loaded at the beginning of the exercise. Do they match?
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+
+
+Slope and Rates-of-Change
+In this exercise, you will model the motion of a car driving (roughly) constant velocity by computing the average velocity over the entire trip. The linear relationship modeled is between the time elapsed and the distance traveled.
+
+In this case, the model parameter a1, or slope, is approximated or "estimated", as the mean velocity, or put another way, the "rate-of-change" of the distance ("rise") divided by the time ("run").
+
+
+
+Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/417073ac3c8000457321f38f6deda3c0e16b7984/ch03_ex03_fig01.png
+
+
+
+ Q : 
+
+
+Compute the the point-to-point differences of both the times and distances using numpy.diff().
+Compute an array of velocities as the ratio of the diff_distance divided by diff_times.
+Compute the average and range of velocity values, using numpy methods mean, max, min.
+Plot the array of velocities to visualize the average and spread of the values.
+
+
+
+
+
+# Compute an array of velocities as the slope between each point
+diff_distances = np.diff(times)
+diff_times = np.diff(distances)
+velocities = diff_distances / diff_times
+
+# Chracterize the center and spread of the velocities
+v_avg = np.mean(velocities)
+v_max = np.max(velocities)
+v_min = np.min(velocities)
+v_range = v_max - v_min
+
+# Plot the distribution of velocities
+fig = plot_velocity_timeseries(times[1:], velocities)
+
+
+
+
+Correct! Generally we might use the average velocity as the slope in our model. But notice that there is some random variation in the instantaneous velocity values when plotted as a time series. The range of values v_max - v_min is one measure of the scale of that variation, and the standard deviation of velocity values is another measure. We see the implications of this variation in a model parameter in the next chapter of this course when discussing inference.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Intercept and Starting Points
+In this exercise, you will see the intercept and slope parameters in the context of modeling measurements taken of the volume of a solution contained in a large glass jug. The solution is composed of composed of water, grains, sugars, and yeast. The total mass of both the solution and the glass container was also recorded, but the empty container mass was not noted.
+
+Your job is to use the preloaded pandas DataFrame df, with data columns volumes and masses to build a linear model that relates the masses (y-data) to the volumes (x-data). The slope will be an estimate of the density (change in mass / change in volume) of the solution, and the intercept will be an estimate of the empty container weight (mass when volume=0).
+
+
+
+
+Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/9937537805654245b5e6fccb309cfa0ac8ed516c/ch03_ex04_fig03.png
+
+
+
+
+ Q : 
+
+
+Import ols() from statsmodels and use it to build a model fit to the data=df with formula = "masses ~ volumes".
+Extract the slope a1 and intercept a0 with .params['Intercept'] and .params['volumes'].
+Print a0 and a1 with physically meaningful names.
+Print model_fit() and look for values matching the ones found above; look for row labels Intercept, volumes, and a column label coef.
+
+
+
+
+
+
+# Import ols from statsmodels, and fit a model to the data
+from statsmodels.formula.api import ols
+model_fit = ols(formula="masses ~ volumes", data=df)
+model_fit = model_fit.fit()
+
+# Extract the model parameter values, and assign them to a0, a1
+a0 = model_fit.params['Intercept']
+a1 = model_fit.params['volumes']
+
+# Print model parameter values with meaningful names, and compare to summary()
+print( "container_mass   = {:0.4f}".format(a0) )
+print( "solution_density = {:0.4f}".format(a1) )
+print( model_fit.summary() )
+
+
+
+
+
+In [1]: df.head()
+Out[1]: 
+     masses  volumes
+0  7.812435      2.0
+1  7.698824      2.1
+2  7.817183      2.2
+3  7.872703      2.3
+4  8.176541      2.4
+
+<script.py> output:
+    container_mass   = 5.4349
+    solution_density = 1.1029
+                                OLS Regression Results                            
+    ==============================================================================
+    Dep. Variable:                 masses   R-squared:                       0.999
+    Model:                            OLS   Adj. R-squared:                  0.999
+    Method:                 Least Squares   F-statistic:                 1.328e+05
+    Date:                Sun, 14 Jul 2019   Prob (F-statistic):          1.19e-156
+    Time:                        01:07:23   Log-Likelihood:                 102.39
+    No. Observations:                 101   AIC:                            -200.8
+    Df Residuals:                      99   BIC:                            -195.5
+    Df Model:                           1                                         
+    Covariance Type:            nonrobust                                         
+    ==============================================================================
+                     coef    std err          t      P>|t|      [0.025      0.975]
+    ------------------------------------------------------------------------------
+    Intercept      5.4349      0.023    236.805      0.000       5.389       5.480
+    volumes        1.1029      0.003    364.408      0.000       1.097       1.109
+    ==============================================================================
+    Omnibus:                        0.319   Durbin-Watson:                   2.072
+    Prob(Omnibus):                  0.852   Jarque-Bera (JB):                0.169
+    Skew:                           0.100   Prob(JB):                        0.919
+    Kurtosis:                       3.019   Cond. No.                         20.0
+    ==============================================================================
+    
+    Warnings:
+    [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+
+
+
+Correct! You deserve a cold beverage for all that work! Did you find the model parameter values for intercept and slope in the .summary()? Which one is the empty container mass? Which one is the solution density? Don't worry about everything in the summary output at first glance. We'll see more of it later. For now, it's good enough to try to find the slope and intercept values.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+
+
+Residual Sum of the Squares
+In a previous exercise, we saw that the altitude along a hiking trail was roughly fit by a linear model, and we introduced the concept of differences between the model and the data as a measure of model goodness.
+
+In this exercise, you'll work with the same measured data, and quantifying how well a model fits it by computing the sum of the square of the "differences", also called "residuals".
+
+
+
+
+Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/2ab89e3586e143b07ffa8bc501f82c4450c36dfc/ch02_ex06_fig01.png
+
+
+ Q : 
+
+
+
+Load the x_data, y_data with the pre-defined load_data() function.
+Call the pre-defined model(), passing in x_dataand specific values a0, a1.
+Compute the residuals as y_data - y_model and then find rss by using np.square() and np.sum().
+Print the resulting value of rss.
+
+
+
+
+# Load the data
+x_data, y_data = load_data()
+
+# Model the data with specified values for parameters a0, a1
+y_model = model(x_data, a0=150, a1=25)
+
+# Compute the RSS value for this parameterization of the model
+rss = np.sum(np.square(y_data - y_model))
+print("RSS = {}".format(rss))
+
+
+
+
+
+<script.py> output:
+    RSS = 14444.484117694472
+
+
+
+
+Correct! The value we compute for RSS is not meaningful by itself, but later it becomes meaningful in context when we compare it to other values of RSS computed for other parameterizations of the model. More on that next! Some notes about code style; notice you could have done the RSS calculation in a single line of python code, but writing functions than can be re-used is good practice. Notice also that we could have defined a parameter dictionary dict(a0=150, a1=25) and passed it into the model as model(x, **parameters) which would make it easier to pass around all the parameters together if we needed them for other functions
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+
+
+Minimizing the Residuals
+In this exercise, you will complete a function to visually compare model and data, and compute and print the RSS. You will call it more than once to see how RSS changes when you change values for a0 and a1. We'll see that the values for the parameters we found earlier are the ones needed to minimize the RSS.
+
+
+
+ Q : 
+
+
+
+Fill in the call to model() passing in the data xd and model parameters a0 and a1.
+Compute rss as the sum of the square of the residuals.
+Use compute_rss_and_plot_fit() for various values of a0 and a1 to see how they change RSS.
+Convince yourself that the original values a0=150 and a1=25 minimize RSS, and submit your answer with these.
+
+
+
+
+
+
+# Complete function to load data, build model, compute RSS, and plot
+def compute_rss_and_plot_fit(a0, a1):
+    xd, yd = load_data()
+    ym = model(xd, a0 , a1)
+    residuals = ym - yd
+    rss = np.sum(np.square(residuals))
+    summary = "Parameters a0={}, a1={} yield RSS={:0.2f}".format(a0 , a1 , rss)
+    fig = plot_data_with_model(xd, yd, ym, summary)
+    return rss, summary
+
+# Chose model parameter values and pass them into RSS function
+rss, summary = compute_rss_and_plot_fit(a0= 150, a1= 25)
+print(summary)
+
+
+
+
+
+
+<script.py> output:
+    Parameters a0=150, a1=25 yield RSS=14444.48
+
+
+
+
+Correct! As stated earlier, the significance of RSS is in context of other values. More specifically, the minimum RSS is of value in identifying the specific set of parameter values for our model which yield the smallest residuals in an overall sense.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+
+
+Visualizing the RSS Minima
+In this exercise you will compute and visualize how RSS varies for different values of model parameters. Start by holding the intercept constant, but vary the slope: and for each slope value, you'll compute the model values, and the resulting RSS. Once you have an array of RSS values, you will determine minimal RSS value, in code, and from that minimum, determine the slope that resulted in that minimal RSS.
+
+Use pre-loaded data arrays x_data, y_data, and empty container rss_list to get started.
+
+
+
+Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/f37d23c6c7997ef1daaa74b95cf3292fee6c324a/ch02_ex08_fig01.png
+
+
+
+ Q : 
+
+
+For each trial value a1 in a1_array, use model() to predict the model value, and then compute_rss() with y_data, y_model, store the output rss_value in rss_list.
+Convert rss_list to a np.array(), then use np.min() to find the minimum value best_rss.
+Use np.where() to find the corresponding trial value of best_a1.
+Use plot_rss_vs_parameters() to visually confirm your values agree with the figure shown.
+
+
+
+
+
+
+# Loop over all trial values in a1_array, computing rss for each
+a1_array = np.linspace(15, 35, 101)
+for a1_trial in a1_array:
+    y_model = model(x_data, a0=150, a1=a1_trial)
+    rss_value = compute_rss(y_data, y_model)
+    rss_list.append(rss_value)
+
+# Find the minimum RSS and the a1 value from whence it came
+rss_array = np.array(rss_list)
+best_rss = np.min(rss_array) 
+best_a1 = a1_array[np.where(rss_array==best_rss)]
+print('The minimum RSS = {}, came from a1 = {}'.format(best_rss, best_a1))
+
+# Plot your rss and a1 values to confirm answer
+fig = plot_rss_vs_a1(a1_array, rss_array)
+
+
+
+
+
+<script.py> output:
+    The minimum RSS = 14411.193019771845, came from a1 = [ 24.8]
+
+
+
+
+Correct! The best slope is the one out of an array of slopes than yielded the minimum RSS value out of an array of RSS values. Python tip: notice that we started with rss_list to make it easy to .append() but then later converted to numpy.array() to gain access to all the numpy methods.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Least-Squares with `numpy`
+The formulae below are the result of working through the calculus discussed in the introduction. In this exercise, we'll trust that the calculus correct, and implement these formulae in code using numpy.
+
+a1=covariance(x,y) / variance(x)
+a0=mean(y)−a1 *mean(x)
+
+
+
+ Q : 
+
+
+
+
+Compute the means and deviations of the two variables x, y from the preloaded data.
+Use np.sum() to complete the least-squares formulae, and use them to compute the optimal values for a0 and a1.
+Use model() to build the model values y_model from those optimal slope a1 and intercept a0 values`.
+Use the pre-defined compute_rss_and_plot_fit() to visually confirm that this optimal model fits the data.
+
+
+
+
+
+
+# prepare the means and deviations of the two variables
+x_mean = np.sum(x)/len(x)
+y_mean = np.sum(y)/len(y)
+x_dev = x - x_mean
+y_dev = y - y_mean
+
+# Complete least-squares formulae to find the optimal a0, a1
+a1 = np.sum(x_dev * y_dev) / np.sum( np.square(x_dev) )
+a0 = y_mean - (a1 * x_mean)
+
+# Use the those optimal model parameters a0, a1 to build a model
+y_model = model(x, a0 , a1)
+
+# plot to verify that the resulting y_model best fits the data y
+fig, rss = compute_rss_and_plot_fit(a0, a1)
+
+
+
+
+
+Correct! Notice that the optimal slope a1, according to least-squares, is a ratio of the covariance to the variance. Also, note that the values of the parameters obtained here are NOT exactly the ones used to generate the pre-loaded data (a1=25 and a0=150), but they are close to those. Least-squares does not guarantee zero error; there is no perfect solution, but in this case, least-squares is the best we can do.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Optimization with Scipy
+It is possible to write a numpy implementation of the analytic solution to find the minimal RSS value. But for more complex models, finding analytic formulae is not possible, and so we turn to other methods.
+
+In this exercise you will use scipy.optimize to employ a more general approach to solve the same optimization problem.
+
+In so doing, you will see additional return values from the method that tell answer us "how good is best". Here we will use the same measured data and parameters as seen in the last exercise for ease of comparison of the new scipy approach.
+
+
+
+
+ Q : 
+
+
+Define a function model_func(x, a0, a1) that, for a given array x returns a0 + a1*x.
+Use the scipy function optimize.curve_fit() to compute optimal values for a0 and a1.
+Unpack the param_opt so as to store the model parameters as a0 = param_opt[0] and a1 = param_opt[1].
+Use the predefined function compute_rss_and_plot_fit to test and verify your answer.
+
+
+
+
+
+
+# Define a model function needed as input to scipy
+def model_func(x, a0, a1):
+    return a0 + (a1*x)
+
+# Load the measured data you want to model
+x_data, y_data  = load_data()
+
+# call curve_fit, passing in the model function and data; then unpack the results
+param_opt, param_cov = optimize.curve_fit(model_func , x_data, y_data)
+a0 = param_opt[0]  # a0 is the intercept in y = a0 + a1*x
+a1 = param_opt[1]  # a1 is the slope     in y = a0 + a1*x
+
+# test that these parameters result in a model that fits the data
+fig, rss = compute_rss_and_plot_fit(a0 , a1)
+
+
+
+
+
+Correct! Notice that we passed the function object itself, model_func into curve_fit, rather than passing in the model data. The model function object was the input, because the optimization wants to know what form in general it's solve for; had we passed in a model_func with more terms like an a2*x**2 term, we would have seen different results for the parameters output
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Least-Squares with `statsmodels`
+Several python libraries provide convenient abstracted interfaces so that you need not always be so explicit in handling the machinery of optimization of the model.
+
+As an example, in this exercise, you will use the statsmodels library in a more high-level, generalized work-flow for building a model using least-squares optimization (minimization of RSS).
+
+To help get you started, we've pre-loaded the data from x_data, y_data = load_data() and stored it in a pandas DataFrame with column names x_column and y_column using df = pd.DataFrame(dict(x_column=x_data, y_column=y_data))
+
+
+
+
+ Q : 
+
+
+
+Construct a model ols() with formula formula="y_column ~ x_column" and data data=df, and then .fit() it to the data.
+Use model_fit.predict() to get y_model values and over-plot them with y_data.
+Extract the model parameter values a0 and a1 from model_fit.params.
+Use compute_rss_and_plot_fit() to confirm these results are consistent with the analytic formulae implemented with numpy.
+
+
+
+
+
+
+
+# Pass data and `formula` into ols(), use and `.fit()` the model to the data
+model_fit = ols(formula ="y_column ~ x_column", data =df).fit()
+
+# Use .predict(df) to get y_model values, then over-plot y_data with y_model
+y_model = model_fit.predict(df)
+fig = plot_data_with_model(x_data, y_data , y_model)
+
+# Extract the a0, a1 values from model_fit.params
+a0 = model_fit.params['Intercept']
+a1 = model_fit.params['x_column']
+
+# Visually verify that these parameters a0, a1 give the minimum RSS
+fig, rss = compute_rss_and_plot_fit(a0, a1)
+
+
+
+
+Correct! Great Job! Note that the params container always uses 'Intercept' for the a0 key, but all higher order terms will have keys that match the column name from the pandas DataFrame that you passed into ols(). Python style tip: notice that we used 'method chaining', which looks like this: ols().fit(). Since the object returned by ols() has a method .fit(), this can be a conveniently shorter way to express calculations in python rather than using multiple lines.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Linear Model in Anthropology
+If you found part of a skeleton, from an adult human that lived thousands of years ago, how could you estimate the height of the person that it came from? This exercise is in part inspired by the work of forensic anthropologist Mildred Trotter, who built a regression model for the calculation of stature estimates from human "long bones" or femurs that is commonly used today.
+
+In this exercise, you'll use data from many living people, and the python library scikit-learn, to build a linear model relating the length of the femur (thigh bone) to the "stature" (overall height) of the person. Then, you'll apply your model to make a prediction about the height of your ancient ancestor.
+
+
+
+
+
+Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/24c5103a89f299f1518d5ca969a56211fca37857/ch02_ex14_fig01.png
+
+
+
+
+ Q : 
+
+
+import LinearRegression from sklearn.linear_model and initialize the model with fit_intercept=False.
+Reshape the pre-loaded data arrays legs and heights, from "1-by-N" to "N-by-1" arrays.
+Pass the reshaped arrays legs and heights into model.fit().
+use model.predict() to predict the value fossil_height for the newly found fossil fossil_leg = 50.7.
+
+
+
+
+# import the sklearn class LinearRegression and initialize the model
+from sklearn.linear_model import LinearRegression
+model = LinearRegression(fit_intercept=False)
+
+# Prepare the measured data arrays and fit the model to them
+legs = legs.reshape(len(legs),1)
+heights = heights.reshape(len(heights),1)
+model.fit(legs, heights)
+
+# Use the fitted model to make a prediction for the found femur
+fossil_leg = 50.7
+fossil_height = model.predict(50.7)
+print("Predicted fossil height = {:0.2f} cm".format(fossil_height[0,0]))
+
+
+
+
+
+<script.py> output:
+    Predicted fossil height = 181.34 cm
+
+
+In [1]: legs
+Out[1]: 
+array([ 35. ,  36.5,  38. ,  39.5,  41. ,  42.5,  44. ,  45.5,  47. ,
+        48.5,  50. ,  51.5,  53. ,  54.5,  56. ,  57.5,  59. ,  60.5,
+        62. ,  63.5,  65. ])
+
+
+
+
+Correct! Notice that we used the pre-loaded data to fit or "train" the model, and then applied that model to make a prediction about newly collected data that was not part of the data used to fit the model. Also notice that model.predict() returns the answer as an array of shape = (1,1), so we had to index into it with the [0,0] syntax when printing. This is an artifact of our overly simplified use of sklearn here: the details of this are beyond the scope of the current course, but relate to the number of samples and features that one might use in a more sophisticated, generalized model.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Linear Model in Oceanography
+Time-series data provides a context in which the "slope" of the linear model represents a "rate-of-change".
+
+In this exercise, you will use measurements of sea level change from 1970 to 2010, build a linear model of that changing sea level and use it to make a prediction about the future sea level rise.
+
+
+
+
+
+
+Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/f225423a51edaca69ffe8383a8994063c3eb098b/ch02_ex15_fig01.png
+
+
+
+
+
+ Q : 
+
+
+Import and use LinearRegression(fit_intercept=True) to initialize a linear model.
+Pass in the pre-loaded and reshaped years and levels data into model.fit() to fit the model.
+Use model.predict() to predict a single future_level for future_year = 2100 and print() the result.
+Use model.predict() to forecast many forecast_levels and plot the result with the pre-defined plot_data_and_forecast().
+
+
+
+
+
+# Import LinearRegression class, build a model, fit to the data
+from sklearn.linear_model import LinearRegression
+model = LinearRegression(fit_intercept=True)
+model.fit(years, levels)
+
+# Use model to make a prediction for one year, 2100
+future_year = 2100
+future_level = model.predict(2100)
+print("Prediction: year = {}, level = {:.02f}".format(future_year, future_level[0,0]))
+
+# Use model to predict for many years, and over-plot with measured data
+years_forecast = np.linspace(1970, 2100, 131).reshape(-1, 1)
+levels_forecast = model.predict(years_forecast)
+fig = plot_data_and_forecast(years, levels, years_forecast , levels_forecast)
+
+
+
+
+
+
+<script.py> output:
+    Prediction: year = 2100, level = 16.66
+
+
+
+Correct! Note that with scikit-learn, although we could extract a0 = model.intercept_[0] and a1 = model.coef_[0,0], we do not need to do that in order to make predictions, we just call model.predict(). With more complex models, these parameters may not have easy physical interpretations. Notice also that although our model is linear, the actual data appears to have an up-turn that might be better modeled by adding a quadratic or even exponential term to our model. The linear model forecast may be underestimating the rate of increase in sea level.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+
+
+
+Linear Model in Cosmology
+Less than 100 years ago, the universe appeared to be composed of a single static galaxy, containing perhaps a million stars. Today we have observations of hundreds of billions of galaxies, each with hundreds of billions of stars, all moving.
+
+The beginnings of the modern physical science of cosmology came with the publication in 1929 by Edwin Hubble that included use of a linear model.
+
+In this exercise, you will build a model whose slope will give Hubble's Constant, which describes the velocity of galaxies as a linear function of distance from Earth.
+
+
+
+
+Image URL : http://www.pnas.org/content/15/3/168/F2.medium.gif
+
+
+
+ Q : 
+
+
+
+Use the pre-loaded DataFrame with columns names, distances, and velocities.
+To model a linear relationship between velocities and distances, use formula="velocities ~ distances".
+build and fit a model using ols().fit() with formula="velocities ~ distances" and data=df.
+Extract the intercept from model_fit.params and the intercept spread from model_fit.bse.
+
+
+
+
+# Fit the model, based on the form of the formula
+model_fit = ols(formula="velocities ~ distances", data=df).fit()
+
+# Extract the model parameters and associated "errors" or uncertainties
+a0 = model_fit.params['Intercept']
+a1 = model_fit.params['distances']
+e0 = model_fit.bse['Intercept']
+e1 = model_fit.bse['distances']
+
+# Print the results
+print('For slope a1={:.02f}, the uncertainty in a1 is {:.02f}'.format(a1, e1))
+print('For intercept a0={:.02f}, the uncertainty in a0 is {:.02f}'.format(a0, e0))
+
+
+
+
+
+
+<script.py> output:
+    For slope a1=454.16, the uncertainty in a1 is 75.24
+    For intercept a0=-40.78, the uncertainty in a0 is 83.44
+
+
+
+
+
+Correct! Later in the course, we will spend more time with model uncertainty, and exploring how to compute it ourselves. Notice the ~ in the formula means "similar to" and is interpreted by statsmodels to mean that y ~ x have a linear relationship. More recently, observed astrophysical data extend the veritical scale of measured data out further by almost a factor of 50. Using this new data to model gives a very different value for the slope, Hubble's Constant, of about 72. Modeling with new data revealed a different slope, and this has big implications in the physics of the Universe.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Interpolation: Inbetween Times
+In this exercise, you will build a linear model by fitting monthly time-series data for the Dow Jones Industrial Average (DJIA) and then use that model to make predictions for daily data (in effect, an interpolation). Then you will compare that daily prediction to the real daily DJIA data.
+
+A few notes on the data. "OHLC" stands for "Open-High-Low-Close", which is usually daily data, for example the opening and closing prices, and the highest and lowest prices, for a stock in a given day. "DayCount" is an integer number of days from start of the data collection.
+
+
+
+Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/14df216faa874a9ea14c50bd3ca3dae800468add/ch03_ex06_fig01.png
+
+
+
+ Q : 
+
+
+
+Use ols() to .fit() a model to the data=df_monthly with formula="Close ~ DayCount".
+Use model_fit.predict() on both df_monthly.DayCount and df_daily.DayCount to predict values for the monthly and daily Close prices, stored as a new column Model in each DataFrame.
+Use the predefined plot_model_with_data twice, on each df_monthly and df_daily and compare the RSS values shown.
+
+
+
+
+
+# build and fit a model to the df_monthly data
+model_fit = ols('Close ~ DayCount', data =df_monthly).fit()
+
+# Use the model FIT to the MONTHLY data to make a predictions for both monthly and daily data
+df_monthly['Model'] = model_fit.predict(df_monthly.DayCount)
+df_daily['Model'] = model_fit.predict(df_daily.DayCount)
+
+# Plot the monthly and daily data and model, compare the RSS values seen on the figures
+fig_monthly = plot_model_with_data(df_monthly)
+fig_daily = plot_model_with_data(df_daily)
+
+
+
+
+
+Correct! Notice the monthly data looked linear, but the daily data clearly has additional, nonlinear trends. Under-sampled data often misses real-world features in the data on smaller time or spatial scales. Using the model from the under-sampled data to make interpolations to the daily data can result is large residuals. Notice that the RSS value for the daily plot is more than 30 times worse than the monthly plot
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Extrapolation: Going Over the Edge
+In this exercise, we consider the perils of extrapolation. Shown here is the profile of a hiking trail on a mountain. One portion of the trail, marked in black, looks linear, and was used to build a model. But we see that the best fit line, shown in red, does not fit outside the original "domain", as it extends into this new outside data, marked in blue.
+
+If we want use the model to make predictions for the altitude, but still be accurate to within some tolerance, what are the smallest and largest values of independent variable x that we can allow ourselves to apply the model to?"
+Here, use the preloaded x_data, y_data, y_model, and plot_data_model_tolerance() to complete your solution.
+
+
+
+
+Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/6307576adc9dde93c10422e742c33d865f9fbc72/ch03_ex07_fig01.png
+
+
+
+
+
+ Q : 
+
+
+
+Use np.abs() to compute the residuals as the differences y_model - y_data
+Find the .min() and .max() values of x at which the residuals are less than a tolerance = 100 meters.
+Use np.min() andnp.max()to print the range (the largest and smallest) ofx_good` values.
+Use the predefined plot_data_model_tolerance() to compare the data, model, and range of x_good values where the residuals < tolerance is True.
+
+
+
+
+
+# Compute the residuals, "data - model", and determine where [residuals < tolerance]
+residuals = np.abs(y_model - y_data)
+tolerance = 100
+x_good = x_data[residuals < tolerance]
+
+# Find the min and max of the "good" values, and plot y_data, y_model, and the tolerance range
+print('Minimum good x value = {}'.format(np.min(x_good)))
+print('Maximum good x value = {}'.format(np.max(x_good)))
+fig = plot_data_model_tolerance(x_data, y_data, y_model, tolerance)
+
+
+
+
+
+<script.py> output:
+    Minimum good x value = -5.0
+    Maximum good x value = 12.0
+
+
+
+
+Correct! Notice the range of good values, which extends a little out into the new data, is marked in green on the plot. By comparing the residuals to a tolerance threshold, we can quantify how far out out extrapolation can go before the difference between model and data gets too large.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+RMSE Step-by-step
+In this exercise, you will quantify the over-all model "goodness-of-fit" of a pre-built model, by computing one of the most common quantitative measures of model quality, the RMSE, step-by-step.
+
+Start with the pre-loaded data x_data and y_data, and use it with a predefined modeling function model_fit_and_predict().
+
+
+
+
+
+Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/d30dad2a3e5c1af4cfd0b123cfa7da69749d30b0/ch03_ex10_fig01.png
+
+
+
+ Q : 
+
+
+Compute y_model values from model_fit_and_predict(x_data, y_data).
+Compute the residuals as the difference between y_model and y_data.
+Use np.sum() and np.square() to compute RSS, and divide by len(residuals) to get MSE.
+Take the np.sqrt() of MSE to get RMSE, and print all results.
+
+
+
+
+
+# Build the model and compute the residuals "model - data"
+y_model = model_fit_and_predict(x_data, y_data)
+residuals = y_model - y_data
+
+# Compute the RSS, MSE, and RMSE and print the results
+RSS = np.sum(np.square(residuals))
+MSE = RSS/len(residuals)
+RMSE = np.sqrt(MSE)
+print('RMSE = {:0.2f}, MSE = {:0.2f}, RSS = {:0.2f}'.format(RMSE, MSE, RSS))
+
+
+
+
+
+<script.py> output:
+    RMSE = 26.23, MSE = 687.83, RSS = 14444.48
+
+
+
+
+Correct! Notice that instead of computing RSS and normalizing with division by len(residuals) to get the MSE, you could have just applied np.mean(np.square()) to the residuals. Another useful point to help you remember; you can think of the MSE like a variance, but instead of differencing the data from its mean, you difference the data and the model. Similarly, think of RMSE as a standard deviation.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+R-Squared
+In this exercise you'll compute another measure of goodness, R-squared. R-squared is the ratio of the variance of the residuals divided by the variance of the data we are modeling, and in so doing, is a measure of how much of the variance in your data is "explained" by your model, as expressed in the spread of the residuals.
+
+Here we have pre-loaded the data x_data,y_data and the model predictions y_model for the best fit model; you're goal is to compute the R-squared measure to quantify how much this linear model accounts for variation in the data.
+
+
+
+
+Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/d30dad2a3e5c1af4cfd0b123cfa7da69749d30b0/ch03_ex10_fig01.png
+
+
+
+ Q : 
+
+
+Compute the residuals, by subtracting the y_data from the y_model, and the deviations, by subtracting the y_data from the np.mean() of the y_data.
+Compute the variance of the residuals and the variance of the deviations, using np.mean() and np.square() to each.
+Compute the r_squared as 1 minus the ratio var_residuals / var_deviations, and print the result.
+
+
+
+
+
+# Compute the residuals and the deviations
+residuals = y_model - y_data
+deviations = np.mean(y_data) - y_data
+
+# Compute the variance of the residuals and deviations
+var_residuals = np.mean(np.square(residuals))
+var_deviations = np.mean(np.square(deviations))
+
+# Compute r_squared as 1 - the ratio of RSS/Variance
+r_squared = 1 - (var_residuals / var_deviations)
+print('R-squared is {:0.2f}'.format(r_squared))
+
+
+
+
+
+<script.py> output:
+    R-squared is 0.89
+
+
+
+
+Correct! Notice that R-squared varies from 0 to 1, where a value of 1 means that the model and the data are perfectly correlated and all variation in the data is predicted by the model. A value of zero would mean none of the variation in the data is predicted by the model. Here, the data points are close to the line, so R-squared is closer to 1.0
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Variation Around the Trend
+The data need not be perfectly linear, and there may be some random variation or "spread" in the measurements, and that does translate into variation of the model parameters. This variation is in the parameter is quantified by "standard error", and interpreted as "uncertainty" in the estimate of the model parameter.
+
+In this exercise, you will use ols from statsmodels to build a model and extract the standard error for each parameter of that model.
+
+
+
+
+Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/96008939a1bd6ca848acb59b2cc4d45fea356fc7/ch03_ex13_fig01.png
+
+
+
+ Q : 
+
+
+Store the preloaded data in a DataFrame df, labeling x_data as times and y_data as distances.
+Use model_fit = ols().fit() to fit a linear model or the form formula="distances ~ times" to the data=df.
+Extract the estimated intercept model_fit.params['Intercept'] and the standard error of the slope from model_fit.bse['Intercept'].
+Repeat for the slope, and then print all 4 with meaningful names.
+
+
+
+
+
+# Store x_data and y_data, as times and distances, in df, and use ols() to fit a model to it.
+df = pd.DataFrame(dict(times =x_data, distances =y_data))
+model_fit = ols(formula="distances ~ times", data=df).fit()
+
+# Extact the model parameters and their uncertainties
+a0 = model_fit.params['Intercept']
+e0 = model_fit.bse['Intercept']
+a1 = model_fit.params['times']
+e1 = model_fit.bse['times']
+
+# Print the results with more meaningful names
+print('Estimate    of the intercept = {:0.2f}'.format(a0))
+print('Uncertainty of the intercept = {:0.2f}'.format(e0))
+print('Estimate    of the slope = {:0.2f}'.format(a1))
+print('Uncertainty of the slope = {:0.2f}'.format(e1))
+
+
+
+
+
+<script.py> output:
+    Estimate    of the intercept = -0.81
+    Uncertainty of the intercept = 1.29
+    Estimate    of the slope = 50.78
+    Uncertainty of the slope = 1.11
+
+
+
+Correct! The size of the parameters standard error only makes sense in comparison to the parameter value itself. In fact the units are the same! So a1 and e1 both have units of velocity (meters/second), and a0 and e0 both have units of distance (meters).
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Variation in Two Parts
+Given two data sets of distance-versus-time data, one with very small velocity and one with large velocity. Notice that both may have the same standard error of slope, but different R-squared for the model overall, depending on the size of the slope ("effect size") as compared to the standard error ("uncertainty").
+
+If we plot both data sets as scatter plots on the same axes, the contrast is clear. Variation due to the slope is different than variantion due to the random scatter about the trend line. In this exercise, your goal is to compute the standard error and R-squared for two data sets and compare.
+
+
+
+Image URL : https://assets.datacamp.com/production/repositories/1480/datasets/2995eaec3d7e58c0dd64cad4c1f5ec3f30873e49/ch03_ex14_fig01.png
+
+
+
+ Q : 
+
+
+Build and fit() an ols() model, for both data sets distances1 and distances2.
+Use the .bse of resulting models model_1 and model_2, and the 'times' key to extract the standard error values for the slope from each model.
+Use the .rsquared attribute to extract the R-squared value from each model.
+Print the resulting se_1, rsquared_1, se_2, rsquared_2, and visually compare.
+
+
+
+
+
+# Build and fit two models, for columns distances1 and distances2 in df
+model_1 = ols(formula="distances1 ~ times", data=df).fit()
+model_2 = ols(formula="distances2 ~ times", data=df).fit()
+
+# Extract R-squared for each model, and the standard error for each slope
+se_1 = model_1.bse['times']
+se_2 = model_2.bse['times']
+rsquared_1 = model_1.rsquared
+rsquared_2 = model_2.rsquared
+
+# Print the results
+print('Model 1: SE = {:0.3f}, R-squared = {:0.3f}'.format(se_1 , rsquared_1))
+print('Model 2: SE = {:0.3f}, R-squared = {:0.3f}'.format(se_2 , rsquared_2))
+
+
+
+
+
+<script.py> output:
+    Model 1: SE = 3.694, R-squared = 0.898
+    Model 2: SE = 3.694, R-squared = 0.335
+
+
+
+
+Correct! Notice that the standard error is the same for both models, but the r-squared changes. The uncertainty in the estimates of the model parameters is indepedent from R-squred because that uncertainty is being driven not by the linear trend, but by the inherent randomness in the data. This serves as a transition into looking at statistical inference in linear models.
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
