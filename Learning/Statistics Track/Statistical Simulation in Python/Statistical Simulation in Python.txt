@@ -531,6 +531,463 @@ The seed for this exercise is set to 333
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+ Q : 
+
+
+Queen and spade
+In this example, you'll use the generalized probability formula P(A∪B)=P(A)+P(B)−P(A∩B) to calculate the probability of two events. Consider a deck of cards (13 cards x 4 suites = 52 cards in total). One card is drawn at random. What is the probability of getting a queen or a spade? Here event A is the card being a queen and event B is the card being a spade. Think carefully about whether the two events have anything in common.
+
+
+
+
+ A : 
+
+
+16 / 52
+
+
+
+In [1]: (4/52)+(13/52)-(1/52)
+Out[1]: 0.3076923076923077
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Two of a kind
+Now let's use simulation to estimate probabilities. Suppose you've been invited to a game of poker at your friend's home. In this variation of the game, you are dealt five cards and the player with the better hand wins. You will use a simulation to estimate the probabilities of getting certain hands. Let's work on estimating the probability of getting at least two of a kind. Two of a kind is when you get two cards of different suites but having the same numeric value (e.g., 2 of hearts, 2 of spades, and 3 other cards).
+
+By the end of this exercise, you will know how to use simulation to calculate probabilities for card games.
+
+
+
+
+
+ Q : 
+
+
+In the for loop, shuffle deck_of_cards.
+Utilize the get() method of a dictionary to count the number of occurrences of each card in the hand.
+Increment the counter, two_kind, when there are at least two cards having the same numeric value in the hand.
+
+
+
+
+# Shuffle deck & count card occurrences in the hand
+n_sims, two_kind = 10000, 0
+for i in range(n_sims):
+    np.random.shuffle(deck_of_cards)
+    hand, cards_in_hand = deck_of_cards[0:5], {}
+    for card in hand:
+        # Use .get() method on cards_in_hand
+        cards_in_hand[card[1]] = cards_in_hand.get(card[1], 0) + 1
+    
+    # Condition for getting at least 2 of a kind
+    highest_card = max(cards_in_hand.values())
+    if highest_card>=2: 
+        two_kind += 1
+
+print("Probability of seeing at least two of a kind = {} ".format(two_kind/n_sims))
+
+
+
+
+<script.py> output:
+    Probability of seeing at least two of a kind = 0.4952
+
+
+
+
+Great work! Look up some other hands and try calculating their probability.
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+Game of thirteen
+A famous French mathematician Pierre Raymond De Montmart, who was known for his work in combinatorics, proposed a simple game called as Game of Thirteen. You have a deck of 13 cards, each numbered from 1 through 13. Shuffle this deck and draw cards one by one. A coincidence is when the number on the card matches the order in which the card is drawn. For instance, if the 5th card you draw happens to be a 5, it's a coincidence. You win the game if you get through all the cards without any coincidences. Let's calculate the probability of winning at this game using simulation.
+
+By completing this exercise, you will further strengthen your ability to cast abstract problems into the simulation framework for estimating probabilities.
+
+
+
+
+
+ Q : 
+
+
+
+For each drawing, draw all the cards in deck without replacement and assign to draw.
+Check if there are any coincidences in the draw and, if there are, increment the coincidences counter by 1.
+Calculate winning probability as the fraction of games without any coincidences and use prob_of_winning to print your results.
+
+
+
+
+
+In [10]: sims
+Out[10]: 10000
+
+In [11]: deck
+Out[11]: array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13])
+
+In [12]: coincidence
+Out[12]: True
+
+In [13]: coincidences
+Out[13]: 6287
+
+In [14]: draw
+Out[14]: array([10, 12,  3,  6, 11,  1,  8, 13,  4,  9,  7,  5,  2])
+
+
+
+
+# Pre-set constant variables
+deck, sims, coincidences = np.arange(1, 14), 10000, 0
+
+for _ in range(sims):
+    # Draw all the cards without replacement to simulate one game
+    draw = np.random.choice(deck , size= len(deck) , replace=False)
+    # Check if there are any coincidences
+    coincidence = (draw == list(np.arange(1, 14))).any()
+    if coincidence == True: 
+        coincidences += 1
+
+# Calculate probability of winning
+prob_of_winning =  1 - coincidences /(sims)
+print("Probability of winning = {}".format(prob_of_winning))
+
+
+
+
+Nice work! Try playing with the code to see what happens to the probability of winning when we have more than 13 cards
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+The conditional urn
+As we've learned, conditional probability is defined as the probability of an event given another event. To illustrate this concept, let's turn to an urn problem.
+
+We have an urn that contains 7 white and 6 black balls. Four balls are drawn at random. We'd like to know the probability that the first and third balls are white, while the second and the fourth balls are black.
+
+Upon completion, you will learn to manipulate simulations to calculate simple conditional probabilities.
+
+
+
+ Q : 
+
+
+
+Initialize the counter success to 0 and sims to 5000.
+Define a list, urn, with 7 white balls ('w') and 6 black balls ('b').
+Draw 4 balls without replacement and check to see if the first and third are white and second and fourth are black.
+Increment success if the above criterion is met.
+
+
+
+# Initialize success, sims and urn
+success, sims = 0 , 5000
+urn =  list('w')*7+(list('b'*6))
+
+for _ in range(sims):
+    # Draw 4 balls without replacement
+    draw = np.random.choice(urn, replace=False ,size=4)
+    # Count the number of successes
+    if draw[0] == 'w' and draw[2] == 'w' and draw[1] == 'b' and draw[3] == 'b': 
+        success +=1
+
+print("Probability of success = {}".format(success/sims))
+
+
+
+
+
+<script.py> output:
+    Probability of success = 0.0722
+
+
+
+Good! Now let's try something a bit more advanced.
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Birthday problem
+Now we'll use simulation to solve a famous probability puzzle - the birthday problem. It sounds quite straightforward - How many people do you need in a room to ensure at least a 50% chance that two of them share the same birthday?
+
+With 366 people in a 365-day year, we are 100% sure that at least two have the same birthday, but we only need to be 50% sure. Simulation gives us an elegant way of solving this problem.
+
+Upon completion of this exercise, you will begin to understand how to cast problems in a simulation framework.
+
+
+
+ Q : 
+
+
+
+Initialize the sample space days which is an array from 1 - 365.
+Define a function birthday_sim() that takes as input the number of people and returns the probability that at least two share the same birthday.
+
+
+
+
+# Draw a sample of birthdays & check if each birthday is unique
+days = np.arange(1 , 366)
+people = 2
+
+def birthday_sim(people):
+    sims, unique_birthdays = 2000, 0 
+    for _ in range(sims):
+        draw = np.random.choice(days, size=people, replace=True)
+        if len(draw) == len(set(draw)): 
+            unique_birthdays += 1
+    out = 1 - unique_birthdays / sims
+    return out
+
+
+
+
+# Break out of the loop if probability greater than 0.5
+while (people > 0):
+    prop_bds = birthday_sim(people)
+    if prop_bds > 0.5: 
+        break
+    people += 1
+
+print("With {} people, there's a 50% chance that two share a birthday.".format(people))
+
+
+
+
+
+The seed for this exercise is set to 111
+
+<script.py> output:
+    With 23 people, there's a 50% chance that two share a birthday.
+
+
+
+
+Good Job! Yes, 23 seems surprisingly low, but it's enough to have a 50% chance!
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Full house
+Let's return to our poker game. Last time, we calculated the probability of getting at least two of a kind. This time we are interested in a full house. A full house is when you get two cards of different suits that share the same numeric value and three other cards that have the same numeric value (e.g., 2 of hearts & spades, jacks of clubs, diamonds, & spades).
+
+Thus, a full house is the probability of getting exactly three of a kind conditional on getting exactly two of a kind of another value. Using the same code as before, modify the success condition to get the desired output. This exercise will teach you to estimate conditional probabilities in card games and build your foundation in framing abstract problems for simulation.
+
+
+
+
+ Q : 
+
+
+
+Shuffle deck_of_cards.
+Utilize a dictionary with .get() to count the number of occurrences of each card in the hand.
+Increment the counter full_house when there is a full house in the hand (2 of one kind, 3 of the other).
+
+
+
+
+
+
+#Shuffle deck & count card occurrences in the hand
+n_sims, full_house, deck_of_cards = 50000, 0, deck.copy() 
+for i in range(n_sims):
+    np.random.shuffle(deck_of_cards)
+    hand, cards_in_hand = deck_of_cards[0:5], {}
+    for card in hand:
+        # Use .get() method to count occurrences of each card
+        cards_in_hand[card[1]] = cards_in_hand.get(card[1], 0) + 1
+        
+    # Condition for getting full house
+    condition = (max(cards_in_hand.values()) ==3) & (min(cards_in_hand.values())==2)
+    if  condition == True: 
+        full_house += 1
+print("Probability of seeing a full house = {}".format(full_house/n_sims))
+
+
+
+
+The seed for this exercise is set to 123
+
+<script.py> output:
+    Probability of seeing a full house = 0.0014
+
+
+
+Nicely done! Look at how small this probability is compared to that of at least two of a kind.
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+Driving test
+Through the next exercises, we will learn how to build a data generating process (DGP) through progressively complex examples.
+
+In this exercise, you will simulate a very simple DGP. Suppose that you are about to take a driving test tomorrow. Based on your own practice and based on data you have gathered, you know that the probability of you passing the test is 90% when it's sunny and only 30% when it's raining. Your local weather station forecasts that there's a 40% chance of rain tomorrow. Based on this information, you want to know what is the probability of you passing the driving test tomorrow.
+
+This is a simple problem and can be solved analytically. Here, you will learn how to model a simple DGP and see how it can be used for simulation.
+
+
+
+ Q : 
+
+
+
+Write a function test_outcome() to simulate the weather.
+Set weather as 'rain' or 'sun' depending on the input argument p_rain (the probability of rain).
+Based on the weather, return 'pass' or 'fail'.
+
+
+
+
+
+sims, outcomes, p_rain, p_pass = 1000, [], 0.40, {'sun':0.9, 'rain':0.3}
+
+def test_outcome(p_rain):
+    # Simulate whether it will rain or not
+    weather = np.random.choice(['rain', 'sun'], p=[p_rain, 1-p_rain])
+    # Simulate and return whether you will pass or fail
+    return np.random.choice(['pass', 'fail'], p=[p_pass[weather], 1-p_pass[weather]])
+
+
+
+
+Compute the probability of passing the test. You'll have to count the number of times you pass the test, as collected in outcomes. Save it as pass_outcomes_frac and use that to print the output.
+
+
+
+
+for _ in range(sims):
+    outcomes.append(test_outcome(p_rain))
+
+# Calculate fraction of outcomes where you pass
+pass_outcomes_frac = (sum ([i == 'pass' for i in outcomes ]) / len(outcomes))
+print("Probability of Passing the driving test = {}".format(pass_outcomes_frac))
+
+
+
+
+
+    
+<script.py> output:
+    Probability of Passing the driving test = 0.654
+
+
+
+Nice work! Now let's look at an example of national importance!
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ Ref : 
+
+
+
+National elections
+This exercise will give you a taste of how you can model a DGP at different levels of complexity.
+
+Consider national elections in a country with two political parties - Red and Blue. This country has 50 states and the party that wins the most states wins the elections. You have the probability p of Red winning in each individual state and want to know the probability of Red winning nationally.
+
+Let's model the DGP to understand the distribution. Suppose the election outcome in each state follows a binomial distribution with probability p such that 0 indicates a loss for Red and 1 indicates a win. We then simulate a number of election outcomes. Finally, we can ask rich questions like what is the probability of Red winning less than 45% of the states?
+
+
+
+ Q : 
+
+
+Simulate one election using np.random.binomial() with p = probs and n=1. Assign it to election.
+Append the average of Red's wins in election to outcomes.
+Calculate the fraction of outcomes where Red won less than 45% of the states. Save it as prob_red_wins and use it to print your results.
+
+
+
+
+outcomes, sims, probs = [], 1000, p
+
+for _ in range(sims):
+    # Simulate elections in the 50 states
+    election = np.random.binomial(p=probs, n=1)
+    # Get average of Red wins and add to `outcomes`
+    outcomes.append(election.mean())
+
+# Calculate probability of Red winning in less than 45% of the states
+prob_red_wins = sum([(x < 0.45) for x in outcomes])/len(outcomes)
+print("Probability of Red winning in less than 45% of the states = {}".format(prob_red_wins))
+
+
+
+
+
+<script.py> output:
+    Probability of Red winning in less than 45% of the states = 0.196
+
+
+Good job! Now think about what you would do if you were given the probabilities of winning in each county within a state.
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
 
 
 
