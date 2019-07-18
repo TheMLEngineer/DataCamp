@@ -1206,19 +1206,545 @@ The seed for this exercise is set to 123
 
 
 
+ Q : 
+ 
+ Sampling with replacement
+In this example, you will review the np.random.choice() function that you've already seen in the previous chapters. You are given multiple variations of np.random.choice() for sampling from arrays. Look at each variation carefully and use the console to test out the options. Select the option that could generate ['a', 'c', 'c'] as an output.
+
+
+
+
+ A : 
+
+
+
+np.random.choice(['a', 'b', 'c', 'd', 'e'], size=5, replace=True)[:3]
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ 
+ 
+ Probability example
+In this exercise, we will review the difference between sampling with and without replacement. We will calculate the probability of an event using simulation, but vary our sampling method to see how it impacts probability.
+
+Consider a bowl filled with colored candies - three blue, two green, and five yellow. Draw three candies at random, with replacement and without replacement. You want to know the probability of drawing a yellow candy on the third draw given that the first candy was blue and the second candy was green.
+
+
+
+
+ Q : 
+ 
+ 
+ 
+ Set up your sample space bowl as a list having three blue 'b', two green 'g' and five yellow 'y' candies.
+Draw a sample of three candies with replacement (sample_rep) and without replacement (sample_no_rep).
+Write down the success condition for drawing a yellow candy on the third draw given that the first candy was blue and the second candy was green.
+Calculate the probability with and without replacement as successes divided by the number of iterations.
+
+
+
+
+# Set up the bowl
+success_rep, success_no_rep, sims = 0, 0, 10000
+bowl = list('b'*3)+list('g'*2)+list('y'*5)
+
+for i in range(sims):
+    # Sample with and without replacement & increment success counters
+    sample_rep = np.random.choice(bowl , size = 3 , replace = True)
+    sample_no_rep = np.random.choice(bowl , size = 3 , replace=False)
+    if (sample_rep[0] == 'b') & (sample_rep[1] == 'g') & (sample_rep[2] == 'y'): 
+        success_rep += 1
+    if (sample_no_rep[0] =='b') & (sample_no_rep[1] == 'g') & (sample_no_rep[2] == 'y'): 
+        success_no_rep += 1
+
+# Calculate probabilities
+prob_with_replacement = success_rep/ sims
+prob_without_replacement = success_no_rep / sims
+print("Probability with replacement = {}, without replacement = {}".format(prob_with_replacement, prob_without_replacement))
+
+
+
+
+<script.py> output:
+    Probability with replacement = 0.0266, without replacement = 0.0415
+	
+	
+	
+Well done! Does the difference between sampling with and without replacement make sense now?
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Running a simple bootstrap
+Welcome to the first exercise in the bootstrapping section. We will work through an example where we learn to run a simple bootstrap. As we saw in the video, the main idea behind bootstrapping is sampling with replacement.
+
+Suppose you own a factory that produces wrenches. You want to be able to characterize the average length of the wrenches and ensure that they meet some specifications. Your factory produces thousands of wrenches every day, but it's infeasible to measure the length of each wrench. However, you have access to a representative sample of 100 wrenches. Let's use bootstrapping to get the 95% confidence interval (CI) for the average lengths.
+
+Examine the list wrench_lengths, which has 100 observed lengths of wrenches, in the shell.
+
+
+
+
+ Q : 
+ 
+ Draw a random sample with replacement from wrench_lengths and store it in temp_sample. Set size = len(wrench_lengths).
+Calculate the mean length of each sample, assign it to sample_mean, and then append it to mean_lengths.
+Calculate the bootstrapped mean (boot_mean) and bootstrapped 95% confidence interval (boot_95_ci) by using np.percentile().
+
+
+
+# Draw some random sample with replacement and append mean to mean_lengths.
+mean_lengths, sims = [], 1000
+for i in range(sims):
+    temp_sample = np.random.choice(wrench_lengths , replace=True , size= len(wrench_lengths))
+    sample_mean = np.mean(temp_sample)
+    mean_lengths.append(sample_mean)
+    
+# Calculate bootstrapped mean and 95% confidence interval.
+boot_mean = np.mean(mean_lengths)
+boot_95_ci = np.percentile(mean_lengths, [2.5, 97.5])
+print("Bootstrapped Mean Length = {}, 95% CI = {}".format(boot_mean, boot_95_ci))
+
+
+
+The seed for this exercise is set to 123
+
+<script.py> output:
+    Bootstrapped Mean Length = 10.027059690070363, 95% CI = [ 9.78662216 10.24854356]
+
+
+Good work! Now let's see how we can use bootstrapping for more complicated estimators.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Non-standard estimators
+In the last exercise, you ran a simple bootstrap that we will now modify for more complicated estimators.
+
+Suppose you are studying the health of students. You are given the height and weight of 1000 students and are interested in the median height as well as the correlation between height and weight and the associated 95% CI for these quantities. Let's use bootstrapping.
+
+Examine the pandas DataFrame df with the heights and weights of 1000 students. Using this, calculate the 95% CI for both the median height as well as the correlation between height and weight.
+
+
+ Q : 
+ 
+ Use the .sample() method ondf to generate a sample of the data with replacement and assign it to tmp_df.
+For each generated dataset in tmp_df, calculate the median heights and correlation between heights and weights using .median() and .corr().
+Append the median heights to height_medians and correlation to hw_corr.
+Finally calculate the 95% confidence intervals for each of the above quantities using np.percentile().
 
 
 
 
 
+# Sample with replacement and calculate quantities of interest
+sims, data_size, height_medians, hw_corr = 1000, df.shape[0], [], []
+for i in range(sims):
+    tmp_df = df.sample (n=sims, replace=True)
+    height_medians.append(tmp_df.heights.median())
+    hw_corr.append(tmp_df.weights.corr(tmp_df.heights))
+
+# Calculate confidence intervals
+height_median_ci = np.percentile(height_medians , [2.5 , 97.5])
+height_weight_corr_ci = np.percentile(hw_corr , [2.5 , 97.5])
+print("Height Median CI = {} \nHeight Weight Correlation CI = {}".format( height_median_ci, height_weight_corr_ci))
 
 
 
 
 
+<script.py> output:
+    Height Median CI = [5.25262253 5.55928686] 
+    Height Weight Correlation CI = [0.93892136 0.95103152]
+	
+	
+	
+
+Nicely done! You now know how to run a basic bootstrap.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ 
+ 
+ Bootstrapping regression
+Now let's see how bootstrapping works with regression. Bootstrapping helps estimate the uncertainty of non-standard estimators. Consider the R2 statistic associated with a regression. When you run a simple least squares regression, you get a value for R2. But let's see how can we get a 95% CI for R2.
+
+Examine the DataFrame df with a dependent variable y and two independent variables X1 and X2 using df.head(). We've already fit this regression with statsmodels (sm) using:
+
+reg_fit = sm.OLS(df['y'], df.iloc[:,1:]).fit()
+Examine the result using reg_fit.summary() to find that R2=0.3504. Use bootstrapping to calculate the 95% CI.
 
 
 
+ Q : 
+ 
+ Draw a bootstrap sample from the original dataset using the sample() method of a pandas DataFrame. The number of rows should be the same as that of the original DataFrame.
+Fit a regression similar to reg_fit() using sm.OLS() and extract the R2 statistic.
+Append the R2 to the list rsquared_boot.
+Calculate 95% CI for rsquared_boot as r_sq_95_ci using np.percentile().
+
+
+
+
+rsquared_boot, coefs_boot, sims = [], [], 1000
+reg_fit = sm.OLS(df['y'], df.iloc[:,1:]).fit()
+
+# Run 1K iterations
+for i in range(sims):
+    # First create a bootstrap sample with replacement with n=df.shape[0]
+    bootstrap = df.sample(n = df.shape[0] , replace=True)
+    # Fit the regression and append the r square to rsquared_boot
+    rsquared_boot.append(sm.OLS(bootstrap['y'],bootstrap.iloc[:,1:]).fit().rsquared)
+
+# Calculate 95% CI on rsquared_boot
+r_sq_95_ci = np.percentile(rsquared_boot , [2.5 , 97.5])
+print("R Squared 95% CI = {}".format(r_sq_95_ci))
+print("R Squared 95% CI = {}".format(r_sq_95_ci))
+
+
+
+<script.py> output:
+    R Squared 95% CI = [0.31089312 0.40543591]
+    R Squared 95% CI = [0.31089312 0.40543591]
+	
+	
+Good job! As a follow-up, can you compare the coefficients of the original regression to their bootstrapped counterparts?
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Basic jackknife estimation - mean
+Jackknife resampling is an older procedure, which isn't used as often compared as bootstrapping. However, it's still useful to know how to run a basic jackknife estimation procedure. In this first exercise, we will calculate the jackknife estimate for the mean. Let's return to the wrench factory.
+
+You own a wrench factory and want to measure the average length of the wrenches to ensure that they meet some specifications. Your factory produces thousands of wrenches every day, but it's infeasible to measure the length of each wrench. However, you have access to a representative sample of 100 wrenches. Let's use jackknife estimation to get the average lengths.
+
+Examine the variable wrench_lengths in the shell.
+
+
+ Q : 
+ 
+ Get a jackknife sample by iteratively leaving one observation out of wrench_lengths and assigning it to jk_sample.
+Calculate the mean of jk_sample and append it to mean_lengths.
+Finally, calculate the jackknife estimate mean_lengths_jk as the mean of the mean_lengths array.
+
+
+
+# Leave one observation out from wrench_lengths to get the jackknife sample and store the mean length
+mean_lengths, n = [], len(wrench_lengths)
+index = np.arange(n)
+
+for i in range(n):
+    jk_sample = wrench_lengths[index != i]
+    mean_lengths.append(np.mean(jk_sample))
+
+# The jackknife estimate is the mean of the mean lengths from each sample
+mean_lengths_jk = np.mean(np.array(mean_lengths))
+print("Jackknife estimate of the mean = {}".format(mean_lengths_jk))
+
+
+
+
+
+<script.py> output:
+    Jackknife estimate of the mean = 10.02710907349036
+	
+	
+	
+	
+	Good job! Next, let's see how to get the variance for this estimate.
+
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+ Jackknife confidence interval for the median
+In this exercise, we will calculate the jackknife 95% CI for a non-standard estimator. Here, we will look at the median. Keep in mind that the variance of a jackknife estimator is n-1 times the variance of the individual jackknife sample estimates where n is the number of observations in the original sample.
+
+Returning to the wrench factory, you are now interested in estimating the median length of the wrenches along with a 95% CI to ensure that the wrenches are within tolerance.
+
+Let's revisit the code from the previous exercise, but this time in the context of median lengths. By the end of this exercise, you will have a much better idea of how to use jackknife resampling to calculate confidence intervals for non-standard estimators.
+
+
+
+
+ Q : 
+ 
+ 
+ 
+ Append the median length of each jackknife sample to median_lengths.
+Calculate the mean of the jackknife estimate of median_length and assign to jk_median_length.
+Calculate the upper 95% confidence interval jk_upper_ci and lower 95% confidence intervals of the median jk_lower_ci using 1.96*np.sqrt(jk_var).
+
+
+
+
+# Leave one observation out to get the jackknife sample and store the median length
+median_lengths = []
+for i in range(n):
+    jk_sample = wrench_lengths[index != i]
+    median_lengths.append(np.median(jk_sample))
+
+median_lengths = np.array(median_lengths)
+
+# Calculate jackknife estimate and it's variance
+jk_median_length = np.mean(median_lengths)
+jk_var = (n-1)*np.var(median_lengths)
+
+# Assuming normality, calculate lower and upper 95% confidence intervals
+jk_lower_ci = jk_median_length - 1.96*np.sqrt(jk_var)
+jk_upper_ci = jk_median_length + 1.96*np.sqrt(jk_var)
+print("Jackknife 95% CI lower = {}, upper = {}".format(jk_lower_ci, jk_upper_ci))
+
+
+
+
+<script.py> output:
+    Jackknife 95% CI lower = 9.138592467547202, upper = 10.754868069037098
+	
+	
+	
+Awesome! You are now ready to move on to permutation testing.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Generating a single permutation
+In the next few exercises, we will run a significance test using permutation testing. As discussed in the video, we want to see if there's any difference in the donations generated by the two designs - A and B. Suppose that you have been running both the versions for a few days and have generated 500 donations on A and 700 donations on B, stored in the variables donations_A and donations_B.
+
+We first need to generate a null distribution for the difference in means. We will achieve this by generating multiple permutations of the dataset and calculating the difference in means for each case.
+
+First, let's generate one permutation and calculate the difference in means for the permuted dataset.
+
+
+ Q : 
+ 
+ Concatenate the two arrays donations_A and donations_B using np.concatenate() and assign to data.
+Get a single permutation using np.random.permutation() and assign it to perm.
+Calculate the difference in the mean values of permuted_A and permuted_B as diff_in_means.
+
+
+
+# Concatenate the two arrays donations_A and donations_B into data
+len_A, len_B = len(donations_A), len(donations_B)
+data = np.concatenate([donations_A, donations_B])
+
+# Get a single permutation of the concatenated length
+perm = np.random.permutation(len(donations_A) + len(donations_B))
+
+# Calculate the permutated datasets and difference in means
+permuted_A = data[perm[:len(donations_A)]]
+permuted_B = data[perm[len(donations_A):]]
+diff_in_means = np.mean(permuted_A) - np.mean(permuted_B)
+print("Difference in the permuted mean values = {}.".format(diff_in_means))
+
+
+
+
+
+<script.py> output:
+    Difference in the permuted mean values = -0.13886241452516757.
+	
+
+
+Good start! Now let's see how we can repeat this process multiple times.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Hypothesis testing - Difference of means
+We want to test the hypothesis that there is a difference in the average donations received from A and B. Previously, you learned how to generate one permutation of the data. Now, we will generate a null distribution of the difference in means and then calculate the p-value.
+
+For the null distribution, we first generate multiple permuted datasets and store the difference in means for each case. We then calculate the test statistic as the difference in means with the original dataset. Finally, we calculate the p-value as twice the fraction of cases where the difference is greater than or equal to the absolute value of the test statistic (2-sided hypothesis). A p-value of less than say 0.05 could then determine statistical significance.
+
+
+ Q : 
+ 
+ 
+ 
+ Use list comprehension to generate a list of multiple permutations of donations_A and donations_B & assign it to perm. The number of permutations should be equal to reps.
+Set samples equal to the difference in means of permuted_A_datasets and permuted_B_datasets along the right axis.
+Set test_stat equal to the difference in means of donations_A and donations_B.
+Calculate p-value p_val as twice the fraction of samples greater than or equal to the absolute value of test_stat.
+
+
+
+
+# Generate permutations equal to the number of repetitions
+perm = np.array([np.random.permutation(len(donations_A) + len(donations_B)) for i in range(reps)])
+permuted_A_datasets = data[perm[:, :len(donations_A)]]
+permuted_B_datasets = data[perm[:, len(donations_A):]]
+
+# Calculate the difference in means for each of the datasets
+samples = np.mean(permuted_A_datasets , axis = 1) - np.mean(permuted_B_datasets , axis = 1)
+
+# Calculate the test statistic and p-value
+test_stat = np.mean(donations_A) - np.mean(donations_B)
+p_val = 2*np.sum(samples >= np.abs(test_stat))/reps
+print("p-value = {}".format(p_val))
+
+
+
+
+
+<script.py> output:
+    p-value = 0.002
+	
+	
+	
+Great work! Look how easy it was to generate the null distribution.
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+ 
+ 
+ Hypothesis testing - Non-standard statistics
+In the previous two exercises, we ran a permutation test for the difference in mean values. Now let's look at non-standard statistics.
+
+Suppose that you're interested in understanding the distribution of the donations received from websites A and B. For this, you want to see if there's a statistically significant difference in the median and the 80th percentile of the donations. Permutation testing gives you a wonderfully flexible framework for attacking such problems.
+
+Let's go through running a test to see if there's a difference in the median and the 80th percentile of the distribution of donations. As before, you're given the donations from the websites A and B in the variables donations_A and donations_B respectively.
+
+
+
+
+ Q : 
+ 
+ Set samples_percentile and samples_median equal to the difference in the 80th percentile and medians of permuted_A_datasets and permuted_B_datasets, respectively.
+ 
+ 
+ 
+ 
+# Calculate the difference in 80th percentile and median for each of the permuted datasets (A and B)
+samples_percentile = np.percentile(permuted_A_datasets , 80 , axis = 1) - np.percentile(permuted_B_datasets , 80 , axis = 1)
+samples_median = np.median(permuted_A_datasets , axis = 1) - np.median(permuted_B_datasets , axis = 1)
+
+
+
+
+Set test_stat_percentile and test_stat_median equal to the difference in 80th percentile and medians of donations_A and donations_B (pre-loaded).
+
+
+
+# Calculate the difference in 80th percentile and median for each of the permuted datasets (A and B)
+samples_percentile = np.percentile(permuted_A_datasets, 80, axis=1) - np.percentile(permuted_B_datasets, 80, axis=1)
+samples_median = np.median(permuted_A_datasets, axis=1) - np.median(permuted_B_datasets, axis=1)
+
+# Calculate the test statistic from the original dataset and corresponding p-values
+test_stat_percentile = np.percentile(donations_A , 80) - np.percentile(donations_B , 80 )
+test_stat_median = np.median(donations_A ) - np.median(donations_B)
+
+
+
+Calculate the corresponding p-values p_val_percentile and p_val_median as two times the fraction of percentile and median samples, respectively, greater than or equal to the absolute value of the respective test statistics.
+
+
+
+
+
+# Calculate the difference in 80th percentile and median for each of the permuted datasets (A and B)
+samples_percentile = np.percentile(permuted_A_datasets, 80, axis=1) - np.percentile(permuted_B_datasets, 80, axis=1)
+samples_median = np.median(permuted_A_datasets, axis=1) - np.median(permuted_B_datasets, axis=1)
+
+# Calculate the test statistic from the original dataset and corresponding p-values
+test_stat_percentile = np.percentile(donations_A, 80) - np.percentile(donations_B, 80)
+test_stat_median = np.median(donations_A) - np.median(donations_B)
+p_val_percentile = 2*np.sum(samples_percentile >= np.abs(test_stat_percentile))/reps
+p_val_median = 2*np.sum(samples_median >= np.abs(test_stat_median))/reps
+
+print("80th Percentile: test statistic = {}, p-value = {}".format(test_stat_percentile, p_val_percentile))
+print("Median: test statistic = {}, p-value = {}".format(test_stat_median, p_val_median))
+
+
+
+
+The seed for this exercise is set to 123
+
+<script.py> output:
+    80th Percentile: test statistic = 1.6951624543447839, p-value = 0.026
+    Median: test statistic = 0.6434965714975927, p-value = 0.014
+	
+	
+
+
+In [1]: permuted_A_datasets
+Out[1]: 
+array([[ 5.18944537,  2.33733572,  3.98047533, ...,  0.24878398,
+         3.32898159, 13.44776735],
+       [ 2.37704603, 13.43142068,  7.0530478 , ...,  2.07601611,
+         6.03860325,  5.5438228 ],
+       [ 6.31780261, 15.41124275,  4.85542938, ...,  0.03879923,
+         6.60492872,  0.73719978],
+       ...,
+       [12.3756913 ,  4.14672025,  2.50975773, ...,  5.51419711,
+         0.53235888, 17.54924049],
+       [ 0.07475901,  4.65271737,  6.59091568, ...,  5.69434848,
+         0.55393883,  2.93130586],
+       [ 5.00331722,  4.57995   , 19.21583394, ...,  4.1837879 ,
+         2.63954619,  3.32898159]])
+
+In [2]: permuted_B_datasets
+Out[2]: 
+array([[2.79121217e+00, 4.98562121e+00, 3.22202744e+00, ...,
+        2.34027311e+00, 1.23901335e+01, 3.35534157e+00],
+       [9.02422786e+00, 2.34013992e+00, 1.51655745e+01, ...,
+        2.25837113e+00, 2.31468022e+01, 3.07002667e+00],
+       [9.21972681e-01, 3.45263524e+00, 7.05304780e+00, ...,
+        2.31468022e+01, 5.88831298e+00, 4.26321190e+00],
+       ...,
+       [1.34477674e+01, 1.12580302e+00, 6.00543509e-04, ...,
+        8.75875771e+00, 1.43165231e+01, 2.54264298e+01],
+       [3.86808084e+00, 1.91992769e+00, 2.52459352e+00, ...,
+        1.61605062e+01, 1.54370448e+00, 1.56072383e+00],
+       [3.05135995e+00, 5.85514960e+00, 1.34936676e+00, ...,
+        3.21507841e+00, 6.63951203e+00, 5.87070109e+00]])
+
+In [3]: samples_median
+Out[3]: 
+array([-2.14728792e-01,  8.24141054e-02, -4.92966417e-01, -2.91582356e-01,
+        2.95051955e-01,  1.55680301e-01,  2.36349259e-01, -1.39729416e-01,
+        4.52375278e-02,  3.90519166e-01, -3.21952541e-01, -2.84308119e-01,
+       ... ])
+
+In [4]: samples_percentile
+Out[4]: 
+array([ 0.57367263, -0.53527517,  0.30151233,  0.91011149,  0.52215529,
+        0.10655316,  0.13830829, -0.36892919,  0.25774048, -0.71613165,
+       -0.03931278,  0.52993736, -0.66471044,  1.35230071, -0.44715585, ...
+    ])
+
+
+Perfectly done! Now you know how to use permutation testing for any statistic of your choice.
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
