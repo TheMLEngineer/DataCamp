@@ -160,6 +160,668 @@ Nicely done! The confidence intervals are quite separated. Nonetheless, we will 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+ Ref : 
+ 
+ Permutation test: wild type versus heterozygote
+Test the hypothesis that the heterozygote and wild type bout lengths are identically distributed using a permutation test.
+
+
+
+
+ Q : 
+ 
+ Compute the difference of means (heterozygote minus wild type bout lengths) of the actual data sets, storing the result in the variable diff_means_exp. The numpy arrays bout_lengths_wt and bout_lengths_het are already in your namespace.
+Draw 10,000 permutation replicates of the difference of means using dcst.draw_perm_reps(). You can use the dcst.diff_of_means() function as well, storing your result in perm_reps.
+Compute the p-value, defining "at least as extreme as" to be that the difference of means under the null hypothesis is greater than or equal to that which was observed experimentally.
+Print the p-value to the screen.
+
+
+
+
+# Compute the difference of means: diff_means_exp
+diff_means_exp = np.mean(bout_lengths_het) - np.mean(bout_lengths_wt)
+
+# Draw permutation replicates: perm_reps
+perm_reps = dcst.draw_perm_reps(bout_lengths_het , bout_lengths_wt, 
+                               dcst.diff_of_means , size= 10000)
+
+# Compute the p-value: p-val
+p_val = np.sum(perm_reps >= diff_means_exp) / len(perm_reps)
+
+# Print the result
+print('p =', p_val)
+
+
+
+<script.py> output:
+    p = 0.001
+	
+	
+	
+Well executed! A p-value of 0.001 suggests that the observed difference in means is unlikely to occur if heterozygotic and wild type fish have active bout lengths that are identically distributed.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+ 
+ 
+ Bootstrap hypothesis test
+The permutation test has a pretty restrictive hypothesis, that the heterozygotic and wild type bout lengths are identically distributed. Now, use a bootstrap hypothesis test to test the hypothesis that the means are equal, making no assumptions about the distributions.
+
+
+ Q : 
+ 
+ 
+ 
+ Compute the mean of all bout lengths from this concatenated array (bout_lengths_concat), storing the results in the variable mean_bout_length.
+Shift both data sets such that they both have the same mean, namely mean_bout_length. Store the shifted arrays in variables wt_shifted and het_shifted.
+Use dcst.draw_bs_reps() to draw 10,000 bootstrap replicates of the mean for each of the shifted data sets. Store the respective replicates in bs_reps_wt and bs_reps_het.
+Subtract bs_reps_wt from bs_reps_het to get the bootstrap replicates of the difference of means. Store the results in the variable bs_reps.
+Compute the p-value, defining "at least as extreme as" to be that the difference of means under the null hypothesis is greater than or equal to that which was observed experimentally. The variable diff_means_exp from the last exercise is already in your namespace.
+
+
+
+
+# Concatenate arrays: bout_lengths_concat
+bout_lengths_concat = np.concatenate((bout_lengths_wt, bout_lengths_het))
+
+# Compute mean of all bout_lengths: mean_bout_length
+mean_bout_length = np.mean(bout_lengths_concat)
+
+# Generate shifted arrays
+wt_shifted = bout_lengths_wt - np.mean(bout_lengths_wt) +(mean_bout_length)
+het_shifted = bout_lengths_het - np.mean(bout_lengths_het) + mean_bout_length
+
+# Compute 10,000 bootstrap replicates from shifted arrays
+bs_reps_wt = dcst.draw_bs_reps(wt_shifted ,np.mean , size = 10000)
+bs_reps_het = dcst.draw_bs_reps(het_shifted ,np.mean, size = 10000)
+
+# Get replicates of difference of means: bs_replicates
+bs_reps = bs_reps_het - bs_reps_wt
+
+# Compute and print p-value: p
+p = np.sum(bs_reps >= diff_means_exp) / len(bs_reps)
+print('p-value =', p)
+
+
+
+
+<script.py> output:
+    p-value = 0.0004
+	
+	
+	
+Nice work! We get a result of similar magnitude as the permutation test, though slightly smaller, probably because the heterozygote bout length distribution has a heavier tail to the right.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+ 
+ 
+ Assessing the growth rate
+To compute the growth rate, you can do a linear regression of the logarithm of the total bacterial area versus time. Compute the growth rate and get a 95% confidence interval using pairs bootstrap. The time points, in units of hours, are stored in the numpy array t and the bacterial area, in units of square micrometers, is stored in bac_area.
+
+
+ Q : 
+ 
+ 
+ 
+ Compute the logarithm of the bacterial area (bac_area) using np.log() and store the result in the variable log_bac_area.
+Compute the slope and intercept of the semilog growth curve using np.polyfit(). Store the slope in the variable growth_rate and the intercept in log_a0.
+Draw 10,000 pairs bootstrap replicates of the growth rate and log initial area using dcst.draw_bs_pairs_linreg(). Store the results in growth_rate_bs_reps and log_a0_bs_reps.
+Use np.percentile() to compute the 95% confidence interval of the growth rate (growth_rate_bs_reps).
+Print the growth rate and confidence interval to the screen. This has been done for you, so hit 'Submit Answer' to view the results!
+
+
+
+
+
+# Compute logarithm of the bacterial area: log_bac_area
+log_bac_area = np.log(bac_area)
+
+# Compute the slope and intercept: growth_rate, log_a0
+growth_rate, log_a0 = np.polyfit(t , log_bac_area , deg = 1)
+
+# Draw 10,000 pairs bootstrap replicates: growth_rate_bs_reps, log_a0_bs_reps
+growth_rate_bs_reps , log_a0_bs_reps = \
+            dcst.draw_bs_pairs_linreg(t , log_bac_area , size=10000)
+    
+# Compute confidence intervals: growth_rate_conf_int
+growth_rate_conf_int = np.percentile(growth_rate_bs_reps , [2.5 , 97.5])
+
+# Print the result to the screen
+print("""
+Growth rate: {0:.4f} sq. µm/hour
+95% conf int: [{1:.4f}, {2:.4f}] sq. µm/hour
+""".format(growth_rate, *growth_rate_conf_int))
+
+
+
+
+
+<script.py> output:
+    
+    Growth rate: 0.2301 sq. µm/hour
+    95% conf int: [0.2266, 0.2336] sq. µm/hour
+	
+	
+	
+Under these conditions, the bacteria add about 0.23 square micrometers worth of mass each hour. The error bar is very tight, which we will see graphically in the next exercise.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+ Plotting the growth curve
+You saw in the previous exercise that the confidence interval on the growth curve is very tight. You will explore this graphically here by plotting several bootstrap lines along with the growth curve. You will use the plt.semilogy() function to make the plot with the y-axis on a log scale. This means that you will need to transform your theoretical linear regression curve for plotting by exponentiating it.
+
+
+
+
+ Q : 
+ 
+ Plot the data points using plt.semilogy(). The numpy arrays t and bac_area are again in your namespace.
+Use np.array() to generate time values for plotting the bootstrap lines. Call this t_bs. The time should go from 0 to 14 hours.
+Write a for loop to plot regression lines corresponding to the first 100 pairs bootstrap replicates. The numpy arrays growth_rate_bs_reps and log_a0_bs_reps that you computed in the last exercise are in your namespace.
+Compute the growth curve by exponentiating the linear regression line using np.exp().
+Plot the theoretical line using plt.semilogy() with keyword arguments linewidth=0.5, alpha=0.05, and color='red'.
+Label the axes and show your plot. Appropriate labels for the respective x and y axes are 'time (hr)' and 'area (sq. µm)'.
+
+
+
+
+
+
+# Plot data points in a semilog-y plot with axis labeles
+_ = plt.semilogy(t , bac_area , marker='.', linestyle='none')
+
+# Generate x-values for the bootstrap lines: t_bs
+t_bs = np.array([0,14])
+
+# Plot the first 100 bootstrap lines
+for i in range(100):
+    y = np.exp(growth_rate_bs_reps[i] * t_bs  + log_a0_bs_reps[i])
+    _ = plt.semilogy(t_bs , y, linewidth=0.5, alpha=0.05, color='red')
+    
+# Label axes and show plot
+_ = plt.xlabel('time (hr)')
+_ = plt.ylabel('area (sq. µm)')
+plt.show()
+
+
+
+In [1]: t
+Out[1]: 
+array([ 0.  ,  0.25,  0.5 ,  0.75,  1.  ,  1.25,  1.5 ,  1.75,  2.  ,
+        2.25,  2.5 ,  2.75,  3.  ,  3.25,  3.5 ,  3.75,  4.  ,  4.25,
+        4.5 ,  4.75,  5.  ,  5.25,  5.5 ,  5.75,  6.  ,  6.25,  6.5 ,
+        6.75,  7.  ,  7.25,  7.5 ,  7.75,  8.  ,  8.25,  8.5 ,  8.75,
+        9.  ,  9.25,  9.5 ,  9.75, 10.  , 10.25, 10.5 , 10.75, 11.  ,
+       11.25, 11.5 , 11.75, 12.  , 12.25, 12.5 , 12.75, 13.  , 13.25,
+       13.5 ])
+
+In [2]: bac_area
+Out[2]: 
+array([  5.574735  ,   5.71202325,   5.90339475,   6.19461225,
+         6.456708  ,   6.85193175,   7.17643125,   7.56749475,
+         8.087526  ,   8.586756  ,   8.74900575,   9.48120975,
+        10.03868325,  10.550394  ,  11.13698925,  11.765187  ,
+        12.38506425,  13.07566575,  13.7371455 ,  14.377824  ,
+        14.89785525,  15.5177325 ,  16.341462  ,  17.31912075,
+        18.4132665 ,  19.5947775 ,  20.96766   ,  22.07844675,
+        23.41804725,  24.6702825 ,  26.25533775,  28.00264275,
+        29.6293005 ,  31.41404775,  33.31944225,  35.59925925,
+        37.974762  ,  40.787091  ,  43.749189  ,  46.8028125 ,
+        50.28494175,  53.467533  ,  57.644424  ,  61.438572  ,
+        64.72932975,  68.3861895 ,  71.539659  ,  75.85383825,
+        81.61994475,  86.050611  ,  91.53798075,  98.231823  ,
+       104.27666625, 110.862342  , 118.31751   ])
+
+In [3]: t.shape
+Out[3]: (55,)
+
+In [4]: bac_area.shape
+Out[4]: (55,)
+
+
+
+
+Nicely done. You can see that the bootstrap replicates do not stray much. This is due to the exquisitly exponential nature of the bacterial growth under these experimental conditions.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+ Graphical EDA of men's 200 free heats
+In the heats, all contestants swim, the very fast and the very slow. To explore how the swim times are distributed, plot an ECDF of the men's 200 freestyle.
+
+
+ Q : 
+ Generate x and y values for the ECDF using dcst.ecdf(). The swim times of the heats are stored in the numpy array mens_200_free_heats.
+Plot the ECDF as dots. Remember to specify the appropriate marker and linestyle.
+Label the axes and show the plot. Use 'time (s)' as the x-axis label and 'ECDF' as the y-axis label.
+
+
+# Generate x and y values for ECDF: x, y
+x , y = dcst.ecdf(mens_200_free_heats)
+
+# Plot the ECDF as dots
+_ = plt.plot(x , y , marker = '.' , linestyle = 'none')
+
+# Label axes and show plot
+_ = plt.xlabel('time (s)')
+_ = plt.ylabel('ECDF')
+plt.show()
+
+
+
+
+Well done! Graphical EDA is always a great start. We see that fast swimmers are below 115 seconds, with a smattering of slow swimmers past that, including one very slow swimmer.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+
+ 200 m free time with confidence interval
+Now, you will practice parameter estimation and computation of confidence intervals by computing the mean and median swim time for the men's 200 freestyle heats. The median is useful because it is immune to heavy tails in the distribution of swim times, such as the slow swimmers in the heats. mens_200_free_heats is still in your namespace.
+
+
+ Q : 
+ 
+ Compute the mean and median swim times, storing them in variables mean_time and median_time. The swim times are contained in mens_200_free_heats.
+Draw 10,000 bootstrap replicates each of the mean and median swim time using dcst.draw_bs_reps(). Store the results in bs_reps_mean and bs_reps_median.
+Compute the 95% confidence intervals for the mean and median using the bootstrap replicates and np.percentile().
+Hit 'Submit Answer' to print the results to the screen!
+
+
+
+
+
+
+# Compute mean and median swim times
+mean_time = np.mean(mens_200_free_heats)
+median_time = np.median(mens_200_free_heats)
+
+# Draw 10,000 bootstrap replicates of the mean and median
+bs_reps_mean = dcst.draw_bs_reps(mens_200_free_heats ,np.mean , size = 10000)
+bs_reps_median = dcst.draw_bs_reps(mens_200_free_heats ,np.median, size = 10000)
+
+
+# Compute the 95% confidence intervals
+conf_int_mean = np.percentile(bs_reps_mean , [2.5 , 97.5])
+conf_int_median = np.percentile(bs_reps_median , [2.5 , 97.5])
+
+# Print the result to the screen
+print("""
+mean time: {0:.2f} sec.
+95% conf int of mean: [{1:.2f}, {2:.2f}] sec.
+
+median time: {3:.2f} sec.
+95% conf int of median: [{4:.2f}, {5:.2f}] sec.
+""".format(mean_time, *conf_int_mean, median_time, *conf_int_median))
+
+
+
+<script.py> output:
+    
+    mean time: 111.63 sec.
+    95% conf int of mean: [110.47, 112.92] sec.
+    
+    median time: 110.04 sec.
+    95% conf int of median: [108.96, 111.29] sec.
+	
+	
+	
+Great work! Indeed, the mean swim time is longer than the median because of the effect of the very slow swimmers.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ EDA: finals versus semifinals
+First, you will get an understanding of how athletes' performance changes from the semifinals to the finals by computing the fractional improvement from the semifinals to finals and plotting an ECDF of all of these values.
+
+The arrays final_times and semi_times contain the swim times of the respective rounds. The arrays are aligned such that final_times[i] and semi_times[i] are for the same swimmer/event. If you are interested in the strokes/events, you can check out the data frame df in your namespace, which has more detailed information, but is not used in the analysis.
+
+
+
+
+ Q : 
+ 
+ Compute the fractional improvement from the semifinals to finals. Store the results as f.
+Compute the x and y values for plotting the ECDF.
+Plot the ECDF as dots.
+
+
+
+# Compute fractional difference in time between finals and semis
+f = (semi_times - final_times) / semi_times
+
+# Generate x and y values for the ECDF: x, y
+x , y = dcst.ecdf(f)
+
+# Make a plot of the ECDF
+_ = plt.plot(x , y , marker = '.' , linestyle = 'none')
+
+# Label axes and show plot
+_ = plt.xlabel('f')
+_ = plt.ylabel('ECDF')
+plt.show()
+
+
+
+In [1]: df.head(3)
+Out[1]: 
+   athleteid stroke  distance  final_swimtime  lastname  semi_swimtime
+0     100537   FREE       100           52.52  CAMPBELL          53.00
+1     100537   FREE        50           24.12  CAMPBELL          24.32
+2     100631   FREE       100           52.82  CAMPBELL          52.84
+
+
+Well done! The median of the ECDF is juuuust above zero. But at first glance, it does not look like there is much of any difference between semifinals and finals. We'll check this carefully in the next exercises.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+ Parameter estimates of difference between finals and semifinals
+Compute the mean fractional improvement from the semifinals to finals, along with a 95% confidence interval of the mean. The Numpy array f that you computed in the last exercise is in your namespace.
+
+
+ Q : 
+ 
+ Compute the mean of f, storing the result in f_mean.
+Generate 10,000 bootstrap replicates of the mean of f. Store the results in bs_reps.
+Compute a 95% confidence interval from these bootstrap replicates.
+Hit 'Submit Answer' to print the mean and confidence interval to the screen.
+
+
+
+
+
+# Mean fractional time difference: f_mean
+f_mean = np.mean(f)
+
+# Get bootstrap reps of mean: bs_reps
+bs_reps = dcst.draw_bs_reps(f , np.mean , size = 10000)
+
+# Compute confidence intervals: conf_int
+conf_int = np.percentile(bs_reps , [2.5 , 97.5])
+
+# Report
+print("""
+mean frac. diff.: {0:.5f}
+95% conf int of mean frac. diff.: [{1:.5f}, {2:.5f}]""".format(f_mean, *conf_int))
+
+
+
+
+
+<script.py> output:
+    
+    mean frac. diff.: 0.00040
+    95% conf int of mean frac. diff.: [-0.00092, 0.00176]
+
+
+
+Nice work! It looks like the mean finals time is juuuust faster than the mean semifinal time, and they very well may be the same. We'll test this hypothesis next.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q : 
+ 
+ How to do the permutation test
+Based on our EDA and parameter estimates, it is tough to discern improvement from the semifinals to finals. In the next exercise, you will test the hypothesis that there is no difference in performance between the semifinals and finals. A permutation test is fitting for this. We will use the mean value of f as the test statistic. Which of the following simulates getting the test statistic under the null hypothesis?
+
+Strategy 1
+Take an array of semifinal times and an array of final times for each swimmer for each stroke/distance pair.
+Go through each array, and for each index, swap the entry in the respective final and semifinal array with a 50% probability.
+Use the resulting final and semifinal arrays to compute f and then the mean of f.
+Strategy 2
+Take an array of semifinal times and an array of final times for each swimmer for each stroke/distance pair and concatenate them, giving a total of 96 entries.
+Scramble the concatenated array using the np.permutation() function. Assign the first 48 entries in the scrambled array to be "semifinal" and the last 48 entries to be "final."
+Compute f from these new semifinal and final arrays, and then compute the mean of f.
+Strategy 3
+Take the array f we used in the last exercise.
+Multiply each entry of f by either 1 or -1 with equal probability.
+Compute the mean of this new array to get the test statistic.
+Strategy 4
+Define a function with signature compute_f(semi_times, final_times) to compute f from inputted swim time arrays.
+Draw a permutation replicate using dcst.draw_perm_reps(semi_times, final_times, compute_f).
+
+
+
+
+ A : 
+ 
+ Strategy 1
+ 
+ 
+
+In [1]: f
+Out[1]: 
+array([ 0.0090566 ,  0.00822368,  0.0003785 , -0.00578035, -0.00138913,
+        0.00461736,  0.00512295,  0.00144404,  0.00592604,  0.00508044,
+       -0.00323392,  0.00619268, -0.00464936, -0.00246103,  0.00547246,
+       -0.00292851,  0.00255834,  0.00530179, -0.00295549, -0.00553144,
+       -0.00273096,  0.00934579,  0.00522501,  0.00257542, -0.00381746,
+       -0.00407363,  0.00209702, -0.00209205,  0.01628538,  0.00145998,
+       -0.01576702,  0.00448536,  0.00325262, -0.01965698, -0.00542292,
+       -0.00017532, -0.00277008, -0.0003399 , -0.00361925,  0.00386399,
+        0.00097971, -0.00544535, -0.00040816, -0.00117233, -0.00394548,
+       -0.0029427 , -0.0011055 ,  0.00518736, -0.00571225,  0.00274655,
+       -0.00523062, -0.00558835, -0.00379727,  0.00014901, -0.00711974,
+        0.0078293 , -0.00970874, -0.00317173,  0.02176738,  0.00633112,
+        0.00315126,  0.00703482, -0.00216965, -0.01096892, -0.00533689,
+        0.00102643, -0.00374672,  0.01134251,  0.00041271,  0.01003861,
+       -0.01119259,  0.00343171,  0.00854435, -0.00091463,  0.00033179,
+       -0.00184719, -0.00609585,  0.00179404,  0.00151573,  0.00399042,
+        0.        , -0.0061414 ,  0.01118789, -0.01631854, -0.00223007,
+       -0.00408664, -0.00281611,  0.01370332,  0.00033659,  0.00756209,
+       -0.00148368,  0.01134674,  0.00165289,  0.00446989, -0.00603723,
+        0.00917144])
+		
+		
+		
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+
+ Generating permutation samples
+As you worked out in the last exercise, we need to generate a permutation sample by randomly swapping corresponding entries in the semi_times and final_times array. Write a function with signature swap_random(a, b) that returns arrays where random indices have the entries in a and b swapped.
+
+
+
+
+ Q : 
+ 
+ Define a function with signature swap_random(a, b) that does the following.
+Create an array swap_inds the same length as the input arrays where each entry is True with 50/50 probability. Hint: Use np.random.random() with the size=len(a) keyword argument. Each entry in the result that is less than 0.5 should be True.
+Make copies of a and b, called a_out and b_out, respectively using np.copy().
+Use Boolean indexing with the swap_inds array to swap the appropriate entries of b into a_out and of a into b_out.
+Return a_out and b_out.
+
+
+
+
+
+def swap_random(a , b):
+    """Randomly swap entries in two arrays."""
+    # Indices to swap
+    swap_inds = np.random.random(size = len(a)) < 0.5
+    
+    # Make copies of arrays a and b for output
+    a_out = np.copy(a)
+    b_out = np.copy(b)
+    
+    # Swap values
+    b_out[swap_inds] = a[swap_inds]
+    a_out[swap_inds] = b[swap_inds]
+
+    return a_out, b_out
+	
+	
+
+
+Great! Now you have this function in hand to do the permutation test.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+ Hypothesis test: Do women swim the same way in semis and finals?
+Test the hypothesis that performance in the finals and semifinals are identical using the mean of the fractional improvement as your test statistic. The test statistic under the null hypothesis is considered to be at least as extreme as what was observed if it is greater than or equal to f_mean, which is already in your namespace.
+
+The semifinal and final times are contained in the numpy arrays semi_times and final_times.
+
+
+ Q : 
+ 
+ 
+ 
+ Set up an empty array to contain 1000 permutation replicates using np.empty(). Call this array perm_reps.
+Write a for loop to generate permutation replicates.
+Generate a permutation sample using the swap_random() function you just wrote. Store the arrays in semi_perm and final_perm.
+Compute the value of f from the permutation sample.
+Store the mean of the permutation sample in the perm_reps array.
+Compute the p-value and print it to the screen.
+
+
+
+
+# Set up array of permutation replicates
+perm_reps = np.empty(1000)
+
+for i in range(1000):
+    # Generate a permutation sample
+    semi_perm, final_perm = swap_random(semi_times, final_times)
+    
+    # Compute f from the permutation sample
+    f = (semi_perm - final_perm) / semi_perm
+    
+    # Compute and store permutation replicate
+    perm_reps[i] = np.mean(f)
+
+# Compute and print p-value
+print('p =', np.sum(perm_reps >= f_mean) / 1000)
+
+
+
+
+
+<script.py> output:
+    p = 0.266
+	
+
+
+
+That was a little tricky... Nice work! The p-value is large, about 0.27, which suggests that the results of the 2015 World Championships are consistent with there being no difference in performance between the finals and semifinals.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+
+ 
+ 
+ EDA: Plot all your data
+To get a graphical overview of a data set, it is often useful to plot all of your data. In this exercise, plot all of the splits for all female swimmers in the 800 meter heats. The data are available in a Numpy arrays split_number and splits. The arrays are organized such that splits[i,j] is the split time for swimmer i for split_number[j].
+
+
+ Q : 
+ 
+ Write a for loop, looping over the set of splits for each swimmer to:
+Plot the split time versus split number. Use the linewidth=1 and color='lightgray' keyword arguments.
+Compute the mean split times for each distance. You can do this using the np.mean() function with the axis=0 keyword argument. This tells np.mean() to compute the means over rows, which will give the mean split time for each split number.
+Plot the mean split times (y-axis) versus split number (x-axis) using the marker='.', linewidth=3, and markersize=12 keyword arguments.
+Label the axes and show the plot.
+
+
+
+
+
+# Plot the splits for each swimmer
+for splitset in splits:
+    _ = plt.plot( split_number , splitset,  linewidth=1, color='lightgray')
+
+# Compute the mean split times
+mean_splits = np.mean( splits , axis = 0)
+
+# Plot the mean split times
+plt.plot(mean_splits , split_number , marker = '.' , linewidth = 3 , markersize = 12)
+
+# Label axes and show plot
+_ = plt.xlabel('split number')
+_ = plt.ylabel('split time (s)')
+plt.show()
+
+
+
+
+Nice plotting! You can see that there is wide variability in the splits among the swimmers, and what appears to be a slight trend toward slower split times.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+ Linear regression of average split time
+We will assume that the swimmers slow down in a linear fashion over the course of the 800 m event. The slowdown per split is then the slope of the mean split time versus split number plot. Perform a linear regression to estimate the slowdown per split and compute a pairs bootstrap 95% confidence interval on the slowdown. Also show a plot of the best fit line.
+
+Note: We can compute error bars for the mean split times and use those in the regression analysis, but we will not take those into account here, as that is beyond the scope of this course.
+
+
+ Q : 
+ 
+ 
+ 
+ Use np.polyfit() to perform a linear regression to get the slowdown per split. The variables split_number and mean_splits are already in your namespace. Store the slope and interecept respectively in slowdown and split_3.
+Use dcst.draw_bs_pairs_linreg() to compute 10,000 pairs bootstrap replicates of the slowdown per split. Store the result in bs_reps. The bootstrap replicates of the intercept are not relevant for this analysis, so you can store them in the throwaway variable _.
+Compute the 95% confidence interval of the slowdown per split.
+Plot the split number (split_number) versus the mean split time (mean_splits) as dots, along with the best-fit line.
 
 
 
@@ -167,6 +829,94 @@ Nicely done! The confidence intervals are quite separated. Nonetheless, we will 
 
 
 
+# Perform regression
+slowdown , split_3 = np.polyfit(split_number , mean_splits , 1)
+
+# Compute pairs bootstrap
+bs_reps, _ = dcst.draw_bs_pairs_linreg(split_number , mean_splits , size = 10000)
+
+# Compute confidence interval
+conf_int = np.percentile(bs_reps , [2.5 , 97.5])
+
+# Plot the data with regressions line
+_ = plt.plot(split_number, mean_splits, marker='.', linestyle='none')
+_ = plt.plot(split_number, slowdown * split_number + split_3, '-')
+
+# Label axes and show plot
+_ = plt.xlabel('split number')
+_ = plt.ylabel('split time (s)')
+plt.show()
+
+# Print the slowdown per split
+print("""
+mean slowdown: {0:.3f} sec./split
+95% conf int of mean slowdown: [{1:.3f}, {2:.3f}] sec./split""".format(
+    slowdown, *conf_int))
+
+
+
+
+
+
+<script.py> output:
+    
+    mean slowdown: 0.065 sec./split
+    95% conf int of mean slowdown: [0.051, 0.078] sec./split
+	
+
+Great work! There is a small (about 6 hundreths of a second), but discernible, slowdown per split. We'll do a hypothesis test next.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Hypothesis test: are they slowing down?
+Now we will test the null hypothesis that the swimmer's split time is not at all correlated with the distance they are at in the swim. We will use the Pearson correlation coefficient (computed using dcst.pearson_r()) as the test statistic.
+
+
+ Q : 
+ 
+ Compute the observed Pearson correlation, storing it as rho.
+Using np.empty(), initialize the array of 10,000 permutation replicates of the Pearson correlation, naming it perm_reps_rho.
+Write a for loop to:
+Scramble the split number array using np.random.permutation(), naming it scrambled_split_number.
+Compute the Pearson correlation coefficient between the scrambled split number array and the mean split times and store it in perm_reps_rho.
+Compute the p-value and display it on the screen. Take "at least as extreme as" to mean that the Pearson correlation is at least as big as was observed.
+
+
+
+
+
+# Observed correlation
+rho = dcst.pearson_r(split_number , mean_splits)
+
+# Initialize permutation reps
+perm_reps_rho = np.empty(10000)
+
+# Make permutation reps
+for i in range(10000):
+    # Scramble the split number array
+    scrambled_split_number = np.random.permutation(split_number)
+    
+    # Compute the Pearson correlation coefficient
+    perm_reps_rho[i] = dcst.pearson_r(scrambled_split_number , mean_splits)
+    
+# Compute and print p-value
+p_val = np.sum(perm_reps_rho >= rho) / len(perm_reps_rho)
+print('p =', p_val)
+
+
+
+
+
+<script.py> output:
+    p = 0.0
+	
+
+
+The tiny effect is very real! With 10,000 replicates, we never got a correlation as big as observed under the hypothesis that the swimmers do not change speed as the race progresses. In fact, I did the test with a million replicates, and still never got a single replicate as big as the observed Pearson correlation coefficient.
 
 
 
@@ -174,41 +924,426 @@ Nicely done! The confidence intervals are quite separated. Nonetheless, we will 
 
 
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q : 
+ 
+ A metric for improvement
+In your first analysis, you will investigate how times of swimmers in 50 m events change as they move between low numbered lanes (1-3) to high numbered lanes (6-8) in the semifinals and finals. We showed in the previous chapter that there is little difference between semifinal and final performance, so you will neglect any differences due to it being the final versus the semifinal.
+
+You want to use as much data as you can, so use all four strokes for both the men's and women's competitions. As such, what would be a good metric for improvement from one round to the next for an individual swimmer, where ta is the swim time in a low numbered lane and tb is the swim time in a high numbered lane?
+
+
+ A : 
+ 
+ The fractional improvement of swim time, (ta - tb) / ta.
+ 
+ 
+ 
+ This is a good metric; it is the fractional improvement, and therefore independent of the basal speed (which is itself dependent on stroke and gender).
+
+
+ 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+ ECDF of improvement from low to high lanes
+Now that you have a metric for improvement going from low- to high-numbered lanes, plot an ECDF of this metric. I have put together the swim times of all swimmers who swam a 50 m semifinal in a high numbered lane and the final in a low numbered lane, and vice versa. The swim times are stored in the Numpy arrays swimtime_high_lanes and swimtime_low_lanes. Entry i in the respective arrays are for the same swimmer in the same event.
+
+
+Q : 
+
+Compute the fractional improvement for being in a high-numbered lane for each swimmer using the formula from the last exercise. Store the result in the variable f.
+Compute the x and y values for plotting the ECDF.
+Plot the ECDF as dots.
+Label the x-axis 'f', y-axis 'ECDF', and show the plot.
+
+
+
+
+# Compute the fractional improvement of being in high lane: f
+f = (swimtime_low_lanes - swimtime_high_lanes) / swimtime_low_lanes
+
+# Make x and y values for ECDF: x, y
+x , y = dcst.ecdf(f)
+
+# Plot the ECDFs as dots
+plt.plot(x , y , linestyle = 'none' , marker = '.')
+
+# Label the axes and show the plot
+plt.xlabel('f')
+plt.ylabel('ECDF')
+plt.show()
+
+
+
+Nice work! Oooo, this is starting to paint a picture of lane bias. The ECDF demonstrates that all but three of the 26 swimmers swam faster in the high numbered lanes.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Estimation of mean improvement
+You will now estimate how big this current effect is. Compute the mean fractional improvement for being in a high-numbered lane versus a low-numbered lane, along with a 95% confidence interval of the mean.
+
+
+ Q : 
+ 
+ Compute the mean fractional difference using np.mean(). The variable f from the last exercise is already in your namespace.
+Draw 10,000 bootstrap replicates of the mean fractional difference using dcst.draw_bs_reps(). Store the result in a numpy array named bs_reps.
+Compute the 95% confidence interval using np.percentile().
+Hit 'Submit Answer' to print the mean fractional improvement and 95% confidence interval to the screen.
 
 
 
 
 
+# Compute the mean difference: f_mean
+f_mean = np.mean(f)
+
+# Draw 10,000 bootstrap replicates: bs_reps
+bs_reps = dcst.draw_bs_reps(f , np.mean , size = 10000)
+
+# Compute 95% confidence interval: conf_int
+conf_int = np.percentile(bs_reps , [2.5 , 97.5])
+
+# Print the result
+print("""
+mean frac. diff.: {0:.5f}
+95% conf int of mean frac. diff.: [{1:.5f}, {2:.5f}]""".format(f_mean, *conf_int))
 
 
 
 
 
+<script.py> output:
+    
+    mean frac. diff.: 0.01051
+    95% conf int of mean frac. diff.: [0.00612, 0.01591]
+
+
+
+You're getting to be a pro! And it sure looks like swimmers are faster in lanes 6-8.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Q : 
+ 
+ How should we test the hypothesis?
+You are interested in the presence of lane bias toward higher lanes, presumably due to a slight current in the pool. A natural null hypothesis to test, then, is that the mean fractional improvement going from low to high lane numbers is zero. Which of the following is a good way to simulate this null hypothesis?
+
+As a reminder, the arrays swimtime_low_lanes and swimtime_high_lanes contain the swim times for lanes 1-3 and 6-8, respectively, and we define the fractional improvement as f = (swimtime_low_lanes - swimtime_high_lanes) / swimtime_low_lanes.
+
+
+Randomly swap swimtime_low_lanes[i] and swimtime_high_lanes[i] with probability 0.5. From these randomly swapped arrays, compute the fractional improvement. The test statistic is the mean of this new f array.
+
+Scramble the entries in the swimtime_high_lanes, and recompute f from the scrambled array and the swimtime_low_lanes array. The test statistic is the mean of this new f array.
+
+Shift the swimtime_low_lanes and swimtime_high_lanes arrays by adding a constant value to each so that the shifted arrays have the same mean. Compute the fractional improvement, f_shift, from these shifted arrays. Then, take a bootstrap replicate of the mean from f_shift.
+
+Subtract the mean of f from f to generate f_shift. Then, take bootstrap replicate of the mean from this f_shift.                                        
+
+(A)
+
+Either (3) or (4) will work; they are equivalent.
+
+
+
+Correct! Choice (1) is simulating a different hypothesis, that whether a swimmer is in a high-numbered lane or a low-numbered lane has no bearing on the swim time. This is a perfectly reasonable hypothesis to test, but it is not the one we are testing here. The other choices are not properly simulating a hypothesis we would be interested in.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+ Hypothesis test: Does lane assignment affect performance?
+Perform a bootstrap hypothesis test of the null hypothesis that the mean fractional improvement going from low-numbered lanes to high-numbered lanes is zero. Take the fractional improvement as your test statistic, and "at least as extreme as" to mean that the test statistic under the null hypothesis is greater than or equal to what was observed.
+
+ 
+ Q : 
+ 
+ Create an array f_shift, by shifting f such that its mean is zero. You can use the variable f_mean computed in previous exercises.
+Draw 100,000 bootstrap replicates of the mean of the f_shift.
+Compute and print the p-value.
+
+
+
+# Shift f: f_shift
+f_shift = f - f_mean
+
+# Draw 100,000 bootstrap replicates of the mean: bs_reps
+bs_reps = dcst.draw_bs_reps(f_shift , np.mean , size = 100000)
+
+# Compute and report the p-value
+p_val = np.sum(bs_reps >= f_mean) / 100000
+print('p =', p_val)
+
+
+
+
+<script.py> output:
+    p = 0.00033
+	
+	
+	
+Nice work! A p-value of 0.0003 is quite small and suggests that the mean fractional improvment is greater than zero. For fun, I tested the more restrictive hypothesis that lane number has no bearing at all on performance (item (1) in the previous MCQ), and I got an even smaller p-value of about 0.00001. You can perform that test, too, for practice if you like.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Did the 2015 event have this problem?
+You would like to know if this is a typical problem with pools in competitive swimming. To address this question, perform a similar analysis for the results of the 2015 FINA World Championships. That is, compute the mean fractional improvement for going from lanes 1-3 to lanes 6-8 for the 2015 competition, along with a 95% confidence interval on the mean. Also test the hypothesis that the mean fractional improvement is zero.
+
+The arrays swimtime_low_lanes_15 and swimtime_high_lanes_15 have the pertinent data.
+
+
+
+
+ Q : 
+ 
+ Compute the fractional improvement, f using the arrays swimtime_low_lanes_15 and swimtime_high_lanes_15. Also compute the mean of f, storing it as f_mean.
+Draw 10,000 bootstrap replicates of the mean f.
+Compute the 95% confidence interval of the mean fractional improvement.
+Shift f to create f_shift such that its mean is zero.
+Draw 100,000 bootstrap replicates of the mean of f_shift.
+Compute the p-value.
 
 
 
 
 
+# Compute f and its mean
+f = (swimtime_low_lanes_15 - swimtime_high_lanes_15) / swimtime_low_lanes_15
+f_mean = np.mean(f)
+
+# Draw 10,000 bootstrap replicates
+bs_reps = dcst.draw_bs_reps(f , np.mean , size = 10000)
+
+# Compute 95% confidence interval
+conf_int = np.percentile(bs_reps , [2.5 , 97.5])
+
+# Shift f
+f_shift = f - f_mean
+
+# Draw 100,000 bootstrap replicates of the mean
+bs_reps = dcst.draw_bs_reps(f_shift , np.mean , size = 100000)
+
+# Compute the p-value
+p_val = np.sum(bs_reps >= f_mean) / 100000
+
+# Print the results
+print("""
+mean frac. diff.: {0:.5f}
+95% conf int of mean frac. diff.: [{1:.5f}, {2:.5f}]
+p-value: {3:.5f}""".format(f_mean, *conf_int, p_val))
+
+
+
+
+<script.py> output:
+    
+    mean frac. diff.: 0.00079
+    95% conf int of mean frac. diff.: [-0.00198, 0.00341]
+    p-value: 0.28179
+
+
+
+
+Nice analysis! Both the confidence interval an the p-value suggest that there was no lane bias in 2015.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Q : 
+ 
+ Which splits should we consider?
+As you proceed to quantitatively analyze the zigzag effect in the 1500 m, which splits should you include in our analysis? For reference, the plot of the zigzag effect from the video is shown to the right.
+
+
+
+
+ You should include all splits, so as not to neglect useful data.
+ 
+ 
+ 
+You should only include even splits (100 m, 200 m, ...) because you can compare swimmers in lanes 1-3 going against the putative current and swimmers in lanes 6-8 going with the putative current.
+
+
+
+You should include all splits except the first two and the last two. You should neglect the last two because swimmers stop pacing themselves and "kick" for the final stretch. The first two are different because they involve jumping off the starting blocks and more underwater swimming than others.                (A)
+
+
+
+Yes! You want to use splits where the swimmers are swimming as consistently as they can.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+ Ref : 
+ 
+ EDA: mean differences between odd and even splits
+To investigate the differences between odd and even splits, you first need to define a difference metric. In previous exercises, you investigated the improvement of moving from a low-numbered lane to a high-numbered lane, defining f = (ta - tb) / ta. There, the ta in the denominator served as our reference time for improvement. Here, you are considering both improvement and decline in performance depending on the direction of swimming, so you want the reference to be an average. So, we will define the fractional difference as f = 2(ta - tb) / (ta + tb).
+
+Your task here is to plot the mean fractional difference between odd and even splits versus lane number. I have already calculated the mean fractional differences for the 2013 and 2015 Worlds for you, and they are stored in f_13 and f_15. The corresponding lane numbers are in the array lanes.
+
+
+ Q : 
+ 
+ Plot f_13 versus lanes using keyword arguments marker='.', markersize=12, and linestyle='none'.
+Do the same for f_15 versus lanes.
+Label the x-axis 'lane', y-axis 'frac. diff. (odd - even)', and show it.
+
+
+
+# Plot the the fractional difference for 2013 and 2015
+plt.plot(lanes , f_13 ,   marker='.', markersize=12, linestyle='none')
+plt.plot( lanes ,f_15 ,  marker='.', markersize=12, linestyle='none')
+
+# Add a legend
+_ = plt.legend((2013, 2015))
+
+# Label axes and show plot
+plt.xlabel('lane')
+plt.ylabel('frac. diff. (odd - even)')
+plt.show()
+
+
+
+Whew! EDA has exposed a strong slope in 2013 compared to 2015!
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ How does the current effect depend on lane position?
+To quantify the effect of lane number on performance, perform a linear regression on the f_13 versus lanes data. Do a pairs bootstrap calculation to get a 95% confidence interval. Finally, make a plot of the regression. The arrays lanes and f_13 are in your namespace.
+
+Note that we could compute error bars on the mean fractional differences and use them in the regression, but that is beyond the scope of this course.
+
+
+ Q : 
+ 
+Compute the slope and intercept of the f_13 versus lanes line using np.polyfit().
+Use dcst.draw_bs_pairs_linreg() to get 10,000 bootstrap replicates of the slope and intercept, storing them respectively in bs_reps_slope and bs_reps_int.
+Use the bootstrap replicates to compute a 95% confidence interval for the slope.
+Print the slope and 95% confidence interval to the screen. This has been done for you.
+Using np.array(), generate x-values to use for the plot of the bootstrap lines. x should go from 1 to 8.
+The plot is already populated with the data. Write a for loop to add 100 bootstrap lines to the plot using the keyword arguments color='red', alpha=0.2, and linewidth=0.5.
+
+
+
+
+# Compute the slope and intercept of the frac diff/lane curve
+slope, intercept = np.polyfit(lanes, f_13, 1)
+
+# Compute bootstrap replicates
+bs_reps_slope, bs_reps_int = dcst.draw_bs_pairs_linreg(lanes, f_13, size=10000)
+
+# Compute 95% confidence interval of slope
+conf_int = np.percentile(bs_reps_slope, [2.5, 97.5])
+
+# Print slope and confidence interval
+print("""
+slope: {0:.5f} per lane
+95% conf int: [{1:.5f}, {2:.5f}] per lane""".format(slope, *conf_int))
+
+# x-values for plotting regression lines
+x = np.array([1, 8])
+
+# Plot 100 bootstrap replicate lines
+for i in range(100):
+    _ = plt.plot(x, bs_reps_slope[i] * x + bs_reps_int[i], 
+                 color='red', alpha=0.2, linewidth=0.5)
+   
+# Update the plot
+plt.draw()
+plt.show()
+
+
+
+
+<script.py> output:
+    
+    slope: 0.00447 per lane
+    95% conf int: [0.00394, 0.00501] per lane
+	
+	
+	
+Nice work! The slope is a fractional difference of about 0.4% per lane. This is quite a substantial difference at this elite level of swimming where races can be decided by tiny differences.
 
 
 
 
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Ref : 
+ 
+ Hypothesis test: can this be by chance?
+The EDA and linear regression analysis is pretty conclusive. Nonetheless, you will top off the analysis of the zigzag effect by testing the hypothesis that lane assignment has nothing to do with the mean fractional difference between even and odd lanes using a permutation test. You will use the Pearson correlation coefficient, which you can compute with dcst.pearson_r() as the test statistic. The variables lanes and f_13 are already in your namespace.
+
+
+ Q : 
+ 
+ Compute the observed Pearson correlation coefficient, storing it as rho.
+Initialize an array to store the 10,000 permutation replicates of rho using np.empty(). Name the array perm_reps_rho.
+Write a for loop to draw the permuation replicates.
+Scramble the lanes array using np.random.permutation().
+Compute the Pearson correlation coefficient between the scrambled lanes array and f_13. Store the result in perm_reps_rho.
+Compute and print the p-value. Take "at least as extreme as" to be that the Pearson correlation coefficient is greater than or equal to what was observed.
 
 
 
 
+# Compute observed correlation: rho
+rho = dcst.pearson_r(lanes, f_13)
+
+# Initialize permutation reps: perm_reps_rho
+perm_reps_rho = np.empty(10000)
+
+# Make permutation reps
+for i in range(10000):
+    # Scramble the lanes array: scrambled_lanes
+    scrambled_lanes = np.random.permutation(lanes)
+    
+    # Compute the Pearson correlation coefficient
+    perm_reps_rho[i] = dcst.pearson_r(scrambled_lanes, f_13)
+    
+# Compute and print p-value
+p_val = np.sum(perm_reps_rho >= rho) / 10000
+print('p =', p_val)
+
+
+
+The p-value is very small, as you would expect from the confidence interval of the last exercise.
 
 
 
 
-
-
-
-
-
-
-
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
