@@ -1,0 +1,117 @@
+
+
+
+
+
+Conda : 
+
+
+1) Conda Essentials
+
+
+
+
+SQL : 
+
+
+1) Introduction to Relational Databases in SQL
+
+2) Joining Data in SQL
+
+3) Intro to SQL for Data Science
+
+4) Intermediate SQL
+
+5) SQL for Exploratory Data Analysis
+
+6) Introduction to SQL Server
+
+7) Intermediate SQL Server
+
+
+
+
+
+
+
+
+Python : 
+
+1) Introduction to Linear Modeling in Python
+
+2) Linear Classifiers in Python
+
+3) Visualizing Geospatial Data in Python
+
+4) Improving Your Data Visualizations in Python
+
+5) Introduction to Seaborn
+
+6) Introduction to Matplotlib
+
+7) Introduction to Data Science in Python
+
+8) Network Analysis in Python (Part 1)
+
+9) Deep Learning in Python
+
+10) Machine Learning with Tree-Based Models in Python
+
+11) Introduction to Shell for Data Science
+
+12) Unsupervised Learning in Python
+
+13) Machine Learning with the Experts: School Budgets
+
+14) Supervised Learning with scikit-learn
+
+15) Analyzing Police Activity with pandas
+
+16) Statistical Thinking in Python (Part 2)
+
+17) Statistical Thinking in Python (Part 1)
+
+18) Interactive Data Visualization with Bokeh
+
+19) Introduction to Data Visualization with Python
+
+20) Introduction to Databases in Python
+
+21) Merging DataFrames with pandas
+
+22) Manipulating DataFrames with pandas
+
+23) pandas Foundations
+
+24) Cleaning Data in Python
+
+25) Importing Data in Python (Part 2)
+
+26) Importing Data in Python (Part 1)
+
+27) Python Data Science Toolbox (Part 2)
+
+28) Python Data Science Toolbox (Part 1)
+
+29) Intermediate Python for Data Science
+
+30) Introduction to Python
+
+31) Statistical Simulation in Python
+
+32) Case Studies in Statistical Thinking
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
